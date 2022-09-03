@@ -21,6 +21,7 @@ city!="Nairobi" & city!="New York" & city!="Nicosia" & city!="Sydney")
 **Step 2: Double check the row numbers for the new dataframe:**
 > nrow(bigmac)
 [1] 45
+
 > nrow(bigmac2)
 [2] 38
 
@@ -76,11 +77,18 @@ of bus fares with Mexico City, Milan, Montreal, Nairobi, New York, Nicosia and S
 **Step 2: Plot individual box-and-whisker plots in blue**
 Original:
 > boxplot(y, col='Blue', notch=TRUE)
-![image](https://user-images.githubusercontent.com/77920592/188267545-46853ab7-b4bf-4f5f-a04b-ef93196a1409.png)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267545-46853ab7-b4bf-4f5f-a04b-ef93196a1409.png">
+</p>
 
 New List:
 > boxplot(x, col='Blue', notch=TRUE)
-![image](https://user-images.githubusercontent.com/77920592/188267556-7b1aeba4-c876-49bb-94aa-5958a8e0e571.png)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267556-7b1aeba4-c876-49bb-94aa-5958a8e0e571.png">
+</p>
+
 
 **i) Use the relevant R commands to combine your two notched box-and-whisker plots into a single
 figure such that the y-axis is entitled bus fare and the x-axis is entitled study. The x-axis should have
@@ -89,7 +97,9 @@ the list of bus fares with Mexico City, Milan, Montreal, Nairobi, New York, Nico
 excluded.**
 
 > boxplot (y,x, col='Blue',names=c('With','Without'), ylab = 'Bus Fare', notch=TRUE)
-![image](https://user-images.githubusercontent.com/77920592/188267565-a3971724-33f9-4ac8-8fbc-4cf6917c45df.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267565-a3971724-33f9-4ac8-8fbc-4cf6917c45df.png">
+</p>
 
 **ii. Interpret your result with regards to the notches and the horizontal lines and explicitly state their
 respective values for both box-and whisker plots (maximum of 120 words.)**
@@ -123,7 +133,10 @@ teacher salary vs engineer salary.**
 
 **Step 2: Create the scatterplot**
 > plot(x,y, xlab='teachsal', ylab='engsal', main = 'Teacher Salary vs Engineer Salary',pch = 4, col = 'Red')
-![image](https://user-images.githubusercontent.com/77920592/188267636-416c8248-1f95-4123-86be-9dd7ad54f7d8.png)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267636-416c8248-1f95-4123-86be-9dd7ad54f7d8.png">
+</p>
 
 ### **(e) Assuming that the relationship between teacher salary and engineer salary is captured by a
 simple linear regression model, fit a Least Squares Regression line through the dataset where
@@ -155,7 +168,10 @@ Coefficients:
 > plot(x,y, xlab='teachsal', ylab='engsal', main = 'Teacher Salary vs Engineer Salary',pch = 4, col =
 'Red')
 > abline(lm(y~x))
-![image](https://user-images.githubusercontent.com/77920592/188267673-f3afc9a5-c332-47b8-bd95-76a6ad4cee11.png)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267673-f3afc9a5-c332-47b8-bd95-76a6ad4cee11.png">
+</p>
 
 ### **(f) Using the relevant R commands, find the city for which the predicted engineer salary is above 60
 monetary units.**
@@ -180,7 +196,10 @@ monetary units.**
 > abline(lm(y~x))
 > fitted<- predict(lm(y~x))
 > for (i in 1 : 24) lines(c(x[i], x[i]),c(y[i],fitted[i]))
-![image](https://user-images.githubusercontent.com/77920592/188267711-0d929038-7c9b-49f0-9522-f8d193384627.png)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267711-0d929038-7c9b-49f0-9522-f8d193384627.png">
+</p>
 
 ### **(h) Are the variables engsal and teachsal correlated? Justify your answer using the relevant formulas
 but not a scatterplot.**
@@ -209,7 +228,10 @@ ANSWER: Yes they are highly correlated.
 
 **Step 2: Create histogram**
 > hist(x,breaks = 11, xlab = 'Workhrs', main = 'Histogram of workhrs (11 bins)')
-> ![image](https://user-images.githubusercontent.com/77920592/188267800-9f747e9a-3086-49eb-b8c0-e520e54c747e.png)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188267800-9f747e9a-3086-49eb-b8c0-e520e54c747e.png">
+</p>
 
 ###**(j) Is the assumption that workhrs is normally distributed justified?**
 ANSWER: No, the histogram shows that the workhrs is skewed to the left and the mean is not
