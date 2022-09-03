@@ -4,7 +4,7 @@
 
 A data frame with 53940 rows and 10 variables:
 
-price: price in US dollars (\$326--\$18,823)
+price: price in US dollars (\$326--\$18,823) <br/>
 carat: weight of the diamond (0.2--5.01)
 cut: quality of the cut (Fair, Good, Very Good, Premium, Ideal)
 color: diamond colour, from J (worst) to D (best)
