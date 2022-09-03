@@ -71,12 +71,12 @@ Alternative Hypothesis, H1: There are significant differences between Yield..kg.
 
 **Q4: Are there any significant effects (the ‘omnibus’ test)?**
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269399-d7eff262-b24b-42ff-9655-4a642c9e3e3b.png">
-</p>
+  <img src="https://user-images.githubusercontent.com/77920592/188269399-d7eff262-b24b-42ff-9655-4a642c9e3e3b.png"  width = "550>
+</p>                                                                                                          
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269411-b3781a24-78c4-4fc3-9fc9-79157258b14c.png">
-</p>
+  <img src="https://user-images.githubusercontent.com/77920592/188269411-b3781a24-78c4-4fc3-9fc9-79157258b14c.png" width = "550>
 
+>
 **Step 1: Two-way ANOVA**
 > contrasts(df$HeightGroup) <- contr.sum
 
@@ -132,12 +132,14 @@ Response = Yield..kg.season.
 > summary(result)
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269438-2aa4a506-41c4-4e3d-9d8d-26e8deca6dd6.png">
+  <img src="https://user-images.githubusercontent.com/77920592/188269438-2aa4a506-41c4-4e3d-9d8d-26e8deca6dd6.png" width = "550>
 </p>
+                                                                                                                            
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269449-66ef6baa-e611-4bdb-b67e-c4ae3ec60424.png">
+  <img src="https://user-images.githubusercontent.com/77920592/188269449-66ef6baa-e611-4bdb-b67e-c4ae3ec60424.png" width = "550>
 </p>
-
+  
+>
 **Step 6: Fit ancova model**
 > Height..m.C = Height..m. - mean(Height..m.)
 > result = lm(Yield..kg.season. ~ Height..m.C + Type)
@@ -145,10 +147,11 @@ Response = Yield..kg.season.
 > summary(result)
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269457-ed868d61-ff1c-4775-99b2-cd406a564d14.png">
+  <img src="https://user-images.githubusercontent.com/77920592/188269457-ed868d61-ff1c-4775-99b2-cd406a564d14.png" width = "550>
 </p>
+                                                                                                                            
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269461-70d549ce-4c57-4d6a-91ae-f0e54d0f4113.png">
+  <img src="https://user-images.githubusercontent.com/77920592/188269461-70d549ce-4c57-4d6a-91ae-f0e54d0f4113.png" width = "550>
 </p>
 
 > df$Type = unclass(df$Type)
