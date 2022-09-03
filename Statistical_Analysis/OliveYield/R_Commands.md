@@ -17,12 +17,16 @@ Effect of HeightGroup on Yield..kg.season
 > table(df$Yield..kg.season, df$HeightGroup)
 
 > plot(df$Yield..kg.season~HeightGroup, data=df)
-![image](https://user-images.githubusercontent.com/77920592/188268276-d7644525-e3cd-4d56-bbf6-f027097c7f90.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188268276-d7644525-e3cd-4d56-bbf6-f027097c7f90.png">
+</p>
 
 > plot(df$Height..m.~df$Yield..kg.season,
 + main = 'Yield..kg.season vs HeightGroup',
 + xlab = ' Yield..kg.season ', ylab = 'HeightGroup')
-![image](https://user-images.githubusercontent.com/77920592/188268289-6d0998b3-25f7-4321-b4e9-e281dfbb8642.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188268289-6d0998b3-25f7-4321-b4e9-e281dfbb8642.png">
+</p>
 
 Effect of Type on Yield..kg.season
 
@@ -30,7 +34,9 @@ Effect of Type on Yield..kg.season
 > table(df$Yield..kg.season, df$Type)
 
 > plot(Yield..kg.season ~ Type, data=df)
-![image](https://user-images.githubusercontent.com/77920592/188268336-0c7cfb60-e03a-4fce-859b-013848a07ab5.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188268336-0c7cfb60-e03a-4fce-859b-013848a07ab5.png">
+</p>
 
 **Interpretation**
 
@@ -64,8 +70,12 @@ Alternative Hypothesis, H1: There are significant differences between Yield..kg.
 **Q3: Does Yield..kg.season HeightGroup response differ by Type (I.e., are there interactions)?**
 
 **Q4: Are there any significant effects (the ‘omnibus’ test)?**
-![image](https://user-images.githubusercontent.com/77920592/188269399-d7eff262-b24b-42ff-9655-4a642c9e3e3b.png)
-![image](https://user-images.githubusercontent.com/77920592/188269411-b3781a24-78c4-4fc3-9fc9-79157258b14c.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269399-d7eff262-b24b-42ff-9655-4a642c9e3e3b.png">
+</p>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269411-b3781a24-78c4-4fc3-9fc9-79157258b14c.png">
+</p>
 
 **Step 1: Two-way ANOVA**
 > contrasts(df$HeightGroup) <- contr.sum
@@ -112,15 +122,21 @@ Response = Yield..kg.season.
 **Step 4: Boxplot visualization**
 > dev.new()
 > boxplot(Yield..kg.season.~Type)
-![image](https://user-images.githubusercontent.com/77920592/188268727-30e284e6-c627-43b9-85de-4f1e6e151d8f.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188268727-30e284e6-c627-43b9-85de-4f1e6e151d8f.png">
+</p>
 
 **Step 5: Try one way anova**
 > result = lm(Yield..kg.season.~Type)
 > anova(result)
 > summary(result)
 
-![image](https://user-images.githubusercontent.com/77920592/188269438-2aa4a506-41c4-4e3d-9d8d-26e8deca6dd6.png)
-![image](https://user-images.githubusercontent.com/77920592/188269449-66ef6baa-e611-4bdb-b67e-c4ae3ec60424.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269438-2aa4a506-41c4-4e3d-9d8d-26e8deca6dd6.png">
+</p>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269449-66ef6baa-e611-4bdb-b67e-c4ae3ec60424.png">
+</p>
 
 **Step 6: Fit ancova model**
 > Height..m.C = Height..m. - mean(Height..m.)
@@ -128,11 +144,17 @@ Response = Yield..kg.season.
 > anova(result)
 > summary(result)
 
-![image](https://user-images.githubusercontent.com/77920592/188269457-ed868d61-ff1c-4775-99b2-cd406a564d14.png)
-![image](https://user-images.githubusercontent.com/77920592/188269461-70d549ce-4c57-4d6a-91ae-f0e54d0f4113.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269457-ed868d61-ff1c-4775-99b2-cd406a564d14.png">
+</p>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269461-70d549ce-4c57-4d6a-91ae-f0e54d0f4113.png">
+</p>
 
 > df$Type = unclass(df$Type)
-![image](https://user-images.githubusercontent.com/77920592/188269083-7d72f928-bea5-460e-a8db-60b77084c966.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77920592/188269083-7d72f928-bea5-460e-a8db-60b77084c966.png">
+</p>
 
 **Interpretation**
 
