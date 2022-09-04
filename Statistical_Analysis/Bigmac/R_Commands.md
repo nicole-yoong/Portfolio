@@ -1,7 +1,7 @@
 # Statistical Analysis on the Bigmac.csv
 
 ## **1. Consider the data set bigmac.cvs dataset obtainable from the module’s Blackboard site.**
-### **(a) Using the relevant R-commands, find the names of the variables. **
+### **(a) Using the relevant R-commands, find the names of the variables.**
 
 > bigmac <- read.csv('C:/Users/wgq21ryu/bigmac.csv')
 
@@ -9,7 +9,7 @@
 [7] "teachsal" "teachtax" "vacdays" "workhrs" "city" 
 
 ### **(b) Using the relevant R-commands:
-i. Compute the mean, variance and standard deviation for the variable bus fare. In each case exclude the values for Mexico City, Milan, Montreal, Nairobi, New York, Nicosia and Sydney using the relevant R-commands. **
+i. Compute the mean, variance and standard deviation for the variable bus fare. In each case exclude the values for Mexico City, Milan, Montreal, Nairobi, New York, Nicosia and Sydney using the relevant R-commands.**
 
 **Step 1: Create a new dataframe ‘bigmac2’ to exclude these countries:**
 > bigmac2<-subset(bigmac,city!="Mexico City" & city!="Milan" & city!="Montreal" &
