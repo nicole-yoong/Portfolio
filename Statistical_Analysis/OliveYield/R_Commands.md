@@ -71,10 +71,10 @@ Alternative Hypothesis, H1: There are significant differences between Yield..kg.
 
 **Q4: Are there any significant effects (the ‘omnibus’ test)?**
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269399-d7eff262-b24b-42ff-9655-4a642c9e3e3b.png"  width = "550>
+  <img src="https://user-images.githubusercontent.com/77920592/188269399-d7eff262-b24b-42ff-9655-4a642c9e3e3b.png"  width = "550">
 </p>                                                                                                          
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/77920592/188269411-b3781a24-78c4-4fc3-9fc9-79157258b14c.png" width = "550>
+  <img src="https://user-images.githubusercontent.com/77920592/188269411-b3781a24-78c4-4fc3-9fc9-79157258b14c.png" width = "550">
 
 >
 **Step 1: Two-way ANOVA**
