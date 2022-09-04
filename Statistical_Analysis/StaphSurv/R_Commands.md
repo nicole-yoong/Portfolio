@@ -1,6 +1,6 @@
 # **ANOVAs and Survival Analysis**
 
-## **1. The duration of a staphylococcus infection (days) for patients are recorded in a clinical trial comparing two new antibiotics (Entromyacin and Selovyacin) over a period of 2 weeks. Censoring information is also available (0=censored, 1=cured). The data can be found in StaphSurv.csv
+## **1. The duration of a staphylococcus infection (days) for patients are recorded in a clinical trial comparing two new antibiotics (Entromyacin and Selovyacin) over a period of 2 weeks. Censoring information is also available (0=censored, 1=cured). The data can be found in StaphSurv.csv**
 
 ### **(a) Produce Kaplan Meier survival plot(s) for the data and provide an initial interpretation.**
 
@@ -52,7 +52,7 @@ Log-rank p-value
   <img src="https://user-images.githubusercontent.com/77920592/188308366-ca90384a-f734-489e-ae9b-59211ae5f421.png" width = "450">
 </p>
 
-### **(b) Do a log-rank test to investigate the significance of differences between the two treatments, and interpret the results.
+### **(b) Do a log-rank test to investigate the significance of differences between the two treatments, and interpret the results.**
 
 Hypothesis:
 
