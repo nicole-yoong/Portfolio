@@ -1,0 +1,193 @@
+--- Insert students: Insert a new student member of the society.
+
+Insert into student values (600, 'Peterson, J', 'PeteJ@myhome.com');
+Select * from student
+
+
+
+--- Insert examinations: Insert a new examination for the coming year.
+
+Insert into exam values ('VB03', 'Visual Basic 3', 'London', '2022-06-03', '09:00');
+Select * from exam
+
+
+
+--- Insert entry: Insert an examination entry
+
+Insert into entry (excode, sno) values ('VB03', '100');
+Select * from entry
+
+
+
+--- Update an entry: record the grade awarded to an entry.
+
+Update entry Set egrade = 60 where eno = 10 and excode = 'VB03';
+Select * from entry
+
+
+--- Student Examination Timetables: Produce a table showing the examination timetable for a given student. 
+
+CREATE OR REPLACE FUNCTION retrieve_student_timetable(_sno INTEGER)
+RETURNS TABLE (
+	sname VARCHAR(20),
+    excode       CHAR(4),
+    extitle      VARCHAR(20),
+    exlocation   VARCHAR(20),
+    exdate       domain_exdate,
+    extime       domain_extime)
+
+AS $$
+	BEGIN		
+		RETURN QUERY
+		SELECT student.sname, exam.excode, exam.extitle, exam.exlocation, exam.exdate, exam.extime 
+		FROM student, exam 
+		WHERE student.sno = _sno;
+	END;
+$$ LANGUAGE plpgsql;
+
+
+select * from retrieve_student_timetable(100);
+
+select * from retrieve_student_timetable(200);
+
+
+
+--- All examination results: Produce a table showing the result obtained by each student for each examination. 
+
+Select sno, eno, excode, egrade from entry 
+Where entry is not null
+Group by sno, eno, excode, egrade
+Order by sno;
+
+
+
+--- Select examination results: As Q above but for a given examination. 
+
+Select sno, eno, excode, egrade from entry 
+Where entry is not null and excode  = 'VB01'
+Group by sno, eno, excode, egrade
+Order by sno;
+
+
+
+--- Results for selected student: Produce a table showing details of all examinations taken by a student. 
+
+CREATE OR REPLACE FUNCTION retrieve_student_examinations(_sno INTEGER)
+RETURNS TABLE (
+	sname VARCHAR(20),
+    excode       CHAR(4),
+    extitle      VARCHAR(20),
+	egrade	domain_egrade)
+
+AS $$
+	BEGIN
+	RETURN QUERY
+		SELECT  student.sname, exam.excode, exam.extitle, entry.egrade   
+		FROM student, exam, entry
+		WHERE student.sno = entry.sno 
+		AND exam.excode = entry.excode
+		AND student.sno = _sno; 
+		
+	END;
+$$ LANGUAGE plpgsql;
+
+
+select * from retrieve_student_examinations(100);
+
+
+
+--- Membership status for selected student: Given a specific student membership number, display the name of the student and their membership status in the society.
+
+CREATE TABLE exam_details ( 
+
+excode       CHAR(4), 
+    extitle      VARCHAR(20), 
+    exlocation   VARCHAR(20), 
+    exdate       DATE, 
+    extime       TIME, 
+    sno          INTEGER, 
+sname        VARCHAR(20), 
+    egrade       DECIMAL(5,2)); 	
+
+
+CREATE FUNCTION update_exam_details() RETURNS TRIGGER AS $update_exam_details$ 
+   BEGIN 
+      INSERT INTO exam_details(excode,sno,egrade) 
+  VALUES (new.excode,new.sno,new.egrade); 
+      PERFORM extitle,exlocation,exdate,extime FROM exam WHERE excode = new.excode; 
+      IF FOUND THEN  
+  	UPDATE exam_details SET (extitle,exlocation,exdate,extime) = (select extitle,exlocation,exdate,extime from exam WHERE excode = new.excode) 
+  	WHERE excode = new.excode; 
+  END IF; 
+
+   
+  PERFORM sname FROM student WHERE sno = new.sno; 
+      IF FOUND THEN  
+  	UPDATE exam_details SET (sname) = (select sname from student WHERE sno = new.sno) 
+  	WHERE sno = new.sno; 
+  END IF; 
+
+      RETURN NEW; 
+   END; 
+
+$update_exam_details$ LANGUAGE plpgsql; 
+
+
+CREATE TRIGGER update_exam_details_trigger 
+AFTER UPDATE ON entry 
+FOR EACH ROW EXECUTE PROCEDURE update_exam_details();
+
+
+CREATE OR REPLACE FUNCTION membership(_sno INTEGER)
+RETURNS text AS $$
+
+	DECLARE
+	_sname text;
+	_membership text;
+	
+	BEGIN
+		select sname into _sname from exam_details 
+		where egrade is not null and (exdate between '2022/01/01' and '2022/12/31' ) AND sno = _sno
+		group by sname
+		having count(sno) > 3 and 
+		avg (egrade) >= 50;
+		
+		if _sname is not null then
+			_membership := 'Accredited';
+		else
+			_membership := 'Pending';	
+		END IF;
+		
+		return _membership;
+	END;
+$$ LANGUAGE plpgsql;
+
+
+select sname, membership(sno) from student where sno=100;
+
+select sname, membership(sno) from student where sno=120;
+
+
+--- Delete selected student: This happens if a student withdraws from the society.  All the examination entries for the student must be cancelled. 
+
+CREATE FUNCTION delete_entry_update_cancel() RETURNS TRIGGER AS $delete_entry_update_cancel$
+   BEGIN
+      INSERT INTO cancel(eno,excode,sno,cdate)VALUES (old.eno, old.excode, old.sno,now());
+      RETURN NEW;
+   END;
+   
+$delete_entry_update_cancel$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_delete_entry_update_cancel 
+AFTER DELETE ON entry
+FOR EACH ROW EXECUTE PROCEDURE delete_entry_update_cancel();
+
+Select * from cancel
+
+
+
+--- Delete selected examination: 
+
+Delete from exam where excode = 'VB01'
+
+Delete from exam where excode = 'SQL1'
