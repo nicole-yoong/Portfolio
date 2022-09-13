@@ -1,0 +1,4 @@
+nicole,nicole123//Character_creation nicolelittle,12/12/2020,f,a//Game_level,{},{},{}
+
+ryan,ryan123//Character_creation littleryan,12/12/2001,m,a//Game_level,{},{},{}
+
