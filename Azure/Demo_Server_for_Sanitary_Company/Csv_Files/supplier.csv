@@ -1,0 +1,10 @@
+sup_id,sup_name,company,dept,category,email,phone_number,country,status,special_note
+1,Nora Zukauskaite,Harding,Procurement,Sanitary,nz@gmail.com,78687690,United Kingdom,Ongoing,None
+2,Alexandra Gilson,Steinberg,Procurement,Sanitary,ag@gmail.com,74186007,Germany,Ongoing,None
+3,Duke Tanson,Phoenix,Procurement,Sanitary,dt@gmail.com,74512867,Australia,Ongoing,None
+4,Daniel Patterson,Geberit,Procurement,Sanitary,dp@gmail.com,73082618,Germany,Ongoing,None
+5,Paul Ray,Villeroy Boch,Procurement,Sanitary,pr@gmail.com,74092818,Germany,Ongoing,None
+6,Bryony Pearce,Fima,Procurement,Sanitary,br@gmail.com,73910275,Italy,Ongoing,None
+7,Amy Baker,Grohe,Marketing,Sanitary,ab@gmail.com,75601929,Germany,Ongoing,None
+8,Daniel Underwood,Phoenix,Marketing,Sanitary,du@gmail.com,78162830,Australia,Ongoing,None
+9,Hannah Turner,Steinberg,Marketing,Sanitary,ht@gmail.com,71525262,Australia,Ongoing,None

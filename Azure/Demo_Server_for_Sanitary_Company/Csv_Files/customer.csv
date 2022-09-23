@@ -1,0 +1,19 @@
+cus_id,cus_name,int_id,whatsapp,address_house_no,address_street,address_postal_code,last_visit_date,special_note
+1,Ben Barker,1,78687699,34,"Alexander Road
+London",E27 8VM,2021-03-19,Quotation sent
+2,Natalie Fahey,5,74186006,65,"Victoria Road
+London",SE73 6BF,2021-05-16,Quotation sent
+3,Louise Woodiwiss,3,74512866,12,"St. John’s Road
+London",E90 5HL,2021-08-06,Quotation sent
+4,Katie Gritt,8,73082617,88,"Queens Road
+London",W97 5OS,2021-06-04,Quotation sent
+5,Matt Webster,5,74092817,5,"Park Road
+London",N80 6VS,2021-07-04,Quotation sent
+6,Charlotte Geoghegan,7,73910274,83," Victoria Road
+London",E27 8VM,2021-12-03,None
+7,Katy Paris Royce,1,75601928,451,"Queens Road
+London",E90 5HL,2021-06-05,None
+8,Olivia Mae Hanlon,4,78162839,34,"The Grove
+London",WC35 4OX,2021-05-14,None
+9,John Mitchell,4,71525261,123,"Albert Road
+London",SE76 3OJ,2021-03-02,None

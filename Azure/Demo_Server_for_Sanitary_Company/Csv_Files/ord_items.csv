@@ -1,0 +1,12 @@
+order_id,sku,quantity,price,date_of_delivery,special_note
+1,GR1,1,499,,
+2,PH1,2,1099,,
+3,PH2,3,1299,,
+4,GR2,1,500,,
+5,GR3,1,299,,
+1,VB1,1,399,,
+2,SB3,1,3399,,
+3,SB4,1,4599,,
+4,PH3,3,1299,,
+5,PH4,2,1399,,
+2,SB1,2,2399,,

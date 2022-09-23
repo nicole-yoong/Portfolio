@@ -1,0 +1,16 @@
+sku,item_name,description,price,brand,color,status,stock_quantity,pre_order_arrival_date,special_note
+GR1,Basin Mixer,Basin Mixer,499,Grohe,Stainless Steel,In-stock,30,,None
+PH1,Basin Mixer,Basin Mixer,1099,Phoenix,Stainless Steel,In-stock,40,,None
+PH2,Basin Mixer,Basin Mixer,1299,Phoenix,Stainless Steel,In-stock,13,,None
+GR2,Basin Mixer,Basin Mixer,500,Grohe,Stainless Steel,In-stock,5,,None
+GR3,Basin Mixer,Basin Mixer,299,Grohe,Stainless Steel,In-stock,12,,None
+VB1,Water Closet,Water Closet,399,Villeroy Boch,Ceramic White,In-stock,9,,None
+SB1,Basin Mixer,Basin Mixer,2300,Steinberg,Matte Black,Indent 14 days,0,2021-08-31,Payment pending
+SB2,Sink Mixer,Sink Mixer,2399,Steinberg,Matte Black,Indent 14 days,0,2021-09-01,None
+SB3,Vessel Mixer,Vessel Mixer,3399,Steinberg,Matte Black,Indent 14 days,0,2021-09-02,Payment pending
+SB4,Bath Spout,Bath Spout,4599,Steinberg,Matte Black,Indent 14 days,0,2021-09-03,None
+PH3,Sink Mixer,Sink Mixer,1299,Phoenix,Chrome,In-stock,45,,None
+PH4,Vessel Mixer,Vessel Mixer,1399,Phoenix,Chrome,In-stock,23,,None
+SB5,Basin Mixer,Basin Mixer,2399,Steinberg,Chrome,In-stock,7,,None
+PH5,Basin Mixer,Basin Mixer,1209,Phoenix,Matte Black,Indent 14 days,0,2021-09-01,None
+PH6,Sink Mixer,Sink Mixer,899,Phoenix,Matte Black,Indent 14 days,0,2021-09-01,Payment pending
