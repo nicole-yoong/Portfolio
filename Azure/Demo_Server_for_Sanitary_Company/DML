@@ -1,0 +1,85 @@
+--- DML - TOP MANAGEMENT LEVEL
+
+--- total sales of a specific month 
+drop view temp_total_sales_view;
+create view temp_total_sales_view as
+select date_of_purchase,
+sum (amount_purchase) over (partition by MONTH(date_of_purchase) order by date_of_purchase) as rolling_sales 
+from confirmed_order;
+
+select * from temp_total_sales_view;
+
+drop view monthly_sales_view;
+create view monthly_sales_view as
+select max(rolling_sales) as total_sales, MONTH(date_of_purchase) as month
+from temp_total_sales_view
+group by MONTH(date_of_purchase);
+
+select * from monthly_sales_view;
+
+--- which sales personnel performs better
+select emp_id, sum(amount_purchase) from confirmed_order
+group by emp_id
+order by sum(amount_purchase) desc;
+
+--- compute commissions for sales personnel
+select emp_id, sum(amount_purchase),
+CASE WHEN sum(amount_purchase)> 100000 THEN (0.02*sum(amount_purchase))
+WHEN sum(amount_purchase)< 100000 THEN (0.01*sum(amount_purchase))
+END comms
+from confirmed_order
+where date_of_purchase between '2021-11-01' and '2021-12-31' 
+group by emp_id, comms;
+
+
+
+--- DML - SALES LEVEL
+
+--- check which quotation is still pending for followup
+select distinct(quotation.cus_id), cus_name, whatsapp from quotation join customer
+on quotation.cus_id = customer.cus_id
+where status like 'pending';
+
+
+
+--- DML - MARKETING LEVEL
+
+--- loyalty programme for each interior designer 
+drop view id_loyalty_prog_view;
+create view id_loyalty_prog_view as 
+select int_id, sum(amount_purchase) as amount,
+CASE WHEN sum(amount_purchase)> 100000 THEN 'Gold'
+WHEN sum(amount_purchase)< 100000 THEN 'Silver'
+END tier
+from confirmed_order
+where date_of_purchase between '2021-01-01' and '2021-12-31' 
+group by int_id;
+
+select * from id_loyalty_prog_view
+
+
+--- loyalty programme for customer
+drop view cus_loyalty_prog_view;
+create view cus_loyalty_prog_view as 
+select cus_id, sum(amount_purchase) as amount,
+CASE WHEN sum(amount_purchase)> 100000 THEN 'Gold'
+WHEN sum(amount_purchase)< 100000 THEN 'Silver'
+END tier
+from confirmed_order
+where date_of_purchase between '2021-01-01' and '2021-12-31' 
+group by cus_id;
+
+select * from cus_loyalty_prog_view
+
+
+
+--- DML - OPERATION LEVEL
+
+--- check what items to be order before a certain date
+create view ordered_items_view as
+select ordered_items.order_id, ordered_items.sku, ordered_items.special_note, 
+ordered_items.date_of_delivery, status from ordered_items
+join product_sku
+on ordered_items.sku = product_sku.sku
+
+select * from ordered_items_view
