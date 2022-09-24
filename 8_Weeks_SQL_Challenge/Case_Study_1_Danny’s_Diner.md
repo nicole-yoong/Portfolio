@@ -38,6 +38,7 @@ The final members table captures the join_date when a customer_id joined the bet
 
 # SQL Scheme #
 
+```sql
 CREATE SCHEMA dannys_diner;
 SET search_path = dannys_diner;
 
@@ -91,47 +92,58 @@ INSERT INTO members
 VALUES
   ('A', '2021-01-07'),
   ('B', '2021-01-09');
-  
+ 
+```
+
 # Case Study Questions #
 
 ## 1. What is the total amount each customer spent at the restaurant? ##
 
+```sql
 select customer_id, sum(price) as total_spend
 from sales s
 join menu m on s.product_id = m.product_id
 group by customer_id
 order by total_spend
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090802-855d6a17-49bb-45ed-833c-4ca2be140586.png)
 
 
 ## How many days has each customer visited the restaurant? ## 
 
+```sql
 select customer_id, count(distinct order_date) as days_visited
 from sales
 group by customer_id
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090835-a4b961e9-925b-4d5f-85e0-c9cbefd8806c.png)
 
 ## What was the first item from the menu purchased by each customer? ## 
 
+```sql
 select distinct (customer_id), product_name
 from sales s
 join menu m on s.product_id = m.product_id
 where order_date = any (select min(order_date) from sales group by customer_id)
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090843-96258555-4780-406e-94d1-6ea48fe34941.png)
 
 ## What is the most purchased item on the menu and how many times was it purchased by all customers? ## 
 
+```sql
 select product_name , max(s.product_id) as product_id, count(s.product_id) as times
 from sales s
 join menu m on s.product_id = m.product_id
 group by product_name , s.product_id
 order by times desc limit 1
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090851-20461034-784c-47ee-80ea-faf04baded6a.png)
 
+```sql
 ## Which item was the most popular for each customer? ## 
 
 with fav_item_cte as
@@ -147,11 +159,13 @@ group by s.customer_id, m.product_name
 SELECT customer_id, product_name, order_count
 FROM fav_item_cte
 WHERE rank = 1;
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090859-895c41a2-c34c-4723-8a3b-0d71c644d8fb.png)
 
 ## Which item was purchased first by the customer after they became a member? ## 
 
+```sql
 with after_member_cte as
 (
 select s.customer_id, m.product_name, s.product_id, s.order_date,
@@ -165,11 +179,13 @@ where s.order_date >= ms.join_date
 select customer_id, product_name, product_id, order_date
 from after_member_cte
 where rank = 1
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090870-0bc616ab-18f1-4e75-838d-7554f37c24b7.png)
 
 ## Which item was purchased just before the customer became a member? ## 
 
+```sql
 with before_member_cte as
 (
 select s.customer_id, m.product_name, s.product_id, s.order_date,
@@ -183,22 +199,26 @@ where s.order_date < ms.join_date
 select customer_id, product_name, product_id, order_date
 from before_member_cte
 where rank = 1
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090885-8ba4fed6-1d1c-4288-9c76-ce2393e1422c.png)
 
 ## What is the total items and amount spent for each member before they became a member? ## 
 
+```sql
 select s.customer_id, count(s.product_id) as total_items, sum(price) as amount_spend
 from sales s
 join menu m on s.product_id = m.product_id
 join members ms on ms.customer_id = s.customer_id
 where s.order_date < ms.join_date
 group by s.customer_id
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090896-4fac926b-9e09-4c71-93de-d39e13846ef2.png)
 
 ## If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have? ## 
 
+```sql
 with points_cte as
 (
 select customer_id, s.product_id,
@@ -212,11 +232,13 @@ join menu m on s.product_id = m.product_id
 select customer_id,sum(points) as total_points
 from points_cte
 group by customer_id
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090905-ca528b3e-8169-4547-9143-e02535307cb8.png)
 
 ## In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January? ## 
 
+```sql
 with date_cte as
 (
 select *,
@@ -235,6 +257,7 @@ join menu m on s.product_id = m.product_id
 join members ms on ms.customer_id = s.customer_id
 where order_date < ‘2021-01-31’
 group by s.customer_id
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090923-847cd809-d445-40cb-993d-01d67f6b29e8.png)
 
@@ -245,6 +268,7 @@ Recreate the following table output using the available data:
 
 ![image](https://user-images.githubusercontent.com/77920592/192090933-65a50578-2284-414e-bd9b-c07514d75aba.png)
 
+```sql
 select s.customer_id, s.order_date, m.product_name, m.price,
 case when s.order_date >= join_date then ‘Yes’
 when s.order_date < join_date then ‘No’
@@ -253,6 +277,7 @@ from sales s
 left join menu m on s.product_id = m.product_id
 left join members ms on ms.customer_id = s.customer_id
 order by order_date
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090941-a0d4e08b-caf2-44aa-b2f6-0fd9971a8f73.png)
 
@@ -263,6 +288,7 @@ Danny also requires further information about the ranking of customer products, 
 
 ![image](https://user-images.githubusercontent.com/77920592/192090946-9c1946e4-3eac-4010-8d8e-a8e81c5fd8d1.png)
 
+```sql
 with rank_cte as (
 select s.customer_id, s.order_date, m.product_name, m.price,
 case when s.order_date >= join_date then ‘Yes’
@@ -280,6 +306,7 @@ else
 rank() over (partition by customer_id, member
 order by order_date) end as ranking
 from rank_cte
+```
 
 ![image](https://user-images.githubusercontent.com/77920592/192090956-f719eff7-e926-4f60-8ae7-6c47f877fa7c.png)
 
