@@ -87,7 +87,21 @@ GROUP BY txn_month;
 
 ### What is the closing balance for each customer at the end of the month? ###
 ```sql
+WITH monthly_balance_cte AS
+
+(SELECT customer_id, txn_amount, MONTH(txn_date) AS txn_month,
+SUM(CASE WHEN txn_type='deposit' THEN txn_amount ELSE -txn_amount END) 
+AS net_amount
+FROM customer_transactions
+GROUP BY customer_id, MONTH(txn_date), txn_amount)
+
+SELECT customer_id, txn_month, net_amount,
+SUM(net_amount) over(PARTITION BY customer_id
+                     ORDER BY txn_month ROWS BETWEEN UNBOUNDED preceding AND CURRENT ROW) 
+					 AS closing_balance
+FROM monthly_balance_cte;
 ```
+![image](https://user-images.githubusercontent.com/77920592/192099485-cf1a263e-6a6d-4cb0-9cd1-9b33e1bb721d.png)
 
 ### What is the percentage of customers who increase their closing balance by more than 5%? ###
 ```sql
