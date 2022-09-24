@@ -32,6 +32,9 @@ group by regions.region_id
 
 ### How many days on average are customers reallocated to a different node? ###
 ```sql
+SELECT avg(datediff(day, start_date, end_date)) AS avg_days
+FROM customer_nodes
+WHERE end_date!='9999-12-31';
 ```
 
 ### What is the median, 80th and 95th percentile for this same reallocation days metric for each region? ###
