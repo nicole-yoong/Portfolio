@@ -1,3 +1,7 @@
+# Sql Reporting #
+
+## Summarizing Data in SQL ##
+
 ### Show the following information related to all items with OrderID = 10248: the product name, the unit price (taken from the OrderItems table), the quantity, and the name of the supplier's company (as SupplierName). ###
 
 ```sql
@@ -136,6 +140,7 @@ where o.orderdate >= '2016-07-05' and o.orderdate <= '2016-07-31'
 group by e.employeeid, e.firstname, e.lastname
 order by Sumorders desc 
 ```
+## Classifying Data with CASE WHEN and GROUP BY ##
 
 ### We want to create a report measuring the level of experience each Northwind employee has with the company. Show the FirstName, LastName, HireDate, and Experience columns for each employee. The Experience column should display the following values: ###
 ### N'junior' for employees hired after January, 1st 2014. ###
@@ -253,3 +258,79 @@ c.categoryid = p.categoryid
 group by c.categoryname
 ```
 
+### There have been a lot of orders shipped to France. Of these, how many order items were sold at full price and how many were discounted? Show two columns with the respective counts: FullPrice and DiscountedPrice. ###
+```sql
+select
+sum (case when discount = 0.0 then 1 end) as FullPrice,
+sum (case when discount != 0.0 then 1 end) as DiscountedPrice
+from orderitems oi 
+join orders o on oi.orderid = o.orderid
+where shipcountry = 'France'
+```
+
+### This time, we want a report that will show each supplier alongside their number of units in stock and their number of expensive units in stock. Show four columns: SupplierID, CompanyName, AllUnits (all units in stock supplied by that supplier), and ExpensiveUnits (units in stock with a unit price over 40.0, supplied by that supplier). ###
+```sql
+select s.supplierid, s.companyname, sum(p.unitsinstock) as allunits,
+sum(case when unitprice > 40.0 then UnitsInStock else 0 end) as ExpensiveUnits
+from suppliers s
+join products p on s.supplierid = p.supplierid
+group by s.supplierid, s.companyname
+```
+
+### For each product, show the following columns: ProductID, ProductName, UnitPrice, and PriceLevel. The PriceLevel column should show one of the following values: ###
+### - N'expensive' for products with a unit price above 100. ###
+### - N'average' for products with a unit price above 40 but no more than 100. ###
+### - N'cheap' for other products. ###
+```sql
+select productid, productname, unitprice, 
+case
+	when unitprice > 100 then N'expensive'
+	when unitprice > 40 and unitprice <= 100 then N'average'
+	else N'cheap'
+end as pricelevel
+from products
+```
+
+### We would like to categorize all orders based on their total price (before any discount). For each order, show the following columns: ###
+### 1. OrderID ###
+### 2. TotalPrice (calculated before discount) ###
+### 3. PriceGroup, which should have the following values: ###
+### - N'high' for a total price over $2,000. ###
+### - N'average' for a total price between $600 and $2,000, both inclusive. ###
+### - N'low' for a total price under $600. ###
+```sql
+select o.orderid, sum(oi.unitprice*oi.quantity) as totalprice,
+case 
+	when sum(oi.unitprice*oi.quantity) > 2000 then N'high'
+	when sum(oi.unitprice*oi.quantity) >= 600 and sum(oi.unitprice*oi.quantity) <= 2000 then N'average'
+	else N'low'
+end as pricegroup
+from orders o 
+join orderitems oi on o.orderid = oi.orderid
+group by o.orderid
+```
+### Group all orders based on the Freight column. Show three columns in your report: ###
+### LowFreight – the number of orders where the Freight value is less than 40.0. ###
+### AvgFreight – the number of orders where the Freight value is greater than equal to or 40.0 but less than 80.0. ###
+### HighFreight – the number of orders where the Freight value is greater than equal to or 80.0. ###
+```sql
+select 
+sum (case when o.freight < 40 then 1 end) as LowFreight,
+sum (case when o.freight >= 40 and o.freight < 80 then 1 end) as AvgFreight,
+sum (case when o.freight >= 80 then 1 end) as HighFreight
+from orders o
+```
+## Multi-level Aggregation ##
+
+###  ###
+```sql
+
+```
+###  ###
+```sql
+
+```
+###  ###
+```sql
+
+```
