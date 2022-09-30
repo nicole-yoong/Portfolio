@@ -322,14 +322,91 @@ from orders o
 ```
 ## Multi-level Aggregation ##
 
+### What's the average number of products in each category? Show a single value in a column named AvgProductCount. ###
+### In the inner query, calculate the number of products for each category ID. In the outer query, find the average product count. ###
+```sql
+with TotalProduct_cte as
+(
+  select categoryid, count(productid) as TotalProduct
+  from products
+  group by categoryid
+)
+select avg(TotalProduct) as AvgProductCount
+from TotalProduct_cte
+```
+### For each employee from the Washington (WA) region, show the average value for all orders they placed. Show the following columns: EmployeeID, FirstName, LastName, and AvgTotalPrice (calculated as the average total order price, before discount). ###
+### In the inner query, calculate the value of each order and select it alongside the ID of the employee who processed it. In the outer query, join the CTE with the Employees table to show all the required information and filter the employees by region. ###
+```sql
+with TotalValue_cte as
+(
+  select o.employeeid, oi.orderid, sum(oi.unitprice * oi.quantity) as TotalValue
+  from orders o
+  join orderitems oi on o.orderid = oi.orderid
+  group by oi.orderid, o.employeeid
+)
+select e.employeeid, e.firstname, e.lastname, avg(TotalValue) as AvgTotalPrice
+from TotalValue_cte tvc 
+join employees e on tvc.employeeid = e.employeeid
+where e.region = N'WA'
+group by e.employeeid, e.firstname, e.lastname, e.region
+```
+
+### For each shipping country, we want to find the average count of unique products in each order. Show the ShipCountry and AvgDistinctItemCount columns. Sort the results by count, in descending order. ###
+### In the inner query, find the number of distinct products in each order and select it alongside the ShipCountry column. In the outer query, apply the proper aggregation. ###
+```sql
+with TotalProduct_cte as 
+(
+  select oi.orderid, count(distinct oi.productid) as TotalProduct, o.shipcountry
+  from orders o
+  join orderitems oi on o.orderid = oi.orderid
+  group by oi.orderid, o.shipcountry
+)
+select avg(TotalProduct) as AvgDistinctItemCount, shipcountry
+from TotalProduct_cte
+group by shipcountry
+order by AvgDistinctItemCount desc
+```
+
 ###  ###
 ```sql
 
 ```
+
 ###  ###
 ```sql
 
 ```
+
+###  ###
+```sql
+
+```
+
+###  ###
+```sql
+
+```
+
+###  ###
+```sql
+
+```
+
+###  ###
+```sql
+
+```
+
+###  ###
+```sql
+
+```
+
+###  ###
+```sql
+
+```
+
 ###  ###
 ```sql
 
