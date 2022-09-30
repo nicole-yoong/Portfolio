@@ -367,20 +367,52 @@ group by shipcountry
 order by AvgDistinctItemCount desc
 ```
 
-###  ###
+### What's the average number of orders that were processed by a single employee and shipped to the USA or Canada? Show the answer in a column named AvgOrderCount. ###
 ```sql
-
+with TotalOrder_cte as
+(
+  select employeeid, count(orderid) as TotalOrder
+  from orders 
+  where shipcountry in ('USA', 'Canada')
+  group by employeeid
+)
+select avg(TotalOrder) as AvgOrderCount
+from TotalOrder_cte
 ```
 
-###  ###
+### Find the average order value (after discount) for each customer. Show the CustomerID and AvgDiscountedPrice columns. ###
 ```sql
-
+with TotalValue_cte as
+(
+select o.customerid, o.orderid, sum(oi.unitprice * oi.quantity * (1-discount)) as TotalValue
+  from orders o
+  join customers c on o.customerid = c.customerid
+  join orderitems oi on o.orderid = oi.orderid
+  group by o.customerid, o.orderid
+)
+select customerid, avg(TotalValue) as AvgDiscountedPrice
+from TotalValue_cte
+group by customerid
 ```
 
-###  ###
+### We want to see if cheaper products are currently being ordered in larger quantities. ### 
+### Create a report with two columns: PriceCategory (which will contain either N'cheap' for products with a maximum UnitPrice of 20.0 or N'expensive' otherwise) and AvgProductsOnOrder (the average number of units on order from a given price category). ###
 ```sql
-
+with PriceCategory_cte as
+(
+select productid, unitsonorder,
+  case
+  when unitprice <= 20 then N'cheap'
+  else N'expensive'
+  end as PriceCategory
+from products
+)
+select PriceCategory, avg(unitsonorder) as AvgProductsOnOrder
+from PriceCategory_cte
+group by PriceCategory
 ```
+
+## Multiple Metrics in One Report ##
 
 ###  ###
 ```sql
