@@ -1,5 +1,7 @@
-## Customer Registration ##
+# Customer Behavior Analysis #
+![image](https://user-images.githubusercontent.com/77920592/193347472-dc64e721-1abf-41f6-b42d-233789b02945.png)
 
+## Customer Registration ##
 
 ### Registration over time report ###
 Find the registration count for each week in each year. Show the following columns: RegistrationYear, RegistrationWeek, and RegistrationCount. Order the results by the year and week.
