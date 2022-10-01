@@ -234,23 +234,39 @@ Show the number of good customers in quarterly registration cohorts. Display the
 ```sql
 with AvgOrderValue_cte as
 (  
-  select  c.customerid, c.fullname, c.registrationdate, avg(totalamount) as AvgOrderValue
+  select  c.customerid, c.fullname, c.registrationdate, c.country, avg(totalamount) as AvgOrderValue
   from orders o 
   join customers c on c.customerid = o.customerid
-  group by c.customerid, c.fullname, c.registrationdate
+  group by c.customerid, c.fullname, c.registrationdate, c.country
   having avg(totalamount) > 1905.9063
 )
 select  
 datepart(year, registrationdate) as Year,
-datepart(quarter, registrationdate) as Quarter, count(*) as GoodCustomers
+datepart(quarter, registrationdate) as Quarter, count(*) as GoodCustomers, country
 from AvgOrderValue_cte
-group by datepart(year, registrationdate), datepart(quarter, registrationdate)
+group by datepart(year, registrationdate), datepart(quarter, registrationdate), country
 order by datepart(year, registrationdate), datepart(quarter, registrationdate)
 ```
-![image](https://user-images.githubusercontent.com/77920592/193420916-61c9e00f-8e4f-47e1-b792-642aaf1f8034.png)
+![image](https://user-images.githubusercontent.com/77920592/193421012-36574f34-c788-4d4c-9502-6eaa4e9a26bd.png)
 
-###  ###
+### Finding good customers ###
+Find the number of good customers (defined as those with an average order value greater than 1500.00) in weekly registration and city cohorts (i.e., cohorts defined by both weekly registration and the customer's city). Show the following columns: Year, Week, City, and GoodCustomers. Order the results by year and week
 ```sql
+with AvgOrderValue_cte as
+(  
+  select  c.customerid, c.fullname, c.registrationdate, c.city, avg(totalamount) as AvgOrderValue
+  from orders o 
+  join customers c on c.customerid = o.customerid
+  group by c.customerid, c.fullname, c.registrationdate, c.city
+  having avg(totalamount) > 1500.00
+)
+select  
+datepart(year, registrationdate) as Year,
+datepart(week, registrationdate) as Week, count(*) as GoodCustomers, city
+from AvgOrderValue_cte
+group by datepart(year, registrationdate), datepart(week, registrationdate), city
+order by datepart(year, registrationdate), datepart(week, registrationdate)
 ```
+![image](https://user-images.githubusercontent.com/77920592/193421295-75f27bd8-f79d-48f9-99d0-ffcaef8c68e3.png)
 
 ## Customer Churn ##
