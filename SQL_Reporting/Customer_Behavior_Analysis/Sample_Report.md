@@ -284,17 +284,47 @@ order by datepart(month, registrationdate)
 ## Customer Churn ##
 Inevitably, customers will stop using our services at some point. There can be many reasons for this: they may want to go to our competitors, or they may simply no longer need our services. This phenomenon is called "customer churn." On the other hand, "customer retention" is when we've succeeded in keeping a customer active during a given period.
 
-###  ###
+### Churned customers in weekly cohorts ###
+Find the number of churned customers in monthly registration cohorts from 2017. In this exercise, churned customers are those who haven't placed an order in more than 45 days. Show the following columns: Month and ChurnedCustomers. Order the results by month.
 ```sql
+select datepart(month, registrationdate) as Month,
+count(*) as ChurnedCustomers
+from customers
+where datediff(day, lastorderdate, getdate()) > 45 and
+registrationdate >= '2017-01-01' and registrationdate <= '2017-12-31'
+group by datepart(month, registrationdate)
+order by datepart(month, registrationdate)
 ```
+![image](https://user-images.githubusercontent.com/77920592/193423913-111c884e-ebf4-457a-b379-4d2ead281583.png)
 
-###  ###
+### Percentage of churned customers in weekly cohorts ###
+Calculate the percentage of churned customers in the cohort by dividing the number of churned customers by the number of all customers. 
 ```sql
+select datepart(month, registrationdate) as Month,
+count(customerid) as AllCustomers,
+count(case when datediff(day, lastorderdate, getdate()) > 45 then customerid end) as ChurnedCustomers,
+count(case when datediff(day, lastorderdate, getdate()) > 45 then customerid end) * 100.0 / count(customerid) as ChurnedPercentage 
+from customers
+where registrationdate >= '2017-01-01' and registrationdate <= '2017-12-31'
+group by datepart(month, registrationdate)
+order by datepart(month, registrationdate)
 ```
+![image](https://user-images.githubusercontent.com/77920592/193424098-7ede32d0-80e6-41a9-ae11-3d9d6f293919.png)
 
-###  ###
+### The customer retention chart ###
+Create a customer retention chart for weekly signup cohorts from 2017. Show the following columns: Week, PercentActive10d, PercentActive30d, and PercentActive60d. For each weekly registration cohort, we want to see the percentage of customers still active 30, 60, and 90 days after the registration date. Order the results by week.
 ```sql
+select
+  datepart(week, registrationdate) as Week,
+  count(case when datediff(day, registrationdate, lastorderdate) > 10 then customerid end) * 100.0 / count(customerid) as PercentActive10d,
+  count(case when datediff(day, registrationdate, lastorderdate) > 30 then customerid end) * 100.0 / count(customerid) as PercentActive30d,
+  count(case when datediff(day, registrationdate, lastorderdate) > 60 then customerid end) * 100.0 / count(customerid) as PercentActive60d
+from customers
+where registrationdate >= '2017-01-01' and registrationdate <= '2017-12-31'
+group by datepart(week, registrationdate)
+order by datepart(week, registrationdate)
 ```
+![image](https://user-images.githubusercontent.com/77920592/193424212-be228748-f2dd-4966-95ab-c406449c3bf9.png)
 
 ###  ###
 ```sql
