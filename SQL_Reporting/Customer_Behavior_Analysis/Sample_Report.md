@@ -269,4 +269,45 @@ order by datepart(year, registrationdate), datepart(week, registrationdate)
 ```
 ![image](https://user-images.githubusercontent.com/77920592/193421295-75f27bd8-f79d-48f9-99d0-ffcaef8c68e3.png)
 
+For each month of 2017, show the number of active customers in monthly registration cohorts. Define an active customer as a customer that has placed an order in the last 60 days. Show two columns: Month and ActiveCustomers. Order the results by month.
+```sql
+select datepart(month, registrationdate) as Month, 
+count (customerid) as ActiveCustomers
+from customers
+where datediff(day, lastorderdate, getdate()) < 60 and
+registrationdate > '2017-01-01' and registrationdate < '2017-12-31'
+group by datepart(month, registrationdate)
+order by datepart(month, registrationdate)
+```
+![image](https://user-images.githubusercontent.com/77920592/193421698-f2734f48-5251-4c5d-bcb8-843235412c9d.png)
+
 ## Customer Churn ##
+Inevitably, customers will stop using our services at some point. There can be many reasons for this: they may want to go to our competitors, or they may simply no longer need our services. This phenomenon is called "customer churn." On the other hand, "customer retention" is when we've succeeded in keeping a customer active during a given period.
+
+###  ###
+```sql
+```
+
+###  ###
+```sql
+```
+
+###  ###
+```sql
+```
+
+###  ###
+```sql
+```
+
+###  ###
+```sql
+```
+
+###  ###
+```sql
+```
+
+###  ###
+```sql
+```
