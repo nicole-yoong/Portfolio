@@ -145,5 +145,112 @@ order by datepart (month, registrationdate)
 ![image](https://user-images.githubusercontent.com/77920592/193343064-70271e56-10be-4e2a-9364-cc6b77e1e916.png)
 
 ## Customer Activity ##
+### Number of active customers ###
+For an e-store the definition of an "active customer" is not as straightforward. There are some customers who place orders every now and then, but there are also some who haven't been active for a long time. In our online supermarket, regular customers typically place one order a week, but we'll define "active customers" as all customers who've placed an order within the last 30 days. 
+Find the number of active customers in each country. Show two columns: Country and ActiveCustomers. 
+```sql
+select country, count(customerid) as ActiveCustomers
+from customers
+where datediff(day, lastorderdate, getdate()) < 30
+group by country
+```
+![image](https://user-images.githubusercontent.com/77920592/193419360-44981113-eaa3-450d-baba-7227e90c6102.png)
+
+### Average order value ###
+It's equally important to understand how much revenue our customers generate. We now want to know the average order value for each weekly registration cohort.
+```sql
+select datepart(week, registrationdate) as Week,
+avg(totalamount) as AverageOrderValue
+from customers cu
+join orders o on cu.customerid = o.customerid
+where registrationdate >= '2017-01-01' and registrationdate <= '2017-12-31'
+and country = 'Germany'
+group by datepart(week, registrationdate)
+order by datepart(week, registrationdate)
+```
+![image](https://user-images.githubusercontent.com/77920592/193419656-16b97fe8-c9d8-48cf-88cc-2f07ea2f2a71.png)
+
+### Average order values by customers ###
+Each business will use its own definition of a good customer that is based on their business model. In our e-store, we'll define a "good customer" as a customer whose average order value is above the general average order value for all customers. Analyzing such customers may help us understand what makes customers spend more. This, in turn, can help us decide which marketing campaigns we should focus on.
+```sql
+select
+  c.customerid,
+  avg(totalamount) as AverageOrderValue
+from customers c
+join orders o
+  on c.customerid = o.customerid
+group by c.customerid
+order by avg(totalamount);
+```
+![image](https://user-images.githubusercontent.com/77920592/193419724-df24e17e-8e51-4fc3-acc4-fa45e079b60c.png)
+
+### Average order value per customer ###
+Find each country's average order value per customer. Show two columns: Country and AvgOrderValue. Sort the results by average order value, in ascending order.
+```sql
+with TotalValue_cte as 
+(
+  select c.customerid, country, avg(totalamount) as TotalValue
+  from orders o 
+  join customers c on o.customerid = c.customerid
+  group by c.customerid, country
+)
+select country, avg(TotalValue) as AvgOrderValue
+from TotalValue_cte
+group by Country
+order by avg(TotalValue) asc
+```
+![image](https://user-images.githubusercontent.com/77920592/193420073-423d4df1-d4be-4c45-91e6-42ad680c9784.png)
+
+Find out the average number of orders placed in the last 180 days by customers who have been active (made a purchase) in the last 30 days. Name the column AvgOrders180. Make sure that your average isn't integer.
+```sql
+with TotalOrders_cte as 
+(
+  select customerid, count(orderid) as TotalOrders from orders o
+  where datediff(day, orderdate, getdate()) < 180
+  group by customerid
+)
+select avg(1.0 * TotalOrders) as AvgOrders180
+from TotalOrders_cte toc
+join customers c on toc.customerid = c.customerid
+where datediff(day, lastorderdate, getdate()) < 30
+```
+![image](https://user-images.githubusercontent.com/77920592/193420304-c6c6b08e-1557-4dab-86db-b78d81fe7117.png)
+
+### Above average order values ###
+The average order value per customer in Italy is 1905.9063. Now, for each Italian customer with an average order value above that, show the following columns: CustomerID, FullName, and AvgOrderValue. Order the results by average order value, in descending order.
+```sql
+select  c.customerid, c.fullname, avg(totalamount) as AvgOrderValue
+from orders o 
+join customers c on c.customerid = o.customerid
+where country = 'Italy'
+group by c.customerid, c.fullname
+having avg(totalamount) > 1905.9063
+order by avg(totalamount) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/193420578-acfe4183-504b-43b6-b505-487516006a37.png)
+
+### Good customers in weekly cohorts ###
+Show the number of good customers in quarterly registration cohorts. Display the following columns: Year, Quarter, and GoodCustomers. Order the results by year and quarter.
+```sql
+with AvgOrderValue_cte as
+(  
+  select  c.customerid, c.fullname, c.registrationdate, avg(totalamount) as AvgOrderValue
+  from orders o 
+  join customers c on c.customerid = o.customerid
+  group by c.customerid, c.fullname, c.registrationdate
+  having avg(totalamount) > 1905.9063
+)
+select  
+datepart(year, registrationdate) as Year,
+datepart(quarter, registrationdate) as Quarter, count(*) as GoodCustomers
+from AvgOrderValue_cte
+group by datepart(year, registrationdate), datepart(quarter, registrationdate)
+order by datepart(year, registrationdate), datepart(quarter, registrationdate)
+```
+![image](https://user-images.githubusercontent.com/77920592/193420916-61c9e00f-8e4f-47e1-b792-642aaf1f8034.png)
+
+###  ###
+```sql
+```
 
 ## Customer Churn ##
