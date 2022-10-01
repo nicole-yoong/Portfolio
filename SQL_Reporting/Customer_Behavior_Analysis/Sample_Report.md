@@ -144,6 +144,46 @@ order by datepart (month, registrationdate)
 ```
 ![image](https://user-images.githubusercontent.com/77920592/193343064-70271e56-10be-4e2a-9364-cc6b77e1e916.png)
 
+Create a conversion chart showing the 2017 Q1 monthly registration cohorts and the number of conversions (i.e., the number of customers who made their first purchase) in the first week, the first two weeks, and more than two weeks after registering. Show the following columns:
+- Month – the month of registration.
+- NoSale – the number of customers who never placed an order.
+- FirstWeek – the number of customers who placed their first order within the first week.
+- SecondWeek – the number of customers who placed their first order within the second week.
+- AfterSecondWeek – the number of customers who placed their first order after more than two weeks.
+Order the results by month.
+```sql
+select datepart(month, registrationdate) as Month,
+count(case when firstorderdate is null then customerid end) as NoSale,
+count(case when datediff(day, registrationdate, firstorderdate) < 7 then customerid end) as FirstWeek,
+count(case when datediff(day, registrationdate, firstorderdate) >= 7 and datediff(day, registrationdate, firstorderdate) < 14
+      then customerid end) as SecondWeek,
+count(case when datediff(day, registrationdate, firstorderdate) >= 14 then customerid end) as AfterSecondWeek
+from customers
+where registrationdate >= '2017-01-01' and registrationdate <= '2017-03-31'
+group by datepart(month, registrationdate)
+order by datepart(month, registrationdate)
+```
+![image](https://user-images.githubusercontent.com/77920592/193424736-37a9fadc-bb58-4bbe-8b8b-f1d0ece79eaf.png)
+
+### Customer Acquisition ###
+Create a report that compares the number of acquired customers in weekly registration cohorts across selected channels. Remember, this is during the first quarter of 2017. Show the following columns:
+- RegistrationWeek
+- DirectCount (the number of customers from the 'Direct' channel in the given cohort).
+- SocialCount (the number of customers from the 'Social' channel in the given cohort).
+- ReferralCount (the number of customers from the 'Referral' channel in the given cohort).
+```sql
+select datepart(week, registrationdate) as RegistrationWeek, 
+count(case when channelname = 'Direct' then customerid end) as DirectCount,
+count(case when channelname = 'Social' then customerid end) as SocialCount,
+count(case when channelname = 'Referral' then customerid end) as ReferralCount
+from customers c 
+join channels ch on c.channelid = ch.id
+where registrationdate >= '2017-01-01' and registrationdate <= '2017-03-31'
+group by datepart(week, registrationdate)
+order by datepart(week, registrationdate)
+```
+![image](https://user-images.githubusercontent.com/77920592/193424438-aa2dd8df-5209-4519-a296-4ef607a8ea0b.png)
+
 ## Customer Activity ##
 ### Number of active customers ###
 For an e-store the definition of an "active customer" is not as straightforward. There are some customers who place orders every now and then, but there are also some who haven't been active for a long time. In our online supermarket, regular customers typically place one order a week, but we'll define "active customers" as all customers who've placed an order within the last 30 days. 
@@ -325,19 +365,3 @@ group by datepart(week, registrationdate)
 order by datepart(week, registrationdate)
 ```
 ![image](https://user-images.githubusercontent.com/77920592/193424212-be228748-f2dd-4966-95ab-c406449c3bf9.png)
-
-###  ###
-```sql
-```
-
-###  ###
-```sql
-```
-
-###  ###
-```sql
-```
-
-###  ###
-```sql
-```
