@@ -54,7 +54,9 @@ where country = 'Portugal';
  ```
 
 Scenario 1: LIKE 'P%' >>> The index can quickly find rows where the country value starts with the letter 'P', since 'P' appears before the wildcard. All such rows where the country name begins with a P are returned because all of them match the criterion.
+
 Scenario 2: LIKE 'P%d' >>> The index can only find rows with countries starting with 'P'. Then, the database needs to manually check these rows and return the ones that end with a 'd'.
+
 Scenario 3: LIKE '%es' >>> The wildcard appears as the first letter, the index on country is of no use. The database has to check every row individually.
 
 ### Multi-columns Indexes ###
