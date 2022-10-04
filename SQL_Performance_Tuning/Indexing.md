@@ -239,6 +239,133 @@ TRUNCATE TABLE is much faster than DELETE FROM, but it has its limitations: You 
 
 ## Indexing Problems ##
 
+### Indexes won't function when the indexed column is hidden inside the function ###
 
+```sql
+create table invoice (
+  id integer primary key,
+  issued date,
+  net_amount decimal(8, 2),
+  final_amount decimal(8, 2)
+);
 
+create index date_ind
+on invoice(issued);
+```
+
+When we want to retrieve all invoices from 2017, the following queries won't allow the index to function:
+```sql
+select * from invoice
+where extract(year from issued) = 2017;
+```
+
+That's because the column issued is hidden in an EXTRACT() function call. Your database treats the expression EXTRACT(year FROM issued) as a black box – it doesn't understand what EXTRACT(...) does, it just knows that there is no index created for this black box.
+
+The right way to make the index works is:
+```sql
+select * from invoice
+where issued >= '2017-01-01'
+  and issued < '2018-01-01';
+```
+
+### Indexes won't function when there are indexed columns on both sides of the equation ###
+
+```sql
+create table invoice (
+  id integer primary key,
+  issued date,
+  net_amount decimal(8, 2),
+  final_amount decimal(8, 2)
+);
+
+create index net_am
+on invoice(net_amount);
+
+create index final_am
+on invoice(final_amount);
+```
+
+The right way to make the index works is:
+```sql
+select count(id) from invoice
+where net_amount * 1.15 - final_amount = -30;
+```
+
+### Indexes won't function when the column is inside an expression ###
+
+```sql
+... where lower(company) = 'vertabelo' ...
+```
+
+If we create an index on the column company, it won't be used in the above query because of the LOWER() function call. 
+
+The right way to make the index works is:
+```sql
+create index company_insensitive 
+on dev_award (lower(company));
+```
+
+We need to create an index on the entire expression. Therefore, this index will only be used in queries where the function call LOWER(company) appears, for example:
+```sql
+select first_name, last_name from dev_award
+where lower(company) = 'vertabelo';
+```
+
+However, it won't function in this case:
+```sql
+select first_name, last_name from dev_award
+where company = 'vertabelo';
+```
+
+### Partial Indexes when many of the database's rows are rarely queried ###
+
+Partial indexes take up less space than regular indexes. If you're sure that many of your database's rows are rarely queried, it makes sense to exclude them with a partial index.
+
+```sql
+create table dev_award (
+  id integer primary key,
+  year integer,
+  category varchar(32),
+  first_name varchar(64),
+  last_name varchar(64),
+  company varchar(64),
+  vote_count integer
+);
+```
+
+For example, users almost always use a developer's last name to look for awards. And most of the time they are only interested in the category 'sql'. We've got quite a lot of rows in other categories that are almost never queried.
+In this case, we'd like to create an index on the column last_name, but only for the category 'sql'. 
+
+```sql
+create index lname_sql
+on dev_award (last_name)
+where category = 'sql';
+```
+
+We add a WHERE clause to specify which rows should be included in the index.
+
+This partial index will only function under the following circumstance:
+```sql
+select * from dev_award
+where category = 'sql'
+  and last_name = 'smith';
+```
+
+and it won't function under the following circumstances:
+```sql
+select * from dev_award
+where category = 'java'
+  and last_name = 'smith';
+```
+or
+```sql
+select * from dev_award
+where last_name = 'smith';
+```
+
+### Clustered Indexes ###
+
+A clustered index reorganizes the way the rows are stored physically on the hard drive(s). In other words, the data on the hard drive is stored in the same order as the data in the index. There can be only one clustered index per table.
+
+![image](https://user-images.githubusercontent.com/77920592/193817243-f1399114-47a1-4f17-9ebb-4279e7fb0157.png)
 
