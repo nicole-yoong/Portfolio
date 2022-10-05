@@ -89,7 +89,7 @@ order by placeddate asc;
 
 ![image](https://user-images.githubusercontent.com/77920592/194054209-e42d3818-e857-4290-97cd-5905950e58c5.png)
 
-Abbreviations:
+**Abbreviations: **
 
 SQL Server allows us to use abbreviated syntax to make things easier:
 
@@ -98,9 +98,11 @@ SQL Server allows us to use abbreviated syntax to make things easier:
 - ROWS n FOLLOWING means BETWEEN CURRENT ROW AND n FOLLOWING
 - ROWS CURRENT ROW means BETWEEN CURRENT ROW AND CURRENT ROW
 
+
 ### RANGE ###
 
 The difference between ROWS and RANGE is that RANGE will take into account all rows that have the same value in the column which we order by. This might be helpful with dates.
+RANGE is only supported with UNBOUNDED and CURRENT ROW window frame delimiters. 
 
 For example, we want to calculate the running sum from all orders sorted by date but we don't really need to see how the running sum changed during single days. 
 We just need to show the values at the end of the day. If there are multiple orders on a single day, add them together.
@@ -121,7 +123,7 @@ More examples on RANGE:
 
 ![image](https://user-images.githubusercontent.com/77920592/194058423-a2a0f9ff-aa8d-47b0-b408-c138e3dd6713.png)
 
-** Example 1: **
+**Example 1: **
 
 For each StockChange, show Id, ProductId, Quantity, ChangedDate and the total quantity change from all StockChange for that product. Name the column SumQuantity.
 We want to know total quantity change of a certain product, regardless of the changeddate. Therefore, RANGE will be used. 
@@ -134,7 +136,7 @@ from stockchange
 
 ![image](https://user-images.githubusercontent.com/77920592/194058505-583ca772-cf73-465e-9038-4fd3b90a71d7.png)
 
-** Example 2: **
+**Example 2: **
 
 For each StockChange, show its Id, the ChangedDate, and the number of stock changes that took place on the same day or any time earlier. Name this column StockChangeNumber.
 
@@ -145,6 +147,53 @@ from stockchange
 ```
 
 ![image](https://user-images.githubusercontent.com/77920592/194059135-7742d182-45b3-4125-a5c1-b6ec8b25a75e.png)
+
+
+**Example 3: **
+
+![image](https://user-images.githubusercontent.com/77920592/194059557-a9d7433c-63ab-47db-a9fc-0587bb3ba1ad.png)
+
+Our finance department needs to estimate future cash flows for each date. To do that, we need to show each order's Id, PlacedDate, TotalPrice, and the total sum of all order prices from the same day or any later date. Name the column FutureCashFlow.
+
+```sql
+select id, placeddate, totalprice,
+sum(totalprice) over(order by placeddate range between current row and unbounded following) as FutureCashFlow
+from singleorder
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194059629-b4fc607a-dd18-4343-898d-e5d9873a9407.png)
+
+**Default window timeframe for RANGE: **
+
+- If you don't specify an ORDER BY clause within OVER(...), the whole partition of rows will be used as the window frame.
+- If you do specify an ORDER BY clause within OVER(...), the database will assume RANGE UNBOUNDED PRECEDING as the window frame.
+
+![image](https://user-images.githubusercontent.com/77920592/194059557-a9d7433c-63ab-47db-a9fc-0587bb3ba1ad.png)
+
+**Example 1: **
+
+For each single order, show its Id, the date when it was placed, the total price, and the sum of all total prices (SumTotalPrice).
+
+```sql
+select id, placeddate, totalprice,
+sum(totalprice) over() as SumTotalPrice
+from singleorder
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194060659-5062afc3-2f59-4cd8-8808-90e8c1541d51.png)
+
+**Example 2: **
+
+For each order, show its Id, PlacedDate, TotalPrice and the sum of all total prices. Sort the orders by PlacedDate, but do not specify any window frame.
+The sum of TotalPrices should be calculated as if you wrote RANGE UNBOUNDED PRECEDING.
+
+```sql
+select id, placeddate, totalprice,
+sum(totalprice) over(order by placeddate) as SumTotalPrice
+from singleorder
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194060955-2cd9a6ba-44c8-44b5-bb03-93a7e32d61ec.png)
 
 ### ROWS and RANGE – what's the difference? ###
 
