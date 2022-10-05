@@ -54,4 +54,31 @@ from game
 ![image](https://user-images.githubusercontent.com/77920592/194051785-eccd7d7e-749f-4fe4-8bda-0cb4a34d5aae.png)
 
 
+# More Complex Queries #
 
+### Database ###
+
+![image](https://user-images.githubusercontent.com/77920592/194087824-9a70f020-658f-4e04-a48e-27344d9fba7c.png)
+![image](https://user-images.githubusercontent.com/77920592/194087904-dac1ac7a-bb19-4a4d-bc6a-7c42dec4fa18.png)
+
+For all sales between August 10 and August 14, 2016, show the following information: StoreId, Day, number of customers and rank (based on the number of customers in that store). Name the column Ranking.
+
+```sql
+select storeid, day, customers, 
+rank() over(partition by storeid order by customers asc) as Ranking
+from sales
+where day between '2016-08-10' and '2016-08-14'
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194088062-aa681024-1cf0-46cb-b3b3-bed77e389906.png)
+
+Take the sales between August 1 and August 10, 2016. For each row, show the StoreId, the Day, the Revenue on that day, and the quartile number based on the Revenue of that store in descending order. Name the column Quartile.
+
+```sql
+select storeid, day, revenue,
+ntile(4) over(partition by storeid order by revenue desc) as Quartile
+from sales
+where day between '2016-08-01' and '2016-08-10'
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194088653-14189bd1-397f-4b8a-8987-448d1cb10043.png)
