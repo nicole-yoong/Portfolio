@@ -57,4 +57,35 @@ group by country
 
 ![image](https://user-images.githubusercontent.com/77920592/194302823-e26f4c04-7bc4-4c15-b46d-ea9aa915f525.png)
 
+For each end date, show the following:
+- the EndDate
+- the sum of views from auctions that ended on that day (name this column SumViews)
+- the sum of views from the previous day (name this column PreviousDay)
+- the difference between the sum of views on that day and on the previous day (name this column Delta)
+
+```sql
+select enddate, sum(views) as SumViews,
+lag(sum(views), 1) over(order by enddate asc) as PreviousDay,
+sum(views) - lag(sum(views), 1) over(order by enddate asc) as Delta
+from auction
+group by enddate
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194304261-70357e77-085b-4b26-a2d4-9162bb596067.png)
+
+Group all auctions by category and end date and show the following columns:
+- CategoryId
+- EndDate
+- the average daily final price as DailyAvgFinalPrice for that category on that day
+- the maximal daily average (as DailyMaxAvg) in that category for any day
+
+```sql
+select categoryid, enddate, 
+avg(finalprice) as DailyAvgFinalPrice,
+max(avg(finalprice)) over(partition by categoryid) as DailyMaxAvg
+from auction
+group by categoryid, enddate
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194304866-7de97c5a-47c4-4877-8ce5-137a4be57158.png)
 
