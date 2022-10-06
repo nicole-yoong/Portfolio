@@ -6,7 +6,34 @@ The PARTITION BY() and ORDER BY() within the OVER() clause can cause sorting.
 
 **Example 1:**
 
+```sql
+select orderid, shipcountry, freight as TotalValue, 
+row_number() over(partition by shipcountry order by freight asc) as Rank
+from orders
+```
+![image](https://user-images.githubusercontent.com/77920592/194341084-2f4a06e1-2eda-4439-8078-d9cb0649d855.png)
 
+![image](https://user-images.githubusercontent.com/77920592/194341769-2fd5ec4f-39e4-4b39-91c7-c2947e6f241e.png)
+
+![image](https://user-images.githubusercontent.com/77920592/194342954-e7cd1ae8-c2ee-422f-84d8-516fef2037d1.png)
+
+```sql
+create nonclustered index shipcountry_freight
+on orders
+(shipcountry, freight);
+
+select orderid, shipcountry, freight as TotalValue, 
+row_number() over(partition by shipcountry order by freight asc) as Rank
+from orders
+```
+![image](https://user-images.githubusercontent.com/77920592/194341092-a9f1a092-62bf-4162-b398-6e978e35ed98.png)
+
+![image](https://user-images.githubusercontent.com/77920592/194341181-f12db793-ee61-47c1-a36a-00db3bb16cc3.png)
+
+![image](https://user-images.githubusercontent.com/77920592/194341252-643e0207-0302-4d52-9908-cdab39888f24.png)
+
+The execution plan shows just one sort operation, a combination of shipcountry and freight and the cost of sort operation is quite expensive, 57%. 
+Using the non clustered index consisting the columns in the OVER() clause as shown above, the sort operation is now gone from the execution plan.
 
 **Example 2:**
 
