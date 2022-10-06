@@ -167,3 +167,33 @@ select
 from singleorder;
 ```
 ![image](https://user-images.githubusercontent.com/77920592/194056861-6e73138c-dacf-4f89-af75-190078e21ea9.png)
+
+# More Complex Queries #
+
+### Database ###
+
+![image](https://user-images.githubusercontent.com/77920592/194087824-9a70f020-658f-4e04-a48e-27344d9fba7c.png)
+![image](https://user-images.githubusercontent.com/77920592/194087904-dac1ac7a-bb19-4a4d-bc6a-7c42dec4fa18.png)
+
+Take sales from August 1 to August 10, 2016. For each row, show the following information: StoreId, Day, number of transactions, and the average number of transactions for that store in the window frame starting 2 days before and ending 2 days after the current row. Name the column AvgTransactions.
+
+```sql
+select storeid, day, transactions, 
+avg(transactions) over(partition by storeid order by day asc 
+                       rows between 2 preceding and 2 following) as AvgTransactions
+from sales
+where day between '2016-08-01' and '2016-08-10'
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194293730-22fba7d7-797d-4d32-8d46-7316f402ef5b.png)
+
+For each sales row, show the following information: StoreId, Day, Revenue, and the future cash flow receivable by headquarters (i.e. the total revenue in that store, counted from the current day until the last day in our table). Name the column FollowingRevenue.
+
+```sql
+select storeid, day, revenue,
+sum(revenue) over(partition by storeid order by day asc
+                 rows between current row and unbounded following) as FollowingRevenue
+from sales
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194294369-0efdc6d2-abb7-4d74-953a-0e6f1468a475.png)
