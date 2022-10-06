@@ -1,6 +1,11 @@
 # Common Problems with Window Functions #
 
+The only places where we can use window functions without subqueries are the SELECT and ORDER BY clauses.
+
 # Database #
+
+![image](https://user-images.githubusercontent.com/77920592/194302116-4c3838a2-a9da-4882-91eb-f0c866984f55.png)
+![image](https://user-images.githubusercontent.com/77920592/194302160-e189906f-638d-45de-ad48-7820d3e0f3cf.png)
 
 ## Can't use window functions in the WHERE clause, use subqueries instead ##
 
@@ -27,4 +32,29 @@ having avg(finalprice) > (select avg(finalprice) from auction)
 ![image](https://user-images.githubusercontent.com/77920592/194301144-9a320932-ca5a-4539-90fb-894525ab75ac.png)
 
 ## Can't use window functions in the GROUP BY clause, use subqueries instead ##
+
+Divide all auctions into six equal groups, based on AskingPrice in ascending order. Show the columns GroupNo, MinAskingPrice, AvgAskingPrice and MaxAskingPrice for each group. Sort in ascending order by group.
+
+```sql
+select groupno, min(askingprice) as MinAskingPrice, 
+avg(askingprice) as AvgAskingPrice, max(askingprice) as MaxAskingPrice
+from (
+		select askingprice, ntile(6) over(order by askingprice asc) as GroupNo 
+  		from auction) c
+group by groupno
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194301893-0eee2e7f-7f24-4639-bef9-c12f78f4b542.png)
+
+Group the auctions by the Country. Show the country, its minimal number of participants in an auction and the average minimal number of participants across all countries. Name the last columns MinParticipants and AvgMinParticipants.
+
+```sql
+select country, min(participants) as MinParticipants, 
+avg(min(participants)) over() as AvgMinParticipants
+from auction
+group by country
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194302823-e26f4c04-7bc4-4c15-b46d-ea9aa915f525.png)
+
 
