@@ -82,3 +82,47 @@ where day between '2016-08-01' and '2016-08-10'
 ```
 
 ![image](https://user-images.githubusercontent.com/77920592/194088653-14189bd1-397f-4b8a-8987-448d1cb10043.png)
+
+For each store, show a row with three columns: StoreId, the highest daily Revenue for that store, and the Day when that revenue was achieved.
+
+```sql
+with cte as
+(
+  select storeid, day, revenue, 
+  rank() over(partition by storeid order by revenue desc) as rank
+  from sales
+)
+select storeid, day, revenue
+from cte
+where rank = 1
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194292029-b0b5842b-c1b1-4cb3-879b-4e777bc90087.png)
+
+Let's analyze sales data between August 1 and August 3, 2016. For each row, show the StoreId, Day, Transactions and the ranking of the store (based on the daily number of transactions). The store with the greatest number of transactions should get Rank = 1. Use individual row ranks even when two rows share the same value.
+
+```sql
+select storeid, day, transactions, 
+row_number() over(partition by day order by transactions desc) as rank
+from sales
+where day between '2016-08-01' and '2016-08-03'
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194292113-987ba84f-a6a7-42ca-bab6-c67eeeee134a.png)
+
+For each sales day, show the Day, the StoreId of the best store in terms of the Revenue on that Day, and that store's Revenue.
+
+```sql
+with cte as
+(
+  select day, storeid, revenue,
+  rank() over(partition by day order by revenue desc) as rank
+  from sales
+)
+select day, storeid, revenue
+from cte
+where rank = 1
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194292649-c956701d-2a85-4411-bb8d-79d429e4eeb6.png)
+
