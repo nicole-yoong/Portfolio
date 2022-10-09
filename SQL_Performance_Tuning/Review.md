@@ -125,18 +125,25 @@ Therefore, it is crucial to specify the frame where it’s supported.
 ## Variable ##
 
 ```sql
-select o.orderid, o.orderdate, 
-sum(unitprice*quantity) over
-(partition by o.orderid order by o.orderdate asc
-rows between unbounded preceding and current row) as RunningTotal
-from orders o join [order details] od on o.orderid = od.orderid;
+select orderid, unitprice, quantity,
+sum(unitprice*quantity) over() as TotalValue
+from [order details]
+group by orderid, unitprice, quantity;
 ```
 
-![image](https://user-images.githubusercontent.com/77920592/194327262-19b7fece-fb7f-4bf9-a3c4-9aab5330b720.png)
-
-![image](https://user-images.githubusercontent.com/77920592/194327518-db8ab573-7cf9-4cca-a64e-1e67ceb7dd45.png)
+![image](https://user-images.githubusercontent.com/77920592/194760421-9ee392c9-035a-4689-94d2-8f195238602a.png)
 
 ```sql
+declare @TotalValue money;
+select @TotalValue = sum(unitprice*quantity) from [order details];
 
+select orderid, unitprice, quantity,
+@TotalValue as TotalValue
+from [order details]
+group by orderid, unitprice, quantity
 ```
 
+![image](https://user-images.githubusercontent.com/77920592/194760449-2d23cbd3-a566-4b1b-b224-3509263ee084.png)
+
+The first query only scans the table once, but it has 4382 logical reads in a worktable. 
+The second query scans the table twice, but it doesn’t need the worktable.
