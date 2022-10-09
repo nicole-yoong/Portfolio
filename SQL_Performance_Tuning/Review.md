@@ -82,7 +82,8 @@ When using empty **OVER()** clause, RANGE will be the default specification.
 RANGE can be particularly useful in scenarios where we do not care about the changes of the amount during a single period, such as day. 
 For example, when calculating the running sum from all orders sorted by date, RANGE will be used when we do not really need to see how the running sum changed during single days.
 
-However, RANGE is always associated with some performance issues. 
+However, RANGE is always associated with some performance issues. The performance issues are more obvious in the cases of aggregration. 
+Aggregration always result in a large number of logical reads, causing the data retrieval to perform slowly. There are multiple ways to address the weakness, such as specifying the frame **ROWS BETWEEN UNBOUND PROCEEDING AND CURRENT ROW** to the OVER clause to declare the aggregrated values. 
 
 We want to find the running total of the order amount (unitprice * quantity) in the following queries. 
 
@@ -124,7 +125,7 @@ Therefore, it is crucial to specify the frame where it’s supported.
 
 ## Variable ##
 
-Aggregration always result in a large number of logical reads, causing the data retrieval to perform slowly. There are multiple ways to address the weakness, such as using variable to declare the aggregrated values. 
+Following the earlier discussion on the performance issues of using aggregation, there are other methods we can use to enhance the perfomance, such as using variable.
 
 ```sql
 select orderid, unitprice, quantity,
