@@ -121,3 +121,22 @@ Worktable is created in the tempdb when RANGE is used. In contrast, it is create
 
 
 Therefore, it is crucial to specify the frame where it’s supported.
+
+## Variable ##
+
+```sql
+select o.orderid, o.orderdate, 
+sum(unitprice*quantity) over
+(partition by o.orderid order by o.orderdate asc
+rows between unbounded preceding and current row) as RunningTotal
+from orders o join [order details] od on o.orderid = od.orderid;
+```
+
+![image](https://user-images.githubusercontent.com/77920592/194327262-19b7fece-fb7f-4bf9-a3c4-9aab5330b720.png)
+
+![image](https://user-images.githubusercontent.com/77920592/194327518-db8ab573-7cf9-4cca-a64e-1e67ceb7dd45.png)
+
+```sql
+
+```
+
