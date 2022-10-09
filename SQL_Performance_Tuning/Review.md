@@ -124,6 +124,8 @@ Therefore, it is crucial to specify the frame where it’s supported.
 
 ## Variable ##
 
+Aggregration always result in a large number of logical reads, causing the data retrieval to perform slowly. There are multiple ways to address the weakness, such as using variable to declare the aggregrated values. 
+
 ```sql
 select orderid, unitprice, quantity,
 sum(unitprice*quantity) over() as TotalValue
