@@ -1,30 +1,43 @@
-use northwind;
+## NORTHWIND DATABASE ##
+
+The Northwind database is a sample database used by Microsoft to demonstrate the features of some of its products, including SQL Server and Microsoft Access. The database contains the sales data for Northwind Traders, a fictitious specialty foods exportimport company.
 
 ## EMPLOYEE ANALYSIS ##
 
-### Find the average age of the employees ###
+### Number of employees hired each year ###
+```sql
+select datepart(year, hiredate) as Year, count(*) as Count from employees
+group by datepart(year, hiredate)
+```
+![image](https://user-images.githubusercontent.com/77920592/196151570-52eaf4a3-4e50-4f01-9230-87b25962adf6.png)
+
+### Average age of the employees ###
 
 ```sql
 select avg(datediff(year, birthdate, getdate())) from employees;
 ```
+![image](https://user-images.githubusercontent.com/77920592/196151642-94360555-eba1-4356-9fe1-3bfc11f54a6c.png)
 
-### Find the number of employees in different positions ###
+### Number of employees in different positions ###
 
 ```sql
 select title, count(*) as Count from employees
 group by title;
 ```
+![image](https://user-images.githubusercontent.com/77920592/196151765-448a4d54-1466-4b92-851a-a2db924731e3.png)
 
-### Find the number of orders processed by each employee ###
+### Number of orders processed by each employee ###
 
 ```sql
 select e.employeeid, e.firstname, e.lastname, count(distinct o.orderid) as OrdersCount
 from employees e 
 join orders o on e.employeeid = o.employeeid
 group by e.employeeid, e.firstname, e.lastname
+order by count(distinct o.orderid) desc
 ```
+![image](https://user-images.githubusercontent.com/77920592/196152118-697470b3-f6a9-4a95-a703-ccad7433a147.png)
 
-### Rank the employees processed the highest -value orders ###
+### Order values processed by each employee ###
 
 ```sql
 select e.firstname, e.lastname, sum(od.unitprice * quantity) as Sumorders
@@ -34,6 +47,25 @@ join [order details] od on o.orderid = od.orderid
 group by e.employeeid, e.firstname, e.lastname
 order by sum(od.unitprice * quantity) desc 
 ```
+![image](https://user-images.githubusercontent.com/77920592/196152205-437fbdc4-24e3-4335-91a6-9e1e0cfc3670.png)
+
+### Order values processed by each employee on an annual basis ###
+
+```sql
+select datepart(year, orderdate) as Year, e.firstname, e.lastname, sum(od.unitprice * quantity) as Sumorders
+from employees e 
+join orders o on e.employeeid = o.employeeid
+join [order details] od on o.orderid = od.orderid
+group by e.employeeid, e.firstname, e.lastname, datepart(year, orderdate)
+order by datepart(year, orderdate), sum(od.unitprice * quantity) desc 
+```
+![image](https://user-images.githubusercontent.com/77920592/196154764-1281fa64-18f7-4421-adde-77c314ca9fc8.png)
+![image](https://user-images.githubusercontent.com/77920592/196154862-3a74812c-9aaa-4652-95b3-f53e46371ae6.png)
+
+Northwind hires an average of 3 employees each year and the age of all employees are relatively high, with an average of 66 years old. 
+2/3 of its employees are sales representatives, who are the key personnels pushing the business. 
+Margaret Peacock is the top performing employees processesing the highest number of order counts with the greatest value, followed by Janet Leverling and Nancy Davolio.
+However, when comparing their performances on an annual basis, Janet Leverling overtook Margaret Peacock and became the top performing employees in terms of revenue generation.
 
 ## CUSTOMER ANALYSIS ##
 
