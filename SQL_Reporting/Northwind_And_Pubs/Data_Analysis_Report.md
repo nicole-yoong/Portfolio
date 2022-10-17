@@ -64,6 +64,7 @@ order by datepart(year, orderdate), sum(od.unitprice * quantity) desc
 
 Northwind hires an average of 3 employees each year and the age of all employees are relatively high, with an average of 66 years old. 
 2/3 of its employees are sales representatives, who are the key personnels pushing the business. 
+
 Margaret Peacock is the top performing employees processesing the highest number of order counts with the greatest value, followed by Janet Leverling and Nancy Davolio.
 However, when comparing their performances on an annual basis, Janet Leverling overtook Margaret Peacock and became the top performing employees in terms of revenue generation.
 
@@ -128,6 +129,18 @@ order by sum(od.unitprice*quantity) desc
 ```
 ![image](https://user-images.githubusercontent.com/77920592/196155661-2bf764d2-223d-4e61-90a4-b8b724302b66.png)
 
+### 25th, 50th and 75th percentile values for the revenue (unitprice * quantity) per transaction ###
+
+```sql
+select distinct percentile_cont(0.25) within group(order by (unitprice*quantity)) over() as [25th_percentile]
+from [order details];
+select distinct percentile_cont(0.50) within group(order by (unitprice*quantity)) over() as [50th_percentile]
+from [order details];
+select distinct percentile_cont(0.75) within group(order by (unitprice*quantity)) over() as [75th_percentile]
+from [order details];
+```
+![image](https://user-images.githubusercontent.com/77920592/196162697-2e93048a-966d-4769-9a9c-ee34d8010b32.png)
+
 ### Customers in different tiers based on the order values: i) 10k and below = Bronze, ii) 10k - 50k = Silver, iii) 50k - 100k = Gold, iv) 100k and above = Platinum ###
 ```sql
 with cte as
@@ -143,30 +156,21 @@ from customers cu join orders o on o.customerid = cu.customerid
 join [Order Details] od on o.orderid = od.orderid
 group by cu.customerid, cu.companyname
 )
-select count(*) as Count, MemberTier
+select count(*) as Count, round(count(*) * 100.0 / (select count(*) from customers), 3) as Percentage, MemberTier
 from cte 
 group by MemberTier
 order by Count desc
 ```
-![image](https://user-images.githubusercontent.com/77920592/196157875-f8b743d9-551d-466a-babe-48e1132a1ca2.png)
+![image](https://user-images.githubusercontent.com/77920592/196161733-4ff45b05-eed6-4fb2-b8b7-f682eb79dc5f.png)
 
 Customers in USA purchase the most frequent from Northwind, and it is followed by France and Germany. 
 In terms of the order values, customers in USA contribute the most as expected. 
 Despite customers in France placed quite a number of orders but Germany, Austria, and Brazil overtook France in terms of the order values. 
 
+Looking at the percentile of order values, 25% of the order values lie below $154, 25% of the order values lie above $722.5, and the median order values is $360. 
 
-## TRANSACTION ANALYSIS ##
+Based on the member tiers developed in accordance to the total order values, only less than 6% of customers have exceeded a value of 50k, while the order values of majority of the customers are below 50k. 
 
-### Find the 25th, 50th and 75th percentile values for the revenue (unitprice * quantity) per transaction ###
-
-```sql
-select distinct percentile_cont(0.25) within group(order by (unitprice*quantity)) over() as [25th_percentile]
-from [order details];
-select distinct percentile_cont(0.50) within group(order by (unitprice*quantity)) over() as [25th_percentile]
-from [order details];
-select distinct percentile_cont(0.75) within group(order by (unitprice*quantity)) over() as [25th_percentile]
-from [order details];
-```
 
 ### Find the average discount value per transaction ###
 
