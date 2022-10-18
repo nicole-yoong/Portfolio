@@ -272,14 +272,43 @@ However, a further examination into the average price for each product in each c
 
 ## SUPPLIER
 
-### Find the total number of products provided by each supplier ###
+### Country of suppliers ###
+```sql
+select country, count(*) as Count from suppliers
+group by country
+order by count(*) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/196433666-16580779-426b-43ce-9d13-6187fba8d138.png)
+
+### Total number of products provided by each supplier ###
 
 ```sql
-select s.companyname, count(P.productid) as ProductsCount
+select s.country, s.companyname, count(P.productid) as ProductsCount
 from suppliers s left 
 join products p on s.supplierid = p.supplierid
-group by s.companyname
+group by s.country, s.companyname
+order by count(P.productid) desc
 ```
+![image](https://user-images.githubusercontent.com/77920592/196434717-3b491029-c18f-478d-abee-faeb8d009025.png)
+
+### Top country of supplier of each category ###
+```sql
+with cte as
+(
+select s.country, c.categoryname, count(p.productid) as Count,
+rank() over (partition by c.categoryname order by count(p.productid) desc) as rank
+from products p join categories c on p.categoryid = c.categoryid
+join suppliers s on s.supplierid = p.supplierid
+group by c.categoryname, s.country
+)
+select country, categoryname, Count
+from cte
+where rank = 1
+
+```
+![image](https://user-images.githubusercontent.com/77920592/196439609-781f0dd4-f712-4698-89dd-c4c7af5a4ccf.png)
+
+Northwind works with suppliers from all over the world, and there are more suppliers from USA than the rest of the countries. This could be because it has more customers from USA so the shipping might be easier if it selects to work with suppliers from USA. We could see that USA supplies the highest number of products in the beverages and condiments categories. The rest of the categories are dominated by different countries in the world, such as UK for confections, Norway for dairy products and etc.
 
 ## FREIGHT COST
 
