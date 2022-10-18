@@ -312,7 +312,7 @@ Northwind works with suppliers from all over the world, and there are more suppl
 
 ## FREIGHT COST
 
-### Group all orders based on the Freight column ###
+### Group all orders based on the Freight column: i) Freight cost lower than 40 = Low Freight, ii) between 40 and 80 = Average Freight, iii) Higher than 80 = High Freight. 
 
 ```sql
 select 
@@ -321,3 +321,27 @@ sum (case when o.freight >= 40 and o.freight < 80 then 1 end) as AvgFreight,
 sum (case when o.freight >= 80 then 1 end) as HighFreight
 from orders o
 ```
+![image](https://user-images.githubusercontent.com/77920592/196440595-3029a28d-ac29-40c1-b54e-734868f2d682.png)
+
+### Sort country by freight cost ###
+```sql
+select shipcountry, count(orderid) as Count
+from orders
+where freight > 80 
+group by shipcountry
+order by count(orderid) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/196441514-ac1c8db0-2326-4f2c-8686-984e42fae6f5.png)
+
+### Country with average higher freight cost ###
+```sql
+select shipcountry, count(orderid) as Count, avg(freight) as AvgFreight
+from orders
+group by shipcountry
+order by avg(freight) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/196442141-01e4634b-55e0-4256-9e90-a2b879eb2586.png)
+
+Majority of the freight cost are relatively low. 
+Comparing the average freight cost, Austria has the highest average freight cost among all countries, followed by Ireland and USA. 
+However, USA tops the chart when it comes to the number of freights classified as High Freight cost, which is over $80.
