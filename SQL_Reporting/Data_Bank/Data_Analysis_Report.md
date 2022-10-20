@@ -118,8 +118,34 @@ order by customer_id;
 
 ### What is the percentage of customers who increase their closing balance by more than 5%? ###
 ```sql
+with cte as
+(
+select customer_id, datepart(month, txn_date) as Closing_month, txn_date,
+(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as TotalAmount
+from customer_transactions 
+),
+cte2 as
+(
+select customer_id, closing_month, txn_date, TotalAmount,
+sum(TotalAmount) over(partition by customer_id, closing_month order by txn_date asc rows between unbounded preceding and current row) as Closing_balance,
+rank() over(partition by customer_id, closing_month order by txn_date desc) as Rank
+from cte
+),
+cte3 as
+(
+select customer_id, closing_month, closing_balance, lag(closing_balance, 1, 0) over(partition by customer_id order by closing_month asc) as previous_closing_balance
+from cte2
+where rank = 1
+),
+cte4 as 
+(
+select customer_id, closing_month, closing_balance, previous_closing_balance, round(((closing_balance*1.0 - previous_closing_balance) / closing_balance),2) as percentage_change
+from cte3
+)
+select count(distinct customer_id) as Count from cte4
+where percentage_change >= 5
 ```
-
+![image](https://user-images.githubusercontent.com/77920592/196961488-55479fc4-6015-49fe-a3ee-4ea6a68cdc5d.png)
 
 ## C. Data Allocation Challenge ##
 
