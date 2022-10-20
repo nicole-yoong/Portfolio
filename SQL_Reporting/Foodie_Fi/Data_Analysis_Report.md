@@ -1,5 +1,3 @@
-![image](https://user-images.githubusercontent.com/77920592/192091005-aaadcd85-aa97-4ffb-85f2-a7cb69612b7e.png)
-
 # Introduction #
  
 Subscription based businesses are super popular and Danny realised that there was a large gap in the market – he wanted to create a new streaming service that only had food related content – something like Netflix but with only cooking shows!
@@ -10,11 +8,6 @@ Danny created Foodie-Fi with a data driven mindset and wanted to ensure all futu
 
 Danny has shared the data design for Foodie-Fi and also short descriptions on each of the database tables – our case study focuses on only 2 tables but there will be a challenge to create a new table for the Foodie-Fi team.
 All datasets exist within the foodie_fi database schema – be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
-You can inspect the entity relationship diagram and example data below.
-
-![image](https://user-images.githubusercontent.com/77920592/192091076-4296ae54-7e63-4938-9f77-cbddedaf8a32.png)
-
-All datasets exist within the case1 database schema – be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
 
 ** Table 1: plans **
 Customers can choose which plans to join Foodie-Fi when they first sign up.
