@@ -78,40 +78,43 @@ from cte
 
 ### For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month? ###
 ```sql
-WITH monthly_transaction_cte AS
-
-(SELECT customer_id, MONTH(txn_date) AS txn_month,
-SUM(CASE WHEN txn_type = 'deposit' THEN 1 ELSE 0 END) AS deposit_count,
-SUM(CASE WHEN txn_type = 'purchase' THEN 1 ELSE 0 END) AS purchase_count,
-SUM(CASE WHEN txn_type = 'withdrawal' THEN 1 ELSE 0 END) AS withdrawal_count
-FROM customer_transactions
-GROUP BY customer_id, MONTH(txn_date)
+with cte as
+(
+select customer_id, datepart(month, txn_date) as Month,
+sum(case when txn_type = 'deposit' then 1 else 0 end) as deposit,
+sum(case when txn_type = 'withdrawal' then 1 else 0 end) as withdrawal,
+sum(case when txn_type = 'purchase' then 1 else 0 end) as purchase
+from customer_transactions
+group by datepart(month, txn_date), customer_id
 )
-
-SELECT txn_month, COUNT(DISTINCT customer_id) AS customer_count
-FROM monthly_transaction_cte
-WHERE deposit_count > 1 AND (purchase_count = 1 OR withdrawal_count = 1)
-GROUP BY txn_month;
+select count(customer_id) as TotalCount, month
+from cte
+where deposit > 1 and (purchase = 1 or withdrawal = 1)
+group by month;
 ```
-![image](https://user-images.githubusercontent.com/77920592/192097327-a37f70f0-2b24-4511-9c66-696076ab84f8.png)
+![image](https://user-images.githubusercontent.com/77920592/196954838-39643750-45ac-4cab-b9b7-0a1581d2bcca.png)
 
 ### What is the closing balance for each customer at the end of the month? ###
 ```sql
-WITH monthly_balance_cte AS
-
-(SELECT customer_id, txn_amount, MONTH(txn_date) AS txn_month,
-SUM(CASE WHEN txn_type='deposit' THEN txn_amount ELSE -txn_amount END) 
-AS net_amount
-FROM customer_transactions
-GROUP BY customer_id, MONTH(txn_date), txn_amount)
-
-SELECT customer_id, txn_month, net_amount,
-SUM(net_amount) over(PARTITION BY customer_id
-                     ORDER BY txn_month ROWS BETWEEN UNBOUNDED preceding AND CURRENT ROW) 
-					 AS closing_balance
-FROM monthly_balance_cte;
+with cte as
+(
+select customer_id, datepart(month, txn_date) as Closing_month, txn_date,
+(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as TotalAmount
+from customer_transactions 
+),
+cte2 as
+(
+select customer_id, closing_month, txn_date, TotalAmount,
+sum(TotalAmount) over(partition by customer_id, closing_month order by txn_date asc rows between unbounded preceding and current row) as Closing_balance,
+rank() over(partition by customer_id, closing_month order by txn_date desc) as Rank
+from cte
+)
+select customer_id, closing_month, closing_balance
+from cte2
+where rank = 1
+order by customer_id;
 ```
-![image](https://user-images.githubusercontent.com/77920592/192099485-cf1a263e-6a6d-4cb0-9cd1-9b33e1bb721d.png)
+![image](https://user-images.githubusercontent.com/77920592/196954720-faca7d14-c37f-4cc0-804c-082ce0404e91.png)
 
 ### What is the percentage of customers who increase their closing balance by more than 5%? ###
 ```sql
