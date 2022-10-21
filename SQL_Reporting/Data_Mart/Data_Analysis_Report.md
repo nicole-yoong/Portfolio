@@ -99,10 +99,11 @@ where ws.week_number is null
 
 ### How many total transactions were there for each year in the dataset? ###
 ```sql
-select datepart(year, week_date), count(transactions) as Count
+select datepart(year, week_date) as Year, count(transactions) as Count
 from #clean_weekly_sales
 group by datepart(year, week_date) 
 ```
+![image](https://user-images.githubusercontent.com/77920592/197176544-b315c8f0-e41e-42ed-95db-cff9e310a95a.png)
 
 ### What is the total sales for each region for each month? ###
 ```sql
@@ -111,13 +112,15 @@ from #clean_weekly_sales
 group by region, datepart(month, week_date)
 order by region, datepart(month, week_date) asc
 ```
+![image](https://user-images.githubusercontent.com/77920592/197176465-3c7bc2d2-e139-46b1-af07-5e1b9b789a94.png)
 
 ### What is the total count of transactions for each platform ###
 ```sql
-select platform, count(transactions) as Count
+select platform, sum(cast(transactions as bigint)) as Count
 from #clean_weekly_sales
 group by platform
 ```
+![image](https://user-images.githubusercontent.com/77920592/197176389-d71ce8d9-9e1a-438c-9101-d0cc9899f2a0.png)
 
 ### What is the percentage of sales for Retail vs Shopify for each month? ### 
 ```sql
@@ -139,6 +142,7 @@ select platform, year, month, total_sales, total_monthly_sales,
 round((total_sales * 100.0 / total_monthly_sales),2) as Percentage
 from cte2
 ```
+![image](https://user-images.githubusercontent.com/77920592/197175972-54dbae75-8312-4971-bfa7-05b99ec47491.png)
 
 ### What is the percentage of sales by demographic for each year in the dataset? ###
 ```sql
@@ -159,6 +163,7 @@ select demographic, year, total_sales, total_yearly_sales,
 round((total_sales * 100.0 / total_yearly_sales),2) as Percentage
 from cte2
 ```
+![image](https://user-images.githubusercontent.com/77920592/197175905-58475efe-6c2c-4b39-8041-58c937fd3ebb.png)
 
 ### Which age_band and demographic values contribute the most to Retail sales? ###
 ```sql
@@ -175,9 +180,24 @@ round(total_sales * 100.0 / (select sum(sales) from #clean_weekly_sales
 from cte
 order by total_sales desc
 ```
+![image](https://user-images.githubusercontent.com/77920592/197175845-48216cce-3900-47d2-b7f1-60ca64c4edfb.png)
 
 ### Find the average transaction size for each year for Retail vs Shopify ###
-
+```sql
+with cte as
+(
+select platform, datepart(year, week_date) as Year, sum(sales) as Total_Sales, 
+sum(cast(transactions as bigint)) as Total_Transactions
+from #clean_weekly_sales
+group by platform, datepart(year, week_date)
+)
+select platform, year, total_sales, total_transactions, 
+round(avg(total_sales * 100.0/ total_transactions),2) as Avg_Transaction_Size
+from cte
+group by platform, year, total_sales, total_transactions
+order by year 
+```
+![image](https://user-images.githubusercontent.com/77920592/197175785-cfcb5cc9-d2e5-4940-a333-e4e0cd5448bd.png)
 
 ## Before & After Analysis ##
 
