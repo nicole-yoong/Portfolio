@@ -31,6 +31,22 @@ Convert the week_date to a DATE format
 - Generate a new avg_transaction column as the sales value divided by transactions rounded to 2 decimal places for each record
 
 ```sql
+create table #clean_weekly_sales
+(
+week_date date,
+week_number int,
+month_number int,
+calender_year int,
+region varchar(50),
+platform varchar(50),
+segment varchar(50),
+age_band varchar(50),
+demographic varchar(50),
+avg_transaction int,
+)
+
+with cte as
+(
 select 
 convert(datetime, week_date, 5) as week_date,
 datepart(day, convert(datetime, week_date, 5)) as  week_number,
@@ -47,13 +63,25 @@ when left(segment, 1) = 'C' then 'Couples'
 when left(segment, 1) = 'F' then 'Families'
 else 'Unknown' end as demographic, 
 round(((cast(sales as numeric))/transactions),2) as avg_transaction
-from weekly_sales;
+from weekly_sales
+)
+insert into #clean_weekly_sales
+(
+week_date, week_number, month_number, calender_year, region,
+platform, segment, age_band, demographic, avg_transaction
+)
+select * from cte
 ```
 ![image](https://user-images.githubusercontent.com/77920592/197155272-5cf88b3a-2788-48f8-a6c5-ed56483efbfe.png)
 
 ## Data Exploration ##
 
 ### What day of the week is used for each week_date value? ###
+```sql
+select distinct (datename(dw, week_date)) as Day_name 
+from #clean_weekly_sales
+```
+![image](https://user-images.githubusercontent.com/77920592/197158230-0cdb1f74-5b8c-49c3-8902-75cdaa3257b6.png)
 
 ### What range of week numbers are missing from the dataset? ###
 
