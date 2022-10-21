@@ -28,7 +28,6 @@ Convert the week_date to a DATE format
 - Add a new demographic column using the following mapping for the first letter in the segment values:
 ![image](https://user-images.githubusercontent.com/77920592/197146980-44f0d86a-1d23-4220-b907-44160eea9027.png)
 - Ensure all null string values with an "unknown" string value in the original segment column as well as the new age_band and demographic columns
-- Generate a new avg_transaction column as the sales value divided by transactions rounded to 2 decimal places for each record
 
 ```sql
 create table #clean_weekly_sales
@@ -43,8 +42,7 @@ segment varchar(50),
 age_band varchar(50),
 demographic varchar(50),
 transactions int,
-sales int,
-avg_transaction int,
+sales int
 )
 
 with cte as
@@ -64,18 +62,15 @@ case
 when left(segment, 1) = 'C' then 'Couples'
 when left(segment, 1) = 'F' then 'Families'
 else 'Unknown' end as demographic, 
-sales, transactions, 
-round(((cast(sales as numeric))/transactions),2) as avg_transaction
-from weekly_sales
+sales, transactions from weekly_sales
 )
 insert into #clean_weekly_sales
 (
 week_date, week_number, month_number, calender_year, region,
-platform, segment, age_band, demographic, transactions, sales, avg_transaction
+platform, segment, age_band, demographic, transactions, sales
 )
-select * from cte
+select * from cte;
 ```
-![image](https://user-images.githubusercontent.com/77920592/197161505-61343a15-4f69-479a-85dd-1ccb5d6bdb7e.png)
 
 ## Data Exploration ##
 
@@ -103,18 +98,85 @@ where ws.week_number is null
 ![image](https://user-images.githubusercontent.com/77920592/197161603-ddc9cf63-9ed8-43b8-a1a6-658ddbc092ee.png)
 
 ### How many total transactions were there for each year in the dataset? ###
+```sql
+select datepart(year, week_date), count(transactions) as Count
+from #clean_weekly_sales
+group by datepart(year, week_date) 
+```
 
 ### What is the total sales for each region for each month? ###
+```sql
+select region, datepart(month, week_date) as Month, sum(sales) as TotalSales 
+from #clean_weekly_sales
+group by region, datepart(month, week_date)
+order by region, datepart(month, week_date) asc
+```
 
 ### What is the total count of transactions for each platform ###
+```sql
+select platform, count(transactions) as Count
+from #clean_weekly_sales
+group by platform
+```
 
 ### What is the percentage of sales for Retail vs Shopify for each month? ### 
+```sql
+with cte as
+(
+select platform, datepart(year, week_date) as Year,
+datepart(month, week_date) as Month,
+sum(sales) as Total_Sales
+from #clean_weekly_sales
+group by platform, datepart(year, week_date), datepart(month, week_date)
+),
+cte2 as
+(
+select platform, year, month, total_sales, 
+sum(total_sales) over(partition by year, month) as Total_Monthly_Sales
+from cte
+)
+select platform, year, month, total_sales, total_monthly_sales,
+round((total_sales * 100.0 / total_monthly_sales),2) as Percentage
+from cte2
+```
 
 ### What is the percentage of sales by demographic for each year in the dataset? ###
+```sql
+with cte as
+(
+select demographic, datepart(year, week_date) as Year,
+sum(sales) as Total_Sales
+from #clean_weekly_sales
+group by demographic, datepart(year, week_date)
+),
+cte2 as
+(
+select demographic, year, total_sales, 
+sum(total_sales) over(partition by year) as Total_Yearly_Sales
+from cte
+)
+select demographic, year, total_sales, total_yearly_sales,
+round((total_sales * 100.0 / total_yearly_sales),2) as Percentage
+from cte2
+```
 
 ### Which age_band and demographic values contribute the most to Retail sales? ###
+```sql
+with cte as
+(
+select age_band, demographic, sum(sales) as Total_Sales
+from #clean_weekly_sales
+where platform = 'retail'
+group by age_band, demographic
+)
+select age_band, demographic, total_sales,
+round(total_sales * 100.0 / (select sum(sales) from #clean_weekly_sales
+				where platform = 'retail'),2) as Percentage 
+from cte
+order by total_sales desc
+```
 
-### Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead? ###
+### Find the average transaction size for each year for Retail vs Shopify ###
 
 
 ## Before & After Analysis ##
