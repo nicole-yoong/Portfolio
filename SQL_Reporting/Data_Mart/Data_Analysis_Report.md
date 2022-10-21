@@ -205,7 +205,31 @@ Taking the week_date value of 2020-06-15 as the baseline week where the Data Mar
 We would include all week_date values for 2020-06-15 as the start of the period after the change and the previous week_date values would be before.
 
 ### What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales? ### 
+```sql
+select distinct(dateadd(week, -4, '2020-06-15')) as Date_Before, 
+(dateadd(week, 4, '2020-06-15')) as Date_After
+from #clean_weekly_sales;
 
+with cte as
+(
+select week_date, sum(sales) as Total_Sales
+from #clean_weekly_sales
+where week_date <= '2020-07-13' and week_date >= '2020-05-18'
+group by week_date
+),
+cte2 as
+(
+select 
+sum(case when week_date <= '2020-06-15' then total_sales end) as Sales_Before, 
+sum(case when week_date >= '2020-06-15' then total_sales end) as Sales_After
+from cte
+)
+select sales_before, sales_after, sales_after - sales_before as Figure_Differences,
+((sales_after - sales_before) * 100.0 / sales_after) as Percentage_Differences
+from cte2
+```
+
+The sales dropped $79419 at a negative of 0.102%, meaning that customers may not recognize the packaging changes, or they were not buying in to the changes yet!
 
 ### What about the entire 12 weeks before and after? ### 
 ### How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019? ### 
