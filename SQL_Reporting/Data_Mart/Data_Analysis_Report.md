@@ -42,6 +42,8 @@ platform varchar(50),
 segment varchar(50),
 age_band varchar(50),
 demographic varchar(50),
+transactions int,
+sales int,
 avg_transaction int,
 )
 
@@ -62,17 +64,18 @@ case
 when left(segment, 1) = 'C' then 'Couples'
 when left(segment, 1) = 'F' then 'Families'
 else 'Unknown' end as demographic, 
+sales, transactions, 
 round(((cast(sales as numeric))/transactions),2) as avg_transaction
 from weekly_sales
 )
 insert into #clean_weekly_sales
 (
 week_date, week_number, month_number, calender_year, region,
-platform, segment, age_band, demographic, avg_transaction
+platform, segment, age_band, demographic, transactions, sales, avg_transaction
 )
 select * from cte
 ```
-![image](https://user-images.githubusercontent.com/77920592/197155272-5cf88b3a-2788-48f8-a6c5-ed56483efbfe.png)
+![image](https://user-images.githubusercontent.com/77920592/197161505-61343a15-4f69-479a-85dd-1ccb5d6bdb7e.png)
 
 ## Data Exploration ##
 
@@ -84,6 +87,20 @@ from #clean_weekly_sales
 ![image](https://user-images.githubusercontent.com/77920592/197158230-0cdb1f74-5b8c-49c3-8902-75cdaa3257b6.png)
 
 ### What range of week numbers are missing from the dataset? ###
+```sql
+with counter(current_value) as
+(
+select 1 union all select current_value + 1
+from counter
+where current_value < 53
+)
+
+select distinct(c.current_value) from counter c
+left outer join #clean_weekly_sales ws 
+on c.current_value = ws.week_number
+where ws.week_number is null
+```
+![image](https://user-images.githubusercontent.com/77920592/197161603-ddc9cf63-9ed8-43b8-a1a6-658ddbc092ee.png)
 
 ### How many total transactions were there for each year in the dataset? ###
 
