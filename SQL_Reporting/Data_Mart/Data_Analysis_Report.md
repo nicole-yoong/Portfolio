@@ -49,7 +49,7 @@ with cte as
 (
 select 
 convert(datetime, week_date, 5) as week_date,
-datepart(day, convert(datetime, week_date, 5)) as  week_number,
+datepart(week, convert(datetime, week_date, 5)) as  week_number,
 datepart(month, convert(datetime, week_date, 5)) as  month_number,
 datepart(year, convert(datetime, week_date, 5)) as  calender_year, 
 region, platform, segment, 
@@ -71,6 +71,7 @@ platform, segment, age_band, demographic, transactions, sales
 )
 select * from cte;
 ```
+![image](https://user-images.githubusercontent.com/77920592/197380802-e9b42c5e-aff5-4d68-a8e4-be55042bf15e.png)
 
 ## Data Exploration ##
 
@@ -225,11 +226,12 @@ sum(case when week_date >= '2020-06-15' then total_sales end) as Sales_After
 from cte
 )
 select sales_before, sales_after, sales_after - sales_before as Figure_Differences,
-((sales_after - sales_before) * 100.0 / sales_after) as Percentage_Differences
+((sales_after - sales_before) * 100.0 / sales_before) as Percentage_Differences
 from cte2
 ```
+![image](https://user-images.githubusercontent.com/77920592/197381043-69aac7b2-e2ed-434b-8071-3dec7ea8b50d.png)
 
-The sales dropped $79419 at a negative of 0.102%, meaning that customers may not recognize the packaging changes, or they were not buying in to the changes yet!
+The sales dropped $158838 at a negative of 0.102%, meaning that customers may not recognize the packaging changes, or they were not buying in to the changes yet!
 
 ### What about the entire 12 weeks before and after? ### 
 ```sql
@@ -252,7 +254,7 @@ sum(case when week_date >= '2020-06-15' then total_sales end) as Sales_After
 from cte
 )
 select sales_before, sales_after, sales_after - sales_before as Figure_Differences,
-((sales_after - sales_before) * 100.0 / sales_after) as Percentage_Differences
+((sales_after - sales_before) * 100.0 / sales_before) as Percentage_Differences
 from cte2
 ```
 
@@ -278,13 +280,11 @@ sum(case when datepart(year, week_date) = '2018' then total_sales end) as Sales_
 from cte
 )
 select sales_2020, sales_2019, sales_2018,
-((sales_2020 - sales_2019) * 100.0 / sales_2020) as Changes_2020,
-((sales_2019 - sales_2018) * 100.0 / sales_2020) as Changes_2019
+((sales_2020 - sales_2019) * 100.0 / sales_2019) as Changes_2020,
+((sales_2019 - sales_2018) * 100.0 / sales_2018) as Changes_2019
 from cte2
 ```
-![image](https://user-images.githubusercontent.com/77920592/197380153-32e9b04c-be4e-49ba-810b-c7e297bfbc06.png)
-
-
+![image](https://user-images.githubusercontent.com/77920592/197381425-16b61795-4dc8-44c3-acfe-f26a9e769ec8.png)
 
 ```sql
 with cte as
@@ -305,8 +305,8 @@ sum(case when datepart(year, week_date) = '2018' then total_sales end) as Sales_
 from cte
 )
 select sales_2020, sales_2019, sales_2018,
-((sales_2020 - sales_2019) * 100.0 / sales_2020) as Changes_2020,
-((sales_2019 - sales_2018) * 100.0 / sales_2020) as Changes_2019
+((sales_2020 - sales_2019) * 100.0 / sales_2019) as Changes_2020,
+((sales_2019 - sales_2018) * 100.0 / sales_2018) as Changes_2019
 from cte2
 ```
-![image](https://user-images.githubusercontent.com/77920592/197380270-7342b58f-ab57-41ac-8a8d-e3dc4873c5ff.png)
+![image](https://user-images.githubusercontent.com/77920592/197381410-aed4fe54-5bc3-42ea-80cd-cb8bf39f9d6d.png)
