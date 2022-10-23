@@ -261,52 +261,58 @@ from cte2
 The sales has dropped even more to  a negative 8.96%! 
 
 ### How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019? ###
-```sql
-with cte as
-(
-select week_date, sum(sales) as Total_Sales
-from #clean_weekly_sales
-where (week_date <= '2020-07-13' and week_date >= '2020-05-18') or
-(week_date <= '2019-07-13' and week_date >= '2019-05-18') or
-(week_date <= '2018-07-13' and week_date >= '2018-05-18')
-group by week_date
-),
-cte2 as
-(
-select 
-sum(case when datepart(year, week_date) = '2020' then total_sales end) as Sales_2020, 
-sum(case when datepart(year, week_date) = '2019' then total_sales end) as Sales_2019,
-sum(case when datepart(year, week_date) = '2018' then total_sales end) as Sales_2018
-from cte
-)
-select sales_2020, sales_2019, sales_2018,
-((sales_2020 - sales_2019) * 100.0 / sales_2019) as Changes_2020,
-((sales_2019 - sales_2018) * 100.0 / sales_2018) as Changes_2019
-from cte2
-```
-![image](https://user-images.githubusercontent.com/77920592/197381425-16b61795-4dc8-44c3-acfe-f26a9e769ec8.png)
+
+We can use another approach, using the week number to compare the changes. 
 
 ```sql
+select distinct week_number
+from #clean_weekly_sales
+where week_date = '2020-06-15'  and calender_year = '2020';
+  
 with cte as
 (
-select week_date, sum(sales) as Total_Sales
+select calender_year, week_number, sum(sales) as Total_Sales
 from #clean_weekly_sales
-where (week_date <= '2020-09-07' and week_date >= '2020-03-23') or
-(week_date <= '2019-09-07' and week_date >= '2019-03-23') or
-(week_date <= '2018-09-07' and week_date >= '2018-03-23')
-group by week_date
+where week_number between 21 and 28
+group by calender_year, week_number
 ),
 cte2 as
 (
-select 
-sum(case when datepart(year, week_date) = '2020' then total_sales end) as Sales_2020, 
-sum(case when datepart(year, week_date) = '2019' then total_sales end) as Sales_2019,
-sum(case when datepart(year, week_date) = '2018' then total_sales end) as Sales_2018
+select calender_year, 
+sum(case when week_number between 21 and 24 then total_sales end) as Sales_Before, 
+sum(case when week_number between 25 and 28 then total_sales end) as Sales_After
 from cte
+group by calender_year
 )
-select sales_2020, sales_2019, sales_2018,
-((sales_2020 - sales_2019) * 100.0 / sales_2019) as Changes_2020,
-((sales_2019 - sales_2018) * 100.0 / sales_2018) as Changes_2019
-from cte2
+select calender_year, sales_before, sales_after, sales_after - sales_before as Figure_Differences,
+((sales_after - sales_before) * 100.0 / sales_before) as Percentage_Differences
+from cte2;
 ```
-![image](https://user-images.githubusercontent.com/77920592/197381410-aed4fe54-5bc3-42ea-80cd-cb8bf39f9d6d.png)
+![image](https://user-images.githubusercontent.com/77920592/197381957-5c6bf039-ed18-4c98-8029-71f960a4c210.png)
+
+```sql
+select distinct week_number
+from #clean_weekly_sales
+where week_date = '2020-06-15'  and calender_year = '2020';
+  
+with cte as
+(
+select calender_year, week_number, sum(sales) as Total_Sales
+from #clean_weekly_sales
+where week_number between 13 and 37
+group by calender_year, week_number
+),
+cte2 as
+(
+select calender_year, 
+sum(case when week_number between 13 and 24 then total_sales end) as Sales_Before, 
+sum(case when week_number between 25 and 37 then total_sales end) as Sales_After
+from cte
+group by calender_year
+)
+select calender_year, sales_before, sales_after, sales_after - sales_before as Figure_Differences,
+((sales_after - sales_before) * 100.0 / sales_before) as Percentage_Differences
+from cte2;
+```
+
+![image](https://user-images.githubusercontent.com/77920592/197382001-5d980420-cad3-40be-ac64-b109fd1ef3f3.png)
