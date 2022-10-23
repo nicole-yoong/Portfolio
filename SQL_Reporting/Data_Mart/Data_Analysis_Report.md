@@ -258,4 +258,55 @@ from cte2
 
 The sales has dropped even more to  a negative 8.96%! 
 
-### How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019? ### 
+### How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019? ###
+```sql
+with cte as
+(
+select week_date, sum(sales) as Total_Sales
+from #clean_weekly_sales
+where (week_date <= '2020-07-13' and week_date >= '2020-05-18') or
+(week_date <= '2019-07-13' and week_date >= '2019-05-18') or
+(week_date <= '2018-07-13' and week_date >= '2018-05-18')
+group by week_date
+),
+cte2 as
+(
+select 
+sum(case when datepart(year, week_date) = '2020' then total_sales end) as Sales_2020, 
+sum(case when datepart(year, week_date) = '2019' then total_sales end) as Sales_2019,
+sum(case when datepart(year, week_date) = '2018' then total_sales end) as Sales_2018
+from cte
+)
+select sales_2020, sales_2019, sales_2018,
+((sales_2020 - sales_2019) * 100.0 / sales_2020) as Changes_2020,
+((sales_2019 - sales_2018) * 100.0 / sales_2020) as Changes_2019
+from cte2
+```
+![image](https://user-images.githubusercontent.com/77920592/197380153-32e9b04c-be4e-49ba-810b-c7e297bfbc06.png)
+
+
+
+```sql
+with cte as
+(
+select week_date, sum(sales) as Total_Sales
+from #clean_weekly_sales
+where (week_date <= '2020-09-07' and week_date >= '2020-03-23') or
+(week_date <= '2019-09-07' and week_date >= '2019-03-23') or
+(week_date <= '2018-09-07' and week_date >= '2018-03-23')
+group by week_date
+),
+cte2 as
+(
+select 
+sum(case when datepart(year, week_date) = '2020' then total_sales end) as Sales_2020, 
+sum(case when datepart(year, week_date) = '2019' then total_sales end) as Sales_2019,
+sum(case when datepart(year, week_date) = '2018' then total_sales end) as Sales_2018
+from cte
+)
+select sales_2020, sales_2019, sales_2018,
+((sales_2020 - sales_2019) * 100.0 / sales_2020) as Changes_2020,
+((sales_2019 - sales_2018) * 100.0 / sales_2020) as Changes_2019
+from cte2
+```
+![image](https://user-images.githubusercontent.com/77920592/197380270-7342b58f-ab57-41ac-8a8d-e3dc4873c5ff.png)
