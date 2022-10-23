@@ -290,6 +290,9 @@ from cte2;
 ```
 ![image](https://user-images.githubusercontent.com/77920592/197381957-5c6bf039-ed18-4c98-8029-71f960a4c210.png)
 
+Consistent sales increase can be observed in year 2018 and 2019, but not after the new packaging was introduced in 2020 where the sales dropped by around 0.20%
+
+
 ```sql
 select distinct week_number
 from #clean_weekly_sales
@@ -316,3 +319,5 @@ from cte2;
 ```
 
 ![image](https://user-images.githubusercontent.com/77920592/197382001-5d980420-cad3-40be-ac64-b109fd1ef3f3.png)
+
+Looking at a longer 12-weeks period, the sales increase is the most siginificant in year 2018. We can observe a significant decline in sales in 2020 where the sales dropped by 0.66%. The management would need to ponder the reasons behind the annual sales decline, is there any detrimental causes other than teh introduction of new packaging. 
