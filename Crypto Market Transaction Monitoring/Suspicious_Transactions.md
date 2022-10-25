@@ -20,4 +20,25 @@ The result should return the following:
 - transactions_sum: sum of transaction amounts in the sequence to 6 places after the decimal
 
 ```sql
+with cte2 as(
+select dt, sender, amount, 
+datediff(minute, lag(dt) over(order by sender, dt), dt) as Interval,
+row_number() over(order by sender, dt) as rownumber
+from transact),
+
+cte3  as(
+select * from cte2
+where rownumber in (select rownumber from cte2 where abs(interval)< 60)
+),
+
+cte4 as(
+select * from cte2 where rownumber in (select rownumber from cte3
+union select rownumber - 1 as rownumber from cte3)
+)
+select sender, min(dt) as sequence_start, 
+max(dt) as sequence_end, count(rownumber) as transaction_count,
+sum(amount) as transaction_sum
+from cte4
+group by sender
+having sum(amount) >= 150
 ```
