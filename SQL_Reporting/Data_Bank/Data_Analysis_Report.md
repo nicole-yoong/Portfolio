@@ -11,7 +11,8 @@ This case study is all about calculating metrics, growth and helping the busines
 The following case study questions include some general data exploration analysis for the nodes and transactions before diving right into the core business questions and finishes with a challenging final request!
 
 ## A. Customer Nodes Exploration ##
-How many unique nodes are there on the Data Bank system?
+
+### How many unique nodes are there on the Data Bank system? ###
 
 ```sql
 select count(distinct node_id) from customer_nodes
@@ -74,7 +75,7 @@ group by customer_id
 select avg(TotalCount), avg(TotalAmount) as AvgTotalAmount
 from cte 
 ```
-![image](https://user-images.githubusercontent.com/77920592/196947051-1b2bc3f3-4c33-4d43-b179-46f042f70227.png)
+![image](https://user-images.githubusercontent.com/77920592/197758519-ced24d10-1b84-413b-9173-04ff592b773a.png)
 
 ### For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month? ###
 ```sql
@@ -98,65 +99,20 @@ group by month;
 ```sql
 with cte as
 (
-select customer_id, datepart(month, txn_date) as Closing_month, txn_date,
-(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as TotalAmount
+select customer_id, datepart(month, txn_date) as Closing_month, 
+sum(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as NetAmount
 from customer_transactions 
-),
-cte2 as
-(
-select customer_id, closing_month, txn_date, TotalAmount,
-sum(TotalAmount) over(partition by customer_id, closing_month order by txn_date asc rows between unbounded preceding and current row) as Closing_balance,
-rank() over(partition by customer_id, closing_month order by txn_date desc) as Rank
-from cte
+group by customer_id, datepart(month, txn_date)
 )
-select customer_id, closing_month, closing_balance
-from cte2
-where rank = 1
-order by customer_id;
+select customer_id, closing_month, NetAmount,
+sum(NetAmount) over(partition by customer_id order by closing_month asc rows between unbounded preceding and current row) as Closing_balance
+from cte
+group by customer_id, closing_month, NetAmount
 ```
-![image](https://user-images.githubusercontent.com/77920592/196954720-faca7d14-c37f-4cc0-804c-082ce0404e91.png)
+![image](https://user-images.githubusercontent.com/77920592/197763687-6516ce5e-50fb-4344-9f6b-f3eed7afa14f.png)
 
-### What is the percentage of customers who increase their closing balance by more than 5%? ###
+### What percentage of customers increase their opening month’s positive closing balance by more than 5% in the following month ###
 ```sql
-with cte as
-(
-select customer_id, datepart(month, txn_date) as Closing_month, txn_date,
-(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as TotalAmount
-from customer_transactions 
-),
-cte2 as
-(
-select customer_id, closing_month, txn_date, TotalAmount,
-sum(TotalAmount) over(partition by customer_id, closing_month order by txn_date asc rows between unbounded preceding and current row) as Closing_balance,
-rank() over(partition by customer_id, closing_month order by txn_date desc) as Rank
-from cte
-),
-cte3 as
-(
-select customer_id, closing_month, closing_balance, lag(closing_balance, 1, 0) over(partition by customer_id order by closing_month asc) as previous_closing_balance
-from cte2
-where rank = 1
-),
-cte4 as 
-(
-select customer_id, closing_month, closing_balance, previous_closing_balance, round(((closing_balance*1.0 - previous_closing_balance) / closing_balance),2) as percentage_change
-from cte3
-)
-select count(distinct customer_id) as Count from cte4
-where percentage_change >= 5
+
 ```
-![image](https://user-images.githubusercontent.com/77920592/196961488-55479fc4-6015-49fe-a3ee-4ea6a68cdc5d.png)
 
-## C. Data Allocation Challenge ##
-
-To test out a few different hypotheses - the Data Bank team wants to run an experiment where different groups of customers would be allocated data using 3 different options:
-
-Option 1: data is allocated based off the amount of money at the end of the previous month
-Option 2: data is allocated on the average amount of money kept in the account in the previous 30 days
-Option 3: data is updated real-time
-For this multi-part challenge question - you have been requested to generate the following data elements to help the Data Bank team estimate how much data will need to be provisioned for each option:
-- running customer balance column that includes the impact each transaction
-- customer balance at the end of each month
-- minimum, average and maximum values of the running balance for each customer
-
-Using all of the data available - how much data would have been required for each option on a monthly basis?
