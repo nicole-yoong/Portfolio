@@ -113,13 +113,49 @@ group by customer_id, closing_month, NetAmount
 
 ### What percentage of customers have a negative first month balance? ###
 ```sql
-
+with cte as
+(
+select customer_id, datepart(month, txn_date) as Closing_month, 
+sum(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as NetAmount
+from customer_transactions 
+group by customer_id, datepart(month, txn_date)
+),
+cte2 as
+(
+select customer_id, closing_month, NetAmount,
+sum(NetAmount) over(partition by customer_id order by closing_month asc rows between unbounded preceding and current row) as Closing_balance,
+row_number() over(partition by customer_id order by closing_month asc) as rn
+from cte
+group by customer_id, closing_month, NetAmount
+)
+select round(count(*)*100.0/(select count(distinct customer_id) from customer_transactions),2) as Percentage 
+from cte2
+where closing_balance < 0 and rn = 1
 ```
+![image](https://user-images.githubusercontent.com/77920592/198001241-4eba2339-b290-41a8-bdd8-b0908107a372.png)
 
 ### What percentage of customers have a positive first month balance? ###
 ```sql
-
+with cte as
+(
+select customer_id, datepart(month, txn_date) as Closing_month, 
+sum(case when txn_type = 'deposit' then +txn_amount else -txn_amount end) as NetAmount
+from customer_transactions 
+group by customer_id, datepart(month, txn_date)
+),
+cte2 as
+(
+select customer_id, closing_month, NetAmount,
+sum(NetAmount) over(partition by customer_id order by closing_month asc rows between unbounded preceding and current row) as Closing_balance,
+row_number() over(partition by customer_id order by closing_month asc) as rn
+from cte
+group by customer_id, closing_month, NetAmount
+)
+select round(count(*)*100.0/(select count(distinct customer_id) from customer_transactions),2) as Percentage 
+from cte2
+where closing_balance > 0 and rn = 1
 ```
+![image](https://user-images.githubusercontent.com/77920592/198001365-20380f21-5ef9-4151-95bb-3f8b987bf9da.png)
 
 ### What percentage of customers increase their opening month’s positive closing balance by more than 5% in the following month ###
 ```sql
