@@ -156,13 +156,3 @@ from cte2
 where closing_balance > 0 and rn = 1
 ```
 ![image](https://user-images.githubusercontent.com/77920592/198001365-20380f21-5ef9-4151-95bb-3f8b987bf9da.png)
-
-### What percentage of customers increase their opening month’s positive closing balance by more than 5% in the following month ###
-```sql
-
-```
-
-### What percentage of customers increase their opening month’s negative closing balance by more than 5% in the following month ###
-```sql
-
-```
