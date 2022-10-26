@@ -111,8 +111,22 @@ group by customer_id, closing_month, NetAmount
 ```
 ![image](https://user-images.githubusercontent.com/77920592/197763687-6516ce5e-50fb-4344-9f6b-f3eed7afa14f.png)
 
+### What percentage of customers have a negative first month balance? ###
+```sql
+
+```
+
+### What percentage of customers have a positive first month balance? ###
+```sql
+
+```
+
 ### What percentage of customers increase their opening month’s positive closing balance by more than 5% in the following month ###
 ```sql
 
 ```
 
+### What percentage of customers increase their opening month’s negative closing balance by more than 5% in the following month ###
+```sql
+
+```
