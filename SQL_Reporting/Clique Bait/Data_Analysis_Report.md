@@ -91,7 +91,7 @@ group by ph.product_category
 
 ## B. Product Funnel Analysis ##
 
-Using a single SQL query - create a new output table which has the following details:
+### Using a single SQL query - create a new output table which has the following details: ###
 
 How many times was each product viewed?
 
@@ -100,6 +100,37 @@ How many times was each product added to cart?
 How many times was each product added to a cart but not purchased (abandoned)?
 
 How many times was each product purchased?
+
+```sql
+with cte as(
+select e.visit_id, page_name,
+sum(case when event_type = 1 then 1 else 0 end) as PageViews,
+sum(case when event_type = 2 then 1 else 0 end) as CartsAdd
+from events e join page_hierarchy ph
+on e.page_id = ph.page_id
+where product_category is not null
+group by e.visit_id, page_name),
+
+cte2 as(
+select distinct(visit_id) as Purchaseid
+from events where event_type = 3),
+
+cte3 as(
+select *, 
+(case when purchaseid is not null then 1 else 0 end) as Purchase
+from cte left join cte2
+on visit_id = purchaseid)
+
+
+select page_name, sum(pageviews) as PageViews, sum(cartsadd) as CartsAdd, 
+sum(case when cartsadd = 1 and purchase = 0 then 1 else 0
+	end) as CartsAddNotPurchase,
+sum(case when cartsadd = 1 and purchase = 1 then 1 else 0
+	end) as CartsAddPurchase
+from cte3
+group by page_name
+```
+![image](https://user-images.githubusercontent.com/77920592/198271139-904b1a83-9938-4182-96c1-afc970cc54c2.png)
 
 Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products.
 
