@@ -6,23 +6,88 @@ In this case study - you are required to support Danny’s vision and analyse hi
 
 ## A. Digital Analysis ##
 
-How many users are there?
+### How many users are there? ###
+```sql
+select count(distinct user_id) as Count from users
+```
+![image](https://user-images.githubusercontent.com/77920592/198260869-b185a4c1-52c0-41a0-addc-ef59452e977a.png)
 
-How many cookies does each user have on average?
+### How many cookies does each user have on average? ###
+```sql
+with cte as
+(
+select count(distinct user_id) as CountUser,
+count(cookie_id) as CountCookie
+from users)
+select round((countcookie / countuser),0) as AvgCookie from cte
+```
+![image](https://user-images.githubusercontent.com/77920592/198260944-a8404f58-49ae-41bc-beec-712a18bd2149.png)
 
-What is the unique number of visits by all users per month?
+### What is the unique number of visits by all users per month? ###
+```sql
+select datepart(month, event_time) as month,
+count (distinct visit_id) as Count from events
+group by datepart(month, event_time)
+order by datepart(month, event_time)
+```
+![image](https://user-images.githubusercontent.com/77920592/198261259-132601cb-9300-40e8-b8e0-f2fad038f7fb.png)
 
-What is the number of events for each event type?
+### What is the number of events for each event type? ###
+```sql
+select e.event_type, ei.event_name, count(*) as Count from events e 
+join event_identifier ei on e.event_type = ei.event_type
+group by e.event_type, ei.event_name
+order by e.event_type
+```
+![image](https://user-images.githubusercontent.com/77920592/198261315-02576abd-124f-44bc-af75-f8e48e3a26de.png)
 
-What is the percentage of visits which have a purchase event?
+### What is the percentage of visits which have a purchase event? ###
+```sql
+select 
+round(count(distinct visit_id)*100.0/(select count(distinct visit_id) from events),2) as percentage
+from events e 
+join event_identifier ei on e.event_type = ei.event_type
+where e.event_type = 3
+```
+![image](https://user-images.githubusercontent.com/77920592/198261415-3c14f919-4b59-4543-b2f7-768caec82fc2.png)
 
-What is the percentage of visits which view the checkout page but do not have a purchase event?
+### What is the percentage of visits which view the checkout page but do not have a purchase event? ###
+```sql
+with cte as
+(
+select visit_id,
+max(case when event_type <> 3 and page_id = 12 then 1 else 0 end) as checkout,
+max(case when event_type = 3 then 1 else 0 end) as purchase
+from events
+group by visit_id
+)
+select sum(checkout) as Sum_checkout, sum(purchase) as Sum_purchase,
+1 - (sum(purchase)*1.0/sum(checkout)) as Percentage
+from cte
+```
+![image](https://user-images.githubusercontent.com/77920592/198261639-de9ae7cd-707b-497b-95de-6e67777bb096.png)
 
-What are the top 3 pages by number of views?
+### What are the top 3 pages by number of views? ###
+```sql
+select top 3 e.page_id, page_name, count(*) as Count
+from events e join page_hierarchy ph
+on e.page_id = ph.page_id
+group by e.page_id, page_name
+order by count(*) desc 
+```
+![image](https://user-images.githubusercontent.com/77920592/198261714-68c5b154-a636-4945-91c1-fddf478281ed.png)
 
-What is the number of views and cart adds for each product category?
-
-What are the top 3 products by purchases?
+### What is the number of views and cart adds for each product category? ###
+```sql
+select ph.product_category, 
+sum(case when event_type = 1 then 1 else 0 end) as NumberofViews,
+sum(case when event_type = 2 then 1 else 0 end) as CartAdds
+from events e join page_hierarchy ph
+on e.page_id = ph.page_id
+where product_category <> 'null'
+group by ph.product_category
+```
+![image](https://user-images.githubusercontent.com/77920592/198261797-7dc99c66-091c-4d6e-8474-825141f07c96.png)
 
 ## B. Product Funnel Analysis ##
 
