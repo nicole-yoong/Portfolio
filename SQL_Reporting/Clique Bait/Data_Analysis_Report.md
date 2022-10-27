@@ -231,7 +231,7 @@ from #individual_pf
 
 ## C. Campaigns Analysis ##
 
-Generate a table that has 1 single row for every unique visit_id record and has the following columns:
+### Generate a table that has 1 single row for every unique visit_id record and has the following columns: ###
 
 - user_id
 - visit_id
@@ -243,11 +243,25 @@ Generate a table that has 1 single row for every unique visit_id record and has 
 - impression: count of ad impressions for each visit
 - click: count of ad clicks for each visit
 - (Optional column) cart_products: a comma separated text value with products added to the cart sorted by the order they were added to the cart (hint: use the sequence_number)
-Use the subsequent dataset to generate at least 5 insights for the Clique Bait team - bonus: prepare a single A4 infographic that the team can use for their management reporting sessions, be sure to emphasise the most important points from your findings.
-
-Some ideas you might want to investigate further include:
-
-- Identifying users who have received impressions during each campaign period and comparing each metric with other users who did not have an impression event
-- Does clicking on an impression lead to higher purchase rates?
-- What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
-- What metrics can you use to quantify the success or failure of each campaign compared to eachother?
+```sql
+select distinct user_id, visit_id, min(event_time) as start_time,
+sum(case when event_type = 1 then 1 else 0 end) as page_views,
+sum(case when event_type = 2 then 1 else 0 end) as cart_adds,
+sum(case when event_type = 3 then 1 else 0 end) as purchase,
+sum(case when event_type = 4 then 1 else 0 end) as impressions,
+sum(case when event_type = 5 then 1 else 0 end) as click,
+case
+when min(event_time) > '2020-01-01 00:00:00' and min(event_time) < '2020-01-14 00:00:00'
+		then 'BOGOF - Fishing For Compliments'
+when min(event_time) > '2020-01-15 00:00:00' and min(event_time) < '2020-01-28 00:00:00'
+		then '25% Off - Living The Lux Life'
+when min(event_time) > '2020-02-01 00:00:00' and min(event_time) < '2020-03-31 00:00:00'
+		then 'Half Off - Treat Your Shellf(ish)' 
+else NULL
+end as Campaign,
+string_agg(case when product_id IS NOT NULL AND event_type = 2 
+			then page_name ELSE NULL END, ', ') AS cart_products
+from events e join users u on e.cookie_id = u.cookie_id
+join page_hierarchy ph on e.page_id = ph.page_id
+group by visit_id, user_id
+order by user_id
