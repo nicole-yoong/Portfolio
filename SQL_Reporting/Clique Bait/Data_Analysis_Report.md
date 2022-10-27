@@ -132,19 +132,59 @@ group by page_name
 ```
 ![image](https://user-images.githubusercontent.com/77920592/198271139-904b1a83-9938-4182-96c1-afc970cc54c2.png)
 
-Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products.
+### Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products. ###
+```sql
+with cte as(
+select e.visit_id, page_name, product_category,
+sum(case when event_type = 1 then 1 else 0 end) as PageViews,
+sum(case when event_type = 2 then 1 else 0 end) as CartsAdd
+from events e join page_hierarchy ph
+on e.page_id = ph.page_id
+where product_category is not null
+group by e.visit_id, product_category, page_name),
+
+cte2 as(
+select distinct(visit_id) as Purchaseid
+from events where event_type = 3),
+
+cte3 as(
+select *, 
+(case when purchaseid is not null then 1 else 0 end) as Purchase
+from cte left join cte2
+on visit_id = purchaseid)
+
+
+select product_category, sum(pageviews) as PageViews, sum(cartsadd) as CartsAdd, 
+sum(case when cartsadd = 1 and purchase = 0 then 1 else 0
+	end) as CartsAddNotPurchase,
+sum(case when cartsadd = 1 and purchase = 1 then 1 else 0
+	end) as CartsAddPurchase
+from cte3
+group by product_category
+```
+![image](https://user-images.githubusercontent.com/77920592/198273216-d09d07e9-fe45-4cef-a12c-00d461a7581e.png)
 
 Use your 2 new output tables - answer the following questions:
 
-Which product had the most views, cart adds and purchases?
+### Which product had the most views, cart adds and purchases? ###
 
-Which product was most likely to be abandoned?
+Most views: Oyster
 
-Which product had the highest view to purchase percentage?
+Most cart adds: Lobster
 
-What is the average conversion rate from view to cart add?
+Most purchases: Lobster
 
-What is the average conversion rate from cart add to purchase?
+### Which product was most likely to be abandoned? ###
+Russian Caviar
+
+### Which product had the highest view to purchase percentage? ###
+
+
+### What is the average conversion rate from view to cart add? ###
+
+
+### What is the average conversion rate from cart add to purchase? ###
+
 
 ## C. Campaigns Analysis ##
 
