@@ -102,6 +102,15 @@ How many times was each product added to a cart but not purchased (abandoned)?
 How many times was each product purchased?
 
 ```sql
+create table #individual_pf
+(
+page_name varchar(50),
+pageviews int,
+cartsadd int,
+cartsaddnotpurchase int,
+cartsaddpurchase int
+)
+
 with cte as(
 select e.visit_id, page_name,
 sum(case when event_type = 1 then 1 else 0 end) as PageViews,
@@ -119,21 +128,36 @@ cte3 as(
 select *, 
 (case when purchaseid is not null then 1 else 0 end) as Purchase
 from cte left join cte2
-on visit_id = purchaseid)
+on visit_id = purchaseid),
 
-
+cte4 as(
 select page_name, sum(pageviews) as PageViews, sum(cartsadd) as CartsAdd, 
 sum(case when cartsadd = 1 and purchase = 0 then 1 else 0
 	end) as CartsAddNotPurchase,
 sum(case when cartsadd = 1 and purchase = 1 then 1 else 0
 	end) as CartsAddPurchase
 from cte3
-group by page_name
+group by page_name)
+
+insert into #individual_pf (page_name, pageviews, cartsadd, cartsaddnotpurchase, cartsaddpurchase)
+select page_name, pageviews, cartsadd, cartsaddnotpurchase, cartsaddpurchase
+from cte4
+
+select * from #individual_pf
 ```
 ![image](https://user-images.githubusercontent.com/77920592/198271139-904b1a83-9938-4182-96c1-afc970cc54c2.png)
 
 ### Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products. ###
 ```sql
+create table #category_pf
+(
+product_category varchar(50),
+pageviews int,
+cartsadd int,
+cartsaddnotpurchase int,
+cartsaddpurchase int
+)
+
 with cte as(
 select e.visit_id, page_name, product_category,
 sum(case when event_type = 1 then 1 else 0 end) as PageViews,
@@ -151,16 +175,22 @@ cte3 as(
 select *, 
 (case when purchaseid is not null then 1 else 0 end) as Purchase
 from cte left join cte2
-on visit_id = purchaseid)
+on visit_id = purchaseid),
 
-
+cte4 as(
 select product_category, sum(pageviews) as PageViews, sum(cartsadd) as CartsAdd, 
 sum(case when cartsadd = 1 and purchase = 0 then 1 else 0
 	end) as CartsAddNotPurchase,
 sum(case when cartsadd = 1 and purchase = 1 then 1 else 0
 	end) as CartsAddPurchase
 from cte3
-group by product_category
+group by product_category)
+
+insert into #category_pf (product_category, pageviews, cartsadd, cartsaddnotpurchase, cartsaddpurchase)
+select product_category, pageviews, cartsadd, cartsaddnotpurchase, cartsaddpurchase
+from cte4
+
+select * from #category_pf
 ```
 ![image](https://user-images.githubusercontent.com/77920592/198273216-d09d07e9-fe45-4cef-a12c-00d461a7581e.png)
 
