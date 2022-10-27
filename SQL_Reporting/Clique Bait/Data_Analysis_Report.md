@@ -208,13 +208,26 @@ Most purchases: Lobster
 Russian Caviar
 
 ### Which product had the highest view to purchase percentage? ###
-
+```sql
+select page_name, round(cartsaddpurchase * 100.0/pageviews,2) as ViewtoPurchase
+from #individual_pf
+order by round(cartsaddpurchase * 100.0/pageviews,2) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/198313810-c8d48261-5a5c-4503-aa84-ac7a03706a73.png)
 
 ### What is the average conversion rate from view to cart add? ###
-
+```sql
+select avg(round(cartsadd * 100.0/ pageviews,2)) as ConversionRate
+from #individual_pf
+```
+![image](https://user-images.githubusercontent.com/77920592/198313897-849c7335-fed4-4530-b888-a839405b56d3.png)
 
 ### What is the average conversion rate from cart add to purchase? ###
-
+```sql
+select avg(round(cartsaddpurchase * 100.0/ cartsadd,2)) as ConversionRate
+from #individual_pf
+```
+![image](https://user-images.githubusercontent.com/77920592/198313979-023d3350-e30b-49a0-b2d7-27c46ab9cabf.png)
 
 ## C. Campaigns Analysis ##
 
