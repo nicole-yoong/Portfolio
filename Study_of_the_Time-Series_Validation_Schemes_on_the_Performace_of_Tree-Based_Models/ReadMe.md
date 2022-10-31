@@ -1,4 +1,6 @@
 # Study of the Time-series Validation Schemes on The Performance of Tree-based Models #
+![image](https://user-images.githubusercontent.com/77920592/199011695-1d084642-d662-4324-ba47-d67f5e528787.png)
+
 
 ## Introduction ##
 With respect to time-series stock price prediction, cross-validation (CV) is an essential statistical method to evaluate the performance of machine learning models. 
