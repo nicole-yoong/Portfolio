@@ -265,3 +265,4 @@ from events e join users u on e.cookie_id = u.cookie_id
 join page_hierarchy ph on e.page_id = ph.page_id
 group by visit_id, user_id
 order by user_id
+![image](https://user-images.githubusercontent.com/77920592/198987379-19f9de53-5708-4500-9a0e-79f3ff0b3dd8.png)
