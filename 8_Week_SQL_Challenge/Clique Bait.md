@@ -1,3 +1,7 @@
+# Case Study #6 - Clique Bait #
+
+![image](https://user-images.githubusercontent.com/77920592/199336817-b98b58f0-9142-427f-97ba-0faa30926224.png)
+
 # Introduction #
 
 Clique Bait is not like your regular online seafood store - the founder and CEO Danny, was also a part of a digital data analytics team and wanted to expand his knowledge into the seafood industry!
