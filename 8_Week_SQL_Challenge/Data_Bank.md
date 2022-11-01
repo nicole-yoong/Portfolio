@@ -1,4 +1,9 @@
+# Case Study #4 - Data Bank #
+
+![image](https://user-images.githubusercontent.com/77920592/199336948-204f4345-718a-4931-b65f-94b76c2e3762.png)
+
 # Introduction #
+
 There is a new innovation in the financial industry called Neo-Banks: new aged digital only banks without physical branches.
 Danny thought that there should be some sort of intersection between these new age banks, cryptocurrency and the data world…so he decides to launch a new initiative - Data Bank!
 Data Bank runs just like any other digital bank - but it isn’t only for banking activities, they also have the world’s most secure distributed data storage platform!
@@ -8,6 +13,7 @@ This case study is all about calculating metrics, growth and helping the busines
 
 
 # Case Study Questions #
+
 The following case study questions include some general data exploration analysis for the nodes and transactions before diving right into the core business questions and finishes with a challenging final request!
 
 ## A. Customer Nodes Exploration ##
