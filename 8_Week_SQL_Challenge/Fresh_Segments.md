@@ -21,7 +21,30 @@ Most questions can be answered using a single query however some questions are m
 ## Data Exploration and Cleansing ##
 
 ### Update the fresh_segments.interest_metrics table by modifying the month_year column to be a date data type with the start of the month ###
+```sql
+select cast(_year + '-' + _month + '-01' as date) as month_year
+from interest_metrics
+where month_year <> 'null'
+
+alter table interest_metrics
+add _month_year date null;
+
+update interest_metrics
+set _month_year = cast(_year + '-' + _month + '-01' as date)
+where month_year <> 'null';
+
+alter table interest_metrics
+drop column month_year;
+```
+
 ### What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?  ###
+```sql
+select _month_year, count(*) as Count
+from interest_metrics
+group by _month_year
+order by _month_year asc
+```
+
 ### What do you think we should do with these null values in the fresh_segments.interest_metrics  ###
 ### How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?  ###
 ### Summarise the id values in the fresh_segments.interest_map by its total record count in this table  ###
