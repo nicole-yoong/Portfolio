@@ -301,20 +301,6 @@ order by count desc
 ```
 ![image](https://user-images.githubusercontent.com/77920592/199333904-d5a3f64d-b514-4248-90fa-8b21bdb5f20b.png)
 
-### Generate an order item for each record in the customers_orders table in the format of one of the following: ###
-- Meat Lovers
-- Meat Lovers - Exclude Beef
-- Meat Lovers - Extra Bacon
-- Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
-### Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients  ###
-- For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
-- 
-### What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first? ###
-```sql
-
-```
-
-
 ## D. Pricing and Ratings ##
 ### If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?  ###
 ```sql
@@ -338,16 +324,27 @@ from cte
 declare @basecost int
 set @basecost = 138;
 select 
-@basecost + sum(case when extras like '%1' then + 1 else 0 end) as TotalCost
+@basecost + sum(case when extras like '1%' or extras like '1' then + 1 else 0 end) as TotalCost
 from #customer_orders co join #runner_orders ro
 on co.order_id = ro.order_id
 where cancellation is null
 ```
+![image](https://user-images.githubusercontent.com/77920592/199334572-90d6836a-2976-4b8d-a7f7-c8420a6fd581.png)
 
 ### The Pizza Runner team now wants to add an additional ratings system that allows customers to rate their runner, how would you design an additional table for this new dataset - generate a schema for this new table and insert your own data for ratings for each successful customer order between 1 to 5.  ###
 ```sql
+create table #rating_system
+(
+order_id int,
+runner_id int,
+rating int
+);
 
+insert into #rating_system
+values 
+(1,1,5), (2,1,4), (3,1,2), (4,2,3), (5,3,5), (7,2,1), (8,2,3), (10,1,4);
 ```
+![image](https://user-images.githubusercontent.com/77920592/199334642-28cfb061-d90a-4c28-97a0-efe86d1fed17.png)
 
 ### Using your newly generated table - can you join all of the information together to form a table which has the following information for successful deliveries?  ###
 - customer_id
@@ -360,12 +357,30 @@ where cancellation is null
 - Delivery duration
 - Average speed
 - Total number of pizzas
-```sql
 
+```sql
+select co.customer_id, co.order_id, ro.runner_id, rating, order_time, pickup_time,
+datediff(minute, order_time, pickup_time) as pickup_duration,
+duration as delivery_duration, 
+round((distance/duration*60),2) as speed,
+count(pizza_id) as total_pizzas
+from #customer_orders co join #runner_orders ro
+on co.order_id = ro.order_id
+join #rating_system rs on co.order_id = rs.order_id
+where cancellation is null
+group by co.customer_id, co.order_id, ro.runner_id, rating, 
+order_time, pickup_time, duration, distance
 ```
+![image](https://user-images.githubusercontent.com/77920592/199334749-6cfa1e30-7208-468d-932e-86ea3d80e5ea.png)
 
 ### If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries? ###
 ```sql
-
+declare @basecost int
+set @basecost = 138;
+select @basecost - 
+sum (case when distance is not null then distance*0.30 else null end) as Delivery_Charges
+from #runner_orders ro
+where cancellation is null
 ```
+![image](https://user-images.githubusercontent.com/77920592/199334822-bb3dd07a-badd-4989-8312-1ea2e628b8e4.png)
 
