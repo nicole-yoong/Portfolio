@@ -44,36 +44,131 @@ from interest_metrics
 group by _month_year
 order by _month_year asc
 ```
+![image](https://user-images.githubusercontent.com/77920592/199477446-0b2abf2b-cef3-498f-ac33-ab69bea81d4c.png)
 
 ### What do you think we should do with these null values in the fresh_segments.interest_metrics  ###
+
+Drop the rows with null interest_id as the information is not useful. 
+```sql
+delete from interest_metrics
+where interest_id  = 'null';
+```
+
 ### How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?  ###
+```sql
+select count(distinct interest_id) as Count
+from interest_metrics
+where not exists 
+(select id from interest_map where id = interest_id)
+```
+![image](https://user-images.githubusercontent.com/77920592/199477600-8ee634c8-dd2f-49dd-8afd-7f74a42d74d0.png)
+
+```sql
+select count(distinct id) as Count
+from interest_map
+where not exists 
+(select interest_id from interest_metrics where id = interest_id)
+```
+![image](https://user-images.githubusercontent.com/77920592/199477691-305de677-1d40-4788-be02-3b62c7a8533f.png)
+
 ### Summarise the id values in the fresh_segments.interest_map by its total record count in this table  ###
+```sql
+select id, interest_name, count(*) as Count
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+group by id, interest_name
+order by count desc
+```
+![image](https://user-images.githubusercontent.com/77920592/199477742-e108cbdd-ac89-493b-8c61-ec286751a905.png)
+
 ### What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246 in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map except from the id column.  ###
+
+Inner join
+
+```sql
+select _month, _year, interest_id, composition, index_value, ranking, percentile_ranking,
+_month_year, interest_name, interest_summary, created_at, last_modified
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+where interest_id = 21246
+```
+![image](https://user-images.githubusercontent.com/77920592/199477851-fd4dc65d-69f2-4fbf-ba28-53804298b597.png)
+
 ### Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?  ###
+
+Make sense because they are of same month and we have set the start date of each _month_year to the first day.
+
+```sql
+select count(*) as Count
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+where _month_year < created_at
+```
+![image](https://user-images.githubusercontent.com/77920592/199478069-298d01b5-d5b1-4c1c-b362-d36f88653788.png)
+
+```sql
+select id, interest_name, _month_year, created_at
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+where _month_year < created_at
+```
+![image](https://user-images.githubusercontent.com/77920592/199478172-eb905243-e884-44c7-856d-675f6526f06c.png)
 
 ## Interest Analysis ##
 
 ### Which interests have been present in all month_year dates in our dataset?  ###
+```sql
+select count(distinct _month_year) as Count_month,
+count (distinct interest_id) as Count_interestid
+from interest_metrics;
+```
+![image](https://user-images.githubusercontent.com/77920592/199478260-08bc131d-21e4-4fc9-a6b8-60f15b42ebf4.png)
+
+```sql
+with cte as
+(
+select interest_id, count(distinct _month_year) as Count_month
+from interest_metrics
+group by interest_id
+)
+
+select count(*) as Count from cte
+where count_month = 14
+```
+![image](https://user-images.githubusercontent.com/77920592/199478316-fa0b9c77-9ccf-4c3f-ba61-fb86a22b1520.png)
+
 ### Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which total_months value passes the 90% cumulative percentage value?  ###
+
 ### If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?  ###
+
 ### Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months present to a removed interest example for your arguments - think about what it means to have less months present from a segment perspective.  ###
+
 ### After removing these interests - how many unique interests are there for each month?  ###
 
 ## Segment Analysis ##
 
 ### Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year ###
+
 ### Which 5 interests had the lowest average ranking value? ###
+
 ### Which 5 interests had the largest standard deviation in their percentile_ranking value? ###
-### For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and its corresponding year_month value? Can you describe what is happening for these 5 interests?  ###
+
+### For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and its corresponding year_month value? Can you describe what is happening for these 5 interests? ###
+
 ### How would you describe our customers in this segment based off their composition and ranking values? What sort of products or services should we show to these customers and what should we avoid?  ###
 
 ## Index Analysis ##
+
 The index_value is a measure which can be used to reverse calculate the average composition for Fresh Segments’ clients.
 
 Average composition can be calculated by dividing the composition column by the index_value column rounded to 2 decimal places.
 
 ### What is the top 10 interests by the average composition for each month? ###
+
 ### For all of these top 10 interests - which interest appears the most often? ###
+
 ### What is the average of the average composition for the top 10 interests for each month? ###
+
 ### What is the 3 month rolling average of the max average composition value from September 2018 to August 2019 and include the previous top ranking interests in the same output shown below. ###
+
 ### Provide a possible reason why the max average composition might change from month to month? Could it signal something is not quite right with the overall business model for Fresh Segments? ###
