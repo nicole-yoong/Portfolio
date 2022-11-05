@@ -139,11 +139,95 @@ where count_month = 14
 
 ### Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which total_months value passes the 90% cumulative percentage value?  ###
 
+Interest below 6 months have a cumulative percentage of over 90%.
+
+```sql
+with cte as
+(
+select interest_id, count(distinct _month_year) as Count_month
+from interest_metrics
+group by interest_id
+),
+cte2 as 
+(
+select count_month, count(*) as Count from cte
+group by count_month
+)
+select count_month, count, 
+round(sum(count) over(order by count_month desc) * 100.0/ 
+sum(count) over (),2) as cumulative
+from cte2
+group by count_month, count
+```
+![image](https://user-images.githubusercontent.com/77920592/200117547-0d582416-10dc-4526-b3c5-2965fefa6c47.png)
+
 ### If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?  ###
+```sql
+with cte as
+(
+select interest_id, count(distinct _month_year) as Count_month
+from interest_metrics
+group by interest_id
+having count(distinct _month_year) < 6
+),
+cte2 as 
+(
+select count(interest_id) as count
+from interest_metrics
+where interest_id in (select interest_id from cte)
+)
+select count(interest_id) as original, 
+(select count from cte2) as to_remove, 
+count(interest_id) - (select count from cte2) as to_remain
+from interest_metrics
+```
+![image](https://user-images.githubusercontent.com/77920592/200117534-b06c6f8c-2afa-42b8-a2ec-8b02284222e1.png)
 
 ### Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months present to a removed interest example for your arguments - think about what it means to have less months present from a segment perspective.  ###
 
+It makes sense. The percentage of interest_id count to be removed is not that significant and it helps attract more customers. 
+
+```sql
+with cte as
+(
+select interest_id, count(distinct _month_year) as Count_month
+from interest_metrics
+group by interest_id
+having count(distinct _month_year) >= 6
+)
+select a._month_year, a.to_remain, b.to_remove, 
+round((to_remove*100.0/to_remain),2) as to_remove_pct
+from 
+	(select _month_year, count(interest_id) as to_remain 
+	from interest_metrics 
+	where interest_id in (select interest_id from cte)
+	group by _month_year) as a
+join
+	(select _month_year, count(interest_id) as to_remove 
+	from interest_metrics 
+	where interest_id not in (select interest_id from cte)
+	group by _month_year) as b
+on a._month_year = b._month_year
+order by a._month_year
+```
+![image](https://user-images.githubusercontent.com/77920592/200118229-d24040bd-207d-430e-bad2-a7f9eb6e5ead.png)
+
 ### After removing these interests - how many unique interests are there for each month?  ###
+```sql
+with cte as
+(
+select interest_id, count(distinct _month_year) as Count_month
+from interest_metrics
+group by interest_id
+having count(distinct _month_year) >= 6
+)
+select _month_year, count(distinct interest_id) as count
+from interest_metrics
+where interest_id in (select interest_id from cte)
+group by _month_year
+order by _month_year
+```
+![image](https://user-images.githubusercontent.com/77920592/200118321-c93c2a0e-817d-465a-b5f9-126779793f20.png)
 
 ## Segment Analysis ##
 
