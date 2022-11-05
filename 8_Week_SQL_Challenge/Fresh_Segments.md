@@ -233,13 +233,103 @@ order by _month_year
 
 ### Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year ###
 
+```sql
+with cte as
+(
+select interest_id, count(distinct _month_year) as Count_month
+from interest_metrics
+group by interest_id
+having count(distinct _month_year) >= 6
+)
+select * into #filtered_table
+from interest_metrics
+where interest_id in (select interest_id from cte);
+
+select * from #filtered_table;
+```
+![image](https://user-images.githubusercontent.com/77920592/200119992-ca53ebcd-a532-4baf-ac53-2749b0669817.png)
+
+```sql
+select top 10 _month_year, datepart(month, _month_year) as month, 
+interest_id, interest_name, round(max(composition),2) as MaxComp
+from #filtered_table ft join interest_map map
+on ft.interest_id = map.id
+group by _month_year, datepart(month, _month_year), interest_id, interest_name
+order by max(composition) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/200120029-10d9dd1b-df76-488c-b86f-8ba0f9b9472d.png)
+
+```sql
+select top 10 _month_year, datepart(month, _month_year) as month, 
+interest_id, interest_name, round(max(composition),2) as MaxComp
+from #filtered_table ft join interest_map map
+on ft.interest_id = map.id
+group by _month_year, datepart(month, _month_year), interest_id, interest_name
+order by max(composition) asc
+```
+![image](https://user-images.githubusercontent.com/77920592/200120090-0b3a1024-9474-4fcf-ab1c-d9808a273c55.png)
+
 ### Which 5 interests had the lowest average ranking value? ###
+```sql
+with cte as
+(
+select interest_id, interest_name, round(avg(ranking),2) as AvgRanking
+from #filtered_table ft join interest_map map
+on ft.interest_id = map.id
+group by interest_id, interest_name
+)
+select top 5 interest_id, interest_name, min(AvgRanking) as MinRanking
+from cte 
+group by interest_id, interest_name
+order by min(AvgRanking) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/200120105-b7208896-7306-4df5-96e7-8702dde1be96.png)
 
 ### Which 5 interests had the largest standard deviation in their percentile_ranking value? ###
+```sql
+select top 5 interest_id, interest_name, round(stdev(percentile_ranking),2) as Stdev_Perc
+from #filtered_table ft join interest_map map
+on ft.interest_id = map.id
+group by interest_id, interest_name
+order by stdev(percentile_ranking) desc
+```
+![image](https://user-images.githubusercontent.com/77920592/200120121-8734ee28-1b21-4d48-936e-d4d721dc0c35.png)
 
 ### For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and its corresponding year_month value? Can you describe what is happening for these 5 interests? ###
+```sql
+with cte as
+(
+select top 5 interest_id, interest_name, round(stdev(percentile_ranking),2) as Stdev_Perc
+from #filtered_table ft join interest_map map
+on ft.interest_id = map.id
+group by interest_id, interest_name
+order by stdev(percentile_ranking) desc
+),
+cte2 as 
+(
+select met._month_year, cte.interest_id, cte.interest_name, met.percentile_ranking,
+rank() over (partition by cte.interest_id, cte.interest_name 
+			 order by percentile_ranking asc) as Min_Perc_Rank, 
+rank() over (partition by cte.interest_id, cte.interest_name 
+			 order by percentile_ranking desc) as Max_Perc_Rank
+from cte join interest_metrics met
+on cte.interest_id = met.interest_id
+group by met._month_year, cte.interest_id, cte.interest_name, percentile_ranking
+)
+select cte2._month_year, cte2.interest_id, cte2.interest_name, cte2.percentile_ranking,
+Min_Perc_Rank, Max_Perc_Rank, Stdev_Perc
+from cte2 join cte on cte2.interest_id = cte.interest_id
+where Min_Perc_Rank = 1 or Max_Perc_Rank = 1
+group by cte2._month_year, cte2.interest_id, cte2.interest_name, 
+		 percentile_ranking, Min_Perc_Rank, Max_Perc_Rank, Stdev_Perc
+order by cte2.interest_id, cte2.interest_name
+```
+![image](https://user-images.githubusercontent.com/77920592/200120137-8c9f76fe-e720-44d3-a285-e002ee871d79.png)
 
 ### How would you describe our customers in this segment based off their composition and ranking values? What sort of products or services should we show to these customers and what should we avoid?  ###
+
+The composition values tell that majority of the customers might be adults with high interest in travelling based on the content Work Comes First Travelers. 
+Travelling content should be shown more to the customers while avoiding the sports and ganes related content. 
 
 ## Index Analysis ##
 
