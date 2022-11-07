@@ -338,11 +338,100 @@ The index_value is a measure which can be used to reverse calculate the average 
 Average composition can be calculated by dividing the composition column by the index_value column rounded to 2 decimal places.
 
 ### What is the top 10 interests by the average composition for each month? ###
+```sql
+with cte as
+(
+select _month_year, 
+interest_id, interest_name, round((composition/index_value),2) as AvgComp,
+rank() over (partition by _month_year 
+			 order by (composition/index_value) desc) as Rank
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+group by _month_year, interest_id, interest_name, composition, index_value
+)
+select * from cte
+where Rank <= 10 
+```
+![image](https://user-images.githubusercontent.com/77920592/200349206-c27cbb0b-8540-4df6-b3ee-80b359996c8b.png)
 
 ### For all of these top 10 interests - which interest appears the most often? ###
+```sql
+with cte as
+(
+select _month_year, 
+interest_id, interest_name, round((composition/index_value),2) as AvgComp,
+rank() over (partition by _month_year 
+			 order by (composition/index_value) desc) as Rank
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+group by _month_year, interest_id, interest_name, composition, index_value
+), 
+cte2 as
+(
+select * from cte
+where Rank <= 10 
+)
+select interest_id, interest_name, count(interest_name) as Count
+from cte2
+group by interest_id, interest_name
+order by count desc
+```
+![image](https://user-images.githubusercontent.com/77920592/200349150-14b1b07d-ccd8-46c9-9d1d-235c4bc3e2c2.png)
 
 ### What is the average of the average composition for the top 10 interests for each month? ###
+```sql
+with cte as
+(
+select _month_year, 
+interest_id, interest_name, round((composition/index_value),2) as AvgComp,
+row_number() over (partition by _month_year
+			 order by (composition/index_value) desc) as Rank
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+)
+select _month_year, round(avg(AvgComp),2) as AvgAvgComp from cte
+where Rank <= 10 
+group by _month_year
+order by _month_year
+```
+![image](https://user-images.githubusercontent.com/77920592/200349103-080b70e6-0d83-4c9c-84cf-1f7388a19106.png)
 
 ### What is the 3 month rolling average of the max average composition value from September 2018 to August 2019 and include the previous top ranking interests in the same output shown below. ###
+```sql
+with cte as
+(
+select _month_year,  
+interest_id, interest_name, round((composition/index_value),2) as AvgComp,
+row_number() over (partition by _month_year
+			 order by (composition/index_value) desc) as Rank
+from interest_metrics met join interest_map map
+on met.interest_id = map.id
+),
+cte2 as
+(
+select _month_year, interest_id, interest_name, AvgComp as MaxComp,
+round(avg(AvgComp) over(order by _month_year 
+						rows between 2 preceding and current row),2) as [3_mth_rolling]
+from cte
+where rank = 1 
+group by _month_year, interest_id, interest_name, AvgComp
+),
+cte3 as
+(
+select *, lag(interest_name, 1) over (order by _month_year) as [int_1_mth_ago],
+lag(interest_name, 2) over (order by _month_year) as [int_2_mth_ago],
+lag(MaxComp, 1) over (order by _month_year) as [1_mth_ago],
+lag(MaxComp, 2) over (order by _month_year) as [2_mth_ago]
+from cte2
+)
+select _month_year, interest_name, MaxComp, [3_mth_rolling],
+(int_1_mth_ago + ': ' + cast([1_mth_ago] as varchar)) AS [1_month_ago],
+(int_2_mth_ago + ': ' + cast([2_mth_ago] as varchar)) AS [2_month_ago]
+from cte3
+where _month_year >= '2018-09-01' and _month_year <= '2019-08-31'
+```
+![image](https://user-images.githubusercontent.com/77920592/200348935-6b4af03a-6ff0-4998-b5a9-c9b52ec6043a.png)
 
 ### Provide a possible reason why the max average composition might change from month to month? Could it signal something is not quite right with the overall business model for Fresh Segments? ###
+
+Change of the seasons might be the reasons behind the changing max average composition, proven by the highest interest in the travelling content, where periods before school holidays or any festive seasons might increase the average composition of travelling content significantly, while reducing the rest.  
