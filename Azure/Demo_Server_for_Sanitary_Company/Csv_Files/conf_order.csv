@@ -1,6 +1,0 @@
-order_id,quotation_number,emp_id,cus_id,int_id,comms,date_of_purchase,amount_purchase,payment_method,payment_cleared,special_note
-1,2021/409,2,1,1,0.02,2021-03-23,76516.9,Credit card,Yes,To be delivered by end of the month
-2,2021/786,5,2,5,0.02,2021-05-19,765,Credit card,Yes,None
-3,2021/1098,1,3,3,0.02,2021-08-16,1826.99,Credit card,Yes,None
-4,2021/877,1,4,8,0.02,2021-06-09,28371.23,Credit card,Yes,None
-5,2021/890,7,5,5,0.02,2021-07-20,299.9,Credit card,Yes,None
