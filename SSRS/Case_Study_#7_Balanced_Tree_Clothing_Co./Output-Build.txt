@@ -1,0 +1,7 @@
+﻿Build started...
+------ Build started: Project: Report_1, Configuration: Debug ------
+Skipping 'DataSource1.rds'. Item is up to date.
+Skipping 'Report1.rdl'. Item is up to date.
+Build complete -- 0 errors, 0 warnings
+========== Build: 1 succeeded or up-to-date, 0 failed, 0 skipped ==========
+========== Deploy: 0 succeeded, 1 failed, 0 skipped ==========
