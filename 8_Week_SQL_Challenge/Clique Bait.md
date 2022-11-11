@@ -247,7 +247,24 @@ from #individual_pf
 - impression: count of ad impressions for each visit
 - click: count of ad clicks for each visit
 - (Optional column) cart_products: a comma separated text value with products added to the cart sorted by the order they were added to the cart (hint: use the sequence_number)
+
 ```sql
+create table campaign_analysis
+(
+user_id int,
+visit_id varchar(20),
+start_time datetime2(3),
+page_views int,
+cart_adds int,
+purchase int,
+impressions int, 
+click int, 
+Campaign varchar(200),
+cart_products varchar(200)
+);
+
+with cte as
+(
 select distinct user_id, visit_id, min(event_time) as start_time,
 sum(case when event_type = 1 then 1 else 0 end) as page_views,
 sum(case when event_type = 2 then 1 else 0 end) as cart_adds,
@@ -268,7 +285,14 @@ string_agg(case when product_id IS NOT NULL AND event_type = 2
 from events e join users u on e.cookie_id = u.cookie_id
 join page_hierarchy ph on e.page_id = ph.page_id
 group by visit_id, user_id
-order by user_id
+)
+
+insert into campaign_analysis 
+(user_id, visit_id, start_time, page_views, cart_adds, purchase, impressions, click, Campaign, cart_products)
+select user_id, visit_id, start_time, page_views, cart_adds, purchase, impressions, click, Campaign, cart_products
+from cte;
+
+select * from campaign_analysis
 ```
 
 ![image](https://user-images.githubusercontent.com/77920592/198987379-19f9de53-5708-4500-9a0e-79f3ff0b3dd8.png)
