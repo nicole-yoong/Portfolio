@@ -296,3 +296,13 @@ select * from campaign_analysis
 ```
 
 ![image](https://user-images.githubusercontent.com/77920592/198987379-19f9de53-5708-4500-9a0e-79f3ff0b3dd8.png)
+
+### What is the percentage of each campaign being participated? ###
+```sql
+select campaign, count(*) as count,
+round(count(*)*100.0/(select count(*) from campaign_analysis),2) as Percentage
+from campaign_analysis
+group by campaign
+```
+
+![image](https://user-images.githubusercontent.com/77920592/201328154-2612e386-5b56-4cc4-9b14-a7bbe6f86e99.png)
