@@ -20,7 +20,8 @@ Once you have an ordered list of possible problems, it's time to investigate.
 
 For this problem, you will need to use four tables. The tables names and column definitions are listed below—click a table name to view information about that table. Note: this data is fake and was generated for the purpose of this case study. It is similar in structure to Yammer's actual data, but for privacy and security reasons it is not real.
 
-Table 1: Users
+### Table 1: Users ### 
+
 This table includes one row per user, with descriptive information about that user's account.
 This table name in Mode is tutorial.yammer_users
 
@@ -33,7 +34,8 @@ This table name in Mode is tutorial.yammer_users
 | company_id:	|The ID of the user's company |
 | language:	|The chosen language of the user |
 
-Table 2: Events
+### Table 2: Events ### 
+
 This table includes one row per event, where an event is an action that a user has taken on Yammer. These events include login events, messaging events, search events, events logged as users progress through a signup funnel, events around received emails.
 This table name in Mode is tutorial.yammer_events
 
@@ -46,28 +48,30 @@ This table name in Mode is tutorial.yammer_events
 | location:	 | The country from which the event was logged (collected through IP address). |
 | device:	 | The type of device used to log the event. |
 
-Table 3: Email Events
+### Table 3: Email Events ### 
+
 This table contains events specific to the sending of emails. It is similar in structure to the events table above.
 This table name in Mode is tutorial.yammer_emails
 
 | Field | Description |
 | ------------- | ------------- |
-user_id:	The ID of the user to whom the event relates. Can be joined to user_id in either of the other tables.
-occurred_at:	The time the event occurred.
-action:	The name of the event that occurred. "sent_weekly_digest" means that the user was delivered a digest email showing relevant conversations from the previous day. "email_open" means that the user opened the email. "email_clickthrough" means that the user clicked a link in the email.
+| user_id:	| The ID of the user to whom the event relates. Can be joined to user_id in either of the other tables. |
+| occurred_at:	| The time the event occurred. |
+| action: | The name of the event that occurred. "sent_weekly_digest" means that the user was delivered a digest email showing relevant conversations from the previous day. "email_open" means that the user opened the email. "email_clickthrough" means that the user clicked a link in the email. |
 
-Table 4: Rollup Periods
+### Table 4: Rollup Periods ### 
+
 The final table is a lookup table that is used to create rolling time periods. Though you could use the INTERVAL() function, creating rolling time periods is often easiest with a table like this. You won't necessarily need to use this table in queries that you write, but the column descriptions are provided here so that you can understand the query that creates the chart shown above.
 This table name in Mode is benn.dimension_rollup_periods
 
 | Field | Description |
 | ------------- | ------------- |
-period_id:	This identifies the type of rollup period. The above dashboard uses period 1007, which is rolling 7-day periods.
-time_id:	This is the identifier for any given data point — it's what you would put on a chart axis. If time_id is 2014-08-01, that means that is represents the rolling 7-day period leading up to 2014-08-01.
-pst_start:	The start time of the period in PST. For 2014-08-01, you'll notice that this is 2014-07-25 — one week prior. Use this to join events to the table.
-pst_end:	The start time of the period in PST. For 2014-08-01, the end time is 2014-08-01. You can see how this is used in conjunction with pst_start to join events to this table in the query that produces the above chart.
-utc_start:	The same as pst_start, but in UTC time.
-pst_start:	The same as pst_end, but in UTC time.
+| period_id: |	This identifies the type of rollup period. The above dashboard uses period 1007, which is rolling 7-day periods. |
+| time_id: | This is the identifier for any given data point — it's what you would put on a chart axis. If time_id is 2014-08-01, that means that is represents the  rolling 7-day period leading up to 2014-08-01. |
+| pst_start: | The start time of the period in PST. For 2014-08-01, you'll notice that this is 2014-07-25 — one week prior. Use this to join events to the table. |
+| pst_end: | The start time of the period in PST. For 2014-08-01, the end time is 2014-08-01. You can see how this is used in conjunction with pst_start to join events to this table in the query that produces the above chart. |
+| utc_start: |	The same as pst_start, but in UTC time. |
+| pst_start: | The same as pst_end, but in UTC time. |
 
 ## Making a recommendation ##
 Start to work your way through your list of hypotheses in order to determine the source of the drop in engagement. As you explore, make sure to save your work. It may be helpful to start with the code that produces the above query, which you can find by clicking the link in the footer of the chart and navigating to the "query" tab.
