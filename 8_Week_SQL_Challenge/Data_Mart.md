@@ -324,4 +324,4 @@ from cte2;
 
 ![image](https://user-images.githubusercontent.com/77920592/197382001-5d980420-cad3-40be-ac64-b109fd1ef3f3.png)
 
-Looking at a longer 12-weeks period, the sales increase is the most siginificant in year 2018. We can observe a significant decline in sales in 2020 where the sales dropped by 0.66%. The management would need to ponder the reasons behind the annual sales decline, is there any detrimental causes other than teh introduction of new packaging. 
+Looking at a longer 12-weeks period, the sales increase is the most siginificant in year 2018. We can observe a significant decline in sales in 2020 where the sales dropped by 0.66%. The management would need to ponder the reasons behind the annual sales decline, is there any detrimental causes other than the introduction of new packaging. 
