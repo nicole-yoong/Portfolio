@@ -1,9 +1,5 @@
-# Review of A/B Testing on SQL #
+# Case Study #1 - Determine the Impact of New Business Venture #
 
-For a lot of e-commerce, subscription or internet companies, A/B testing is one of the approaches to compare two versions using metrics like conversion rates. 
-In this review, multiple case studies in regards to A/B Testing are performed to understand its application. 
-
-## Case Study #1 - Determine the impact of new business venture ##
 Data Mart is an online supermarket that specialises in fresh produce. 
 In June 2020 - large scale supply changes were made at Data Mart. All Data Mart products now use sustainable packaging methods in every single step from the farm all the way to the customer.
 We want to quantify the impact of this change on the sales performance for Data Mart by performing an A/B Testing to answer the following questions:
