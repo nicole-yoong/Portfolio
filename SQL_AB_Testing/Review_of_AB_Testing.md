@@ -3,14 +3,14 @@
 For a lot of e-commerce, subscription or internet companies, A/B testing is one of the approaches to compare two versions using metrics like conversion rates. 
 In this review, multiple case studies in regards to A/B Testing are performed to understand its application. 
 
-## Case Study #1 ##
+## Case Study #1 - Determine the impact of new business venture ##
 Data Mart is an online supermarket that specialises in fresh produce. 
 In June 2020 - large scale supply changes were made at Data Mart. All Data Mart products now use sustainable packaging methods in every single step from the farm all the way to the customer.
 We want to quantify the impact of this change on the sales performance for Data Mart by performing an A/B Testing to answer the following questions:
 - What was the quantifiable impact of the changes introduced in June 2020?
 - Which platform, region, segment and customer types were the most impacted by this change?
 
-Dataset can be found here. 
+Dataset can be found [here](https://github.com/nicole-yoong/Portfolio/blob/main/SQL_AB_Testing/Data_Mart_Schema).
 
 Taking the week_date value of 2020-06-15 as the baseline week where the Data Mart sustainable packaging changes came into effect. We would include all week_date values for 2020-06-15 as the start of the period after the change and the previous week_date values would be before.
 
