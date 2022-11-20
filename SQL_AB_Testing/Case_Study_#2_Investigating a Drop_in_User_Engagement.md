@@ -73,9 +73,10 @@ This table name in Mode is benn.dimension_rollup_periods
 | utc_start: |	The same as pst_start, but in UTC time. |
 | pst_start: | The same as pst_end, but in UTC time. |
 
-## Making a recommendation ##
-Start to work your way through your list of hypotheses in order to determine the source of the drop in engagement. As you explore, make sure to save your work. It may be helpful to start with the code that produces the above query, which you can find by clicking the link in the footer of the chart and navigating to the "query" tab.
+## Solution ##
+https://mode.com/sql-tutorial/a-drop-in-user-engagement-answers/
 
+## Recommendation ##
 Answer the following questions:
 
 Do the answers to any of your original hypotheses lead you to further questions?
