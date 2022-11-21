@@ -74,7 +74,34 @@ This table name in Mode is benn.dimension_rollup_periods
 | pst_start: | The same as pst_end, but in UTC time. |
 
 ## Solution ##
-https://mode.com/sql-tutorial/a-drop-in-user-engagement-answers/
+
+### Hypothesis 1: Growth rate ###
+```sql
+ -- Return growth rate by week
+select date_trunc('week', e.occurred_at) as week,
+       count(distinct e.user_id) AS weekly_active_users
+from tutorial.yammer_events e
+where e.event_type = 'engagement' and e.event_name = 'login'
+group by week
+order by week
+```
+![image](https://user-images.githubusercontent.com/77920592/203055634-922557d7-d7ce-4668-a9be-6de0edaf4062.png)
+
+```sql
+ -- Return growth rate by month
+select date_trunc('month', e.occurred_at) as month,
+       count(distinct e.user_id) AS monthly_active_users
+from tutorial.yammer_events e
+where e.event_type = 'engagement' and e.event_name = 'login'
+group by month
+order by month
+```
+![image](https://user-images.githubusercontent.com/77920592/203055734-9674e8d2-6ab7-4611-854e-4ff4592a0ca8.png)
+
+Weekly and monthly growth rates do not show any significant changes. Therefore, the drop in user engagement may be caused by the existing users facing different issues (slow loading speed, broken features, traffic anommalies, marketing events, etc.)
+
+### Hypothesis 2: Engagement rate ###
+
 
 ## Recommendation ##
 Answer the following questions:
