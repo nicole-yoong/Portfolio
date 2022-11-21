@@ -113,9 +113,11 @@ order by week
 ![image](https://user-images.githubusercontent.com/77920592/203061092-4e9ccd72-c875-4741-a1bc-41b48fa7ef35.png)
 ![image](https://user-images.githubusercontent.com/77920592/203091490-16d12551-209a-4e10-894b-c75799068e67.png)
 
-The number of email sent increases over time. Users generally open the email by they started reducing the clickthrough since first week of August (2014-08-04 00:00:00). This might indicates that the contents fail to grab the attention of the users, possibly due to the lack of creative and innovative topics. However, the emails open rate is still desirable, meaning that the email sent frequency is appropriate, and the users are probably caught by the subject lines to open the email, but the dull contents have caused them to stop clicking through. 
+The number of email sent increases over time. Users generally open the email by they started reducing the clickthrough since first week of August (2014-08-04 00:00:00). This might indicates that the contents fail to grab the attention of the users, possibly due to the lack of creative and innovative topics. However, the emails open rate is still desirable, which means that the emails remain to be well-received by users and the sent frequency is appropriate, and the users are probably caught by the subject lines to open the email, but the dull contents have caused them to stop clicking through. 
 
-There are several weeks where the email clickthrough rate is higher than usual, > 600. The marketing team might want to look into the content of those weeks, it could be the speficic types of contents catching the attention of the users, or they were drawn to some marketing campaigns like big promotion, christmas mega sales etc. 
+We can also see that the number of reengagement emails have increased slightly but it does not improve the clickthrough rate, indicating that the content quality is the key to increase the clickthrough rate but not the quantity of the email sent. The increased number of reengagament emails could potentially annoy the users and hurt the marketing efforts if the contents are not improved.
+
+In the meantime, there are several weeks where the email clickthrough rate is higher than usual, > 600. The marketing team might want to look into the content of those weeks, it could be the speficic types of contents catching the attention of the users, or they were drawn to some marketing campaigns like big promotion, christmas mega sales etc. 
 
 
 # Recommendation #
