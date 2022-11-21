@@ -124,12 +124,15 @@ In the meantime, there are several weeks where the email clickthrough rate is hi
 # Recommendation #
 
 **What seems like the most likely cause of the engagement dip?**
+
 The most likely cause of the engagement dip are:
 - Use of phone device 
 - The email clickthrough rates
+
 Several possible causes can contribute to these issues. First, the email contents are dull and do not catch the attention of the users to read through the them. Users are already drowning in written content and they usually need appealling contents to keep their interests. Second, there might be some weaknesses in the phone UIUX which deteriorate the user navigation experiences. It can be poor interface design, or even broken features or links to affect the customer experiences. Other possibilities could be the distorted email format on phone, such as the font size, images resoluton etc. 
 
 **What, if anything, should the company do in response?**
+
 Company should be informed about the problems so they could figure out the changes that have been made to make sure something isn't broken or poorly implemented.
 It is not completely clear that what the problem is or how it should be solved, thus I suggest several checks that can be implemented:
 - perform beta testing on the phone and tablet views to detect poor structure, and functionality
