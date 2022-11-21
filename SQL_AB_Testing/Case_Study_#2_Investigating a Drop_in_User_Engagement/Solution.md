@@ -11,9 +11,10 @@ group by week
 order by week
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203055634-922557d7-d7ce-4668-a9be-6de0edaf4062.png)
+![image](https://user-images.githubusercontent.com/77920592/203089680-af58d0ed-6c07-4a43-accc-e8a627677419.png)
 
 ```sql
- -- Return growth rate by month
+--- Return growth rate by month
 select date_trunc('month', e.occurred_at) as month,
        count(distinct e.user_id) AS monthly_active_users
 from tutorial.yammer_events e
@@ -22,13 +23,37 @@ group by month
 order by month
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203055734-9674e8d2-6ab7-4611-854e-4ff4592a0ca8.png)
+![image](https://user-images.githubusercontent.com/77920592/203089836-b5f2b81f-b440-487c-bb37-0d8a8e060815.png)
 
 Weekly and monthly growth rates do not show any significant changes. Therefore, the drop in user engagement may be caused by the existing users facing different issues (slow loading speed, broken features, traffic anommalies, marketing events, etc.)
 
 ## Hypothesis 2: Engagement rate ##
 
+### Engagement rate by location ###
+```sql
+--- Return engagement rate by continents
+select date_trunc('week', occurred_at) as week,
+sum(case when location in ('Indonesia', 'Singapore', 'Israel', 'Malaysia', 'Hong Kong', 'Philippines', 
+                          'United Arab Emirates', 'Taiwan', 'Thailand', 'India', 'Iran', 'Japan', 'Iraq', 'Russia', 'Pakistan') then 1 else 0 end) as Asia,
+sum(case when location in ('Brazil', 'Venezuela', 'Colombia', 'Argentina') then 1 else 0  end) as South_America,
+sum(case when location in ('Nigeria', 'Egypt', 'South Africa') then 1 else 0  end) as Africa,
+sum(case when location in ('Australia') then 1 else 0  end) as Oceania,
+sum(case when location in ('United States', 'Canada', 'Mexico') then 1 else 0  end) as North_America,
+sum(case when location in ('Sweden', 'Ireland', 'Portugal', 'Finland', 'France', 'Spain', 'Italy', 
+                          'United Kingdom', 'Greece', 'Chile', 'Denmark', 'Switzerland', 'Norway', 'Austria', 'Poland') then 1 else 0  end) as Europe
+from tutorial.yammer_events 
+where event_type = 'engagement'
+group by week
+order by week
+```
+![image](https://user-images.githubusercontent.com/77920592/203087505-90027948-709d-40ea-9014-5b09ce05824f.png)
+![image](https://user-images.githubusercontent.com/77920592/203087823-7240d480-0475-43fc-b948-89d308c9e0ab.png)
+
+Apart from the users in Africa, the engagement rate dropped significantly across the rest of the continents since first week of August (2014-08-04 00:00:00) where North America witnesses the sharpest drop due to its largest user proportion. 
+
 ### Engagement rate by events ###
 ```sql
+--- Return the engagement rate by events
 select date_trunc('week', occurred_at) as week,
        count(case when e.event_name = 'home_page' then e.user_id else null end) as home_page,
        count(case when e.event_name = 'like_page' then e.user_id else null end) as like_page,
@@ -43,8 +68,9 @@ group by week
 order by week
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203062238-532f7a85-8e43-4bbd-8dff-216e4750e05d.png)
+![image](https://user-images.githubusercontent.com/77920592/203090238-8eaf2358-a17c-43d6-97be-409daa1c3d37.png)
 
-Engagement rate of all events started dropping since first week of August (2014-08-04 00:00:00). Periods around 2014-08-04 00:00:00 are worth a deeper examination to investigate if any significant changes have been implemented to have caused a drop in engagement rate. Therefore, we need to look into the various reasons that might be the underlying factors that might be the drivers.
+Engagement rate of all events except search_autocomplete and search_run started dropping since first week of August (2014-08-04 00:00:00). Periods around 2014-08-04 00:00:00 are worth a deeper examination to investigate if any significant changes have been implemented to have caused a drop in engagement rate. Therefore, we need to look into the various reasons that might be the underlying factors that might be the drivers.
 - Devices >>> By comparing the engagement rate on different devices we can find out the potential UIUX issues, of the broken features or links in a specific device
 - Email >>> By comparing the emails open and clickthrough rate we can have a gauge on the performance of the email marketing contents. 
 
@@ -68,12 +94,13 @@ group by week
 order by week
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203059211-efedefd2-960a-46c9-99fc-38d77d28e410.png)
+![image](https://user-images.githubusercontent.com/77920592/203090690-f5bf8628-ee92-43d7-842b-83e4d2c562d7.png)
 
-
-Engagement rate by devices for phone and tablet started dropping since first week of August (2014-08-04 00:00:00). However, the engagement rate was quite consistent on the computer, showing that there might be issues on the UIUX of phone/tablet thus affecting the customer experiences. 
+Engagement rate by devices for phone and tablet started dropping since first week of August (2014-08-04 00:00:00), especially for phone the drop is the most significant. Although tablet user count shows the same downward trend, the total number of Yammer users on tablet are not the significant. Computer devices remain the most popular device among Yammer users and it looks like the quality of the software is up to standard. It is also worth highlighting that the phone and tablet usage for the Yammer app has regressed back to May level, indicating that strategies to increase the engagement on phone and tablet were not successful if there was any, or else like previously mentioned, there might be some other issues hampering the usage such as the poor UIUX affecting the customer experiences.
 
 ### Engagement rate by email ###
 ```sql
+--- Return engagement rate by email
 select date_trunc('week', occurred_at) as week,
        count(case when e.action = 'sent_weekly_digest' then e.user_id else null end) as weekly_emails,
        count(case when e.action = 'sent_reengagement_email' then e.user_id else null end) as reengagement_emails,
@@ -84,6 +111,7 @@ group by week
 order by week
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203061092-4e9ccd72-c875-4741-a1bc-41b48fa7ef35.png)
+![image](https://user-images.githubusercontent.com/77920592/203091490-16d12551-209a-4e10-894b-c75799068e67.png)
 
 The number of email sent increases over time. Users generally open the email by they started reducing the clickthrough since first week of August (2014-08-04 00:00:00). This might indicates that the contents fail to grab the attention of the users, possibly due to the lack of creative and innovative topics. However, the emails open rate is still desirable, meaning that the email sent frequency is appropriate, and the users are probably caught by the subject lines to open the email, but the dull contents have caused them to stop clicking through. 
 
