@@ -1,6 +1,6 @@
-## Solution ##
+# Solution #
 
-### Hypothesis 1: Growth rate ###
+## Hypothesis 1: Growth rate ##
 ```sql
  -- Return growth rate by week
 select date_trunc('week', e.occurred_at) as week,
@@ -25,9 +25,9 @@ order by month
 
 Weekly and monthly growth rates do not show any significant changes. Therefore, the drop in user engagement may be caused by the existing users facing different issues (slow loading speed, broken features, traffic anommalies, marketing events, etc.)
 
-### Hypothesis 2: Engagement rate ###
+## Hypothesis 2: Engagement rate ##
 
-**Engagement rate by events**
+### Engagement rate by events ###
 ```sql
 select date_trunc('week', occurred_at) as week,
        count(case when e.event_name = 'home_page' then e.user_id else null end) as home_page,
@@ -44,9 +44,11 @@ order by week
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203062238-532f7a85-8e43-4bbd-8dff-216e4750e05d.png)
 
-Engagement rate of all events started dropping since first week of August (2014-08-04 00:00:00).
+Engagement rate of all events started dropping since first week of August (2014-08-04 00:00:00). Periods around 2014-08-04 00:00:00 are worth a deeper examination to investigate if any significant changes have been implemented to have caused a drop in engagement rate. Therefore, we need to look into the various reasons that might be the underlying factors that might be the drivers.
+- Devices >>> By comparing the engagement rate on different devices we can find out the potential UIUX issues, of the broken features or links in a specific device
+- Email >>> By comparing the emails open and clickthrough rate we can have a gauge on the performance of the email marketing contents. 
 
-**Engagement rate by devices**
+### Engagement rate by devices ###
 ```sql
 --- Return types of device
 select distinct e.device AS devices
@@ -70,7 +72,7 @@ order by week
 
 Engagement rate by devices for phone and tablet started dropping since first week of August (2014-08-04 00:00:00). However, the engagement rate was quite consistent on the computer, showing that there might be issues on the UIUX of phone/tablet thus affecting the customer experiences. 
 
-**Engagement rate by email**
+### Engagement rate by email ###
 ```sql
 select date_trunc('week', occurred_at) as week,
        count(case when e.action = 'sent_weekly_digest' then e.user_id else null end) as weekly_emails,
@@ -88,7 +90,7 @@ The number of email sent increases over time. Users generally open the email by 
 There are several weeks where the email clickthrough rate is higher than usual, > 600. The marketing team might want to look into the content of those weeks, it could be the speficic types of contents catching the attention of the users, or they were drawn to some marketing campaigns like big promotion, christmas mega sales etc. 
 
 
-## Recommendation ##
+# Recommendation #
 Answer the following questions:
 
 Do the answers to any of your original hypotheses lead you to further questions?
