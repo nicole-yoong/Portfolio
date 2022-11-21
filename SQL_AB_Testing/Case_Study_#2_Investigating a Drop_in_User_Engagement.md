@@ -158,7 +158,7 @@ order by week
 ```
 ![image](https://user-images.githubusercontent.com/77920592/203061092-4e9ccd72-c875-4741-a1bc-41b48fa7ef35.png)
 
-The number of email sent increases over time. Users generally open the email by they started reducing the clickthrough since first week of August (2014-08-04 00:00:00). This might indicates 
+The number of email sent increases over time. Users generally open the email by they started reducing the clickthrough since first week of August (2014-08-04 00:00:00). This might indicates that the contents fail to grab the attention of the users, possibly due to the lack of creative and innovative topics. 
 
 ## Recommendation ##
 Answer the following questions:
@@ -168,3 +168,5 @@ If so, what are they and how will you test them?
 If they are questions that you can't answer using data alone, how would you go about answering them (hypothetically, assuming you actually worked at this company)?
 What seems like the most likely cause of the engagement dip?
 What, if anything, should the company do in response?
+
+Users are already drowning in written content and 
