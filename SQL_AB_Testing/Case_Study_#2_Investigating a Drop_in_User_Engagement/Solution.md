@@ -96,7 +96,7 @@ order by week
 ![image](https://user-images.githubusercontent.com/77920592/203059211-efedefd2-960a-46c9-99fc-38d77d28e410.png)
 ![image](https://user-images.githubusercontent.com/77920592/203090690-f5bf8628-ee92-43d7-842b-83e4d2c562d7.png)
 
-Engagement rate by devices for phone and tablet started dropping since first week of August (2014-08-04 00:00:00), especially for phone the drop is the most significant. Although tablet user count shows the same downward trend, the total number of Yammer users on tablet are not the significant. Computer devices remain the most popular device among Yammer users and it looks like the quality of the software is up to standard. It is also worth highlighting that the phone and tablet usage for the Yammer app has regressed back to May level, indicating that strategies to increase the engagement on phone and tablet were not successful if there was any, or else like previously mentioned, there might be some other issues hampering the usage such as the poor UIUX affecting the customer experiences.
+Engagement rate by devices for phone and tablet started dropping since first week of August (2014-08-04 00:00:00), especially for phone the drop is the most significant. Although tablet user count shows the same downward trend, the total number of Yammer users on tablet are not the significant. Computer devices remain the most popular device among Yammer users and it looks like the quality of the software is up to standard. It is also worth highlighting that the phone and tablet usage for the Yammer app has regressed back to May level, indicating that strategies to increase the engagement on phone and tablet were not successful if there was any, or else like previously mentioned, there might be some other issues hampering the usage.
 
 ## Hypothesis 5: Engagement rate by emails ##
 
@@ -122,12 +122,16 @@ In the meantime, there are several weeks where the email clickthrough rate is hi
 
 
 # Recommendation #
-Answer the following questions:
 
-Do the answers to any of your original hypotheses lead you to further questions?
-If so, what are they and how will you test them?
-If they are questions that you can't answer using data alone, how would you go about answering them (hypothetically, assuming you actually worked at this company)?
-What seems like the most likely cause of the engagement dip?
-What, if anything, should the company do in response?
+**What seems like the most likely cause of the engagement dip?**
+The most likely cause of the engagement dip are:
+- Use of phone device 
+- The email clickthrough rates
+Several possible causes can contribute to these issues. First, the email contents are dull and do not catch the attention of the users to read through the them. Users are already drowning in written content and they usually need appealling contents to keep their interests. Second, there might be some weaknesses in the phone UIUX which deteriorate the user navigation experiences. It can be poor interface design, or even broken features or links to affect the customer experiences. Other possibilities could be the distorted email format on phone, such as the font size, images resoluton etc. 
 
-Users are already drowning in written content and 
+**What, if anything, should the company do in response?**
+Company should be informed about the problems so they could figure out the changes that have been made to make sure something isn't broken or poorly implemented.
+It is not completely clear that what the problem is or how it should be solved, thus I suggest several checks that can be implemented:
+- perform beta testing on the phone and tablet views to detect poor structure, and functionality
+- perform page funnel analysis mapping the flow of users to check which specific steps result in funnel drop-offs
+- perform A/B testing for weekly digest email contents
