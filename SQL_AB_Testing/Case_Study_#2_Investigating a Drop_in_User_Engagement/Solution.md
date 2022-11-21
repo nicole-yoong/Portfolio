@@ -27,9 +27,8 @@ order by month
 
 Weekly and monthly growth rates do not show any significant changes. Therefore, the drop in user engagement may be caused by the existing users facing different issues (slow loading speed, broken features, traffic anommalies, marketing events, etc.)
 
-## Hypothesis 2: Engagement rate ##
+## Hypothesis 2: Engagement rate by locations ##
 
-### Engagement rate by location ###
 ```sql
 --- Return engagement rate by continents
 select date_trunc('week', occurred_at) as week,
@@ -51,7 +50,8 @@ order by week
 
 Apart from the users in Africa, the engagement rate dropped significantly across the rest of the continents since first week of August (2014-08-04 00:00:00) where North America witnesses the sharpest drop due to its largest user proportion. 
 
-### Engagement rate by events ###
+## Hypothesis 3: Engagement rate by events ##
+
 ```sql
 --- Return the engagement rate by events
 select date_trunc('week', occurred_at) as week,
@@ -74,7 +74,7 @@ Engagement rate of all events except search_autocomplete and search_run started 
 - Devices >>> By comparing the engagement rate on different devices we can find out the potential UIUX issues, of the broken features or links in a specific device
 - Email >>> By comparing the emails open and clickthrough rate we can have a gauge on the performance of the email marketing contents. 
 
-### Engagement rate by devices ###
+## Hypothesis 4: Engagement rate by devices ##
 ```sql
 --- Return types of device
 select distinct e.device AS devices
@@ -98,7 +98,8 @@ order by week
 
 Engagement rate by devices for phone and tablet started dropping since first week of August (2014-08-04 00:00:00), especially for phone the drop is the most significant. Although tablet user count shows the same downward trend, the total number of Yammer users on tablet are not the significant. Computer devices remain the most popular device among Yammer users and it looks like the quality of the software is up to standard. It is also worth highlighting that the phone and tablet usage for the Yammer app has regressed back to May level, indicating that strategies to increase the engagement on phone and tablet were not successful if there was any, or else like previously mentioned, there might be some other issues hampering the usage such as the poor UIUX affecting the customer experiences.
 
-### Engagement rate by email ###
+## Hypothesis 5: Engagement rate by emails ##
+
 ```sql
 --- Return engagement rate by email
 select date_trunc('week', occurred_at) as week,
