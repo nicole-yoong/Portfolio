@@ -1,4 +1,4 @@
-# Performance Tuning Review and Findings #
+# Review of SQL Performance Tuning #
 
 SQL performance tuning is the process of improving SQL queries to accelerate your servers performance. This article provides a review and findings into the different approach of improving the perfomance of data retrieval. 
 
