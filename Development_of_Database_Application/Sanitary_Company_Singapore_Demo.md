@@ -4,8 +4,6 @@ This is a demo of the SQL server developed for a sanitary company, Bathworld bas
 It contains of 12 tables consisting of data from different departments.
 Constraints and triggers are developed. 
 
-![image](https://user-images.githubusercontent.com/77920592/193473357-365ff60a-bdd3-41b3-b30d-41b61df4f907.png)
-
 ## Database Highlights: ##
 
 ### Create Table ###
@@ -305,6 +303,7 @@ on ordered_items.sku = product_sku.sku
 select * from ordered_items_view
 ```
 
+### Insert demo data ###
 
 
 
