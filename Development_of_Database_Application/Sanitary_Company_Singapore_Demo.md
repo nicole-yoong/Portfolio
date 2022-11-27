@@ -6,7 +6,7 @@ Constraints and triggers are developed.
 
 ![image](https://user-images.githubusercontent.com/77920592/193473357-365ff60a-bdd3-41b3-b30d-41b61df4f907.png)
 
-## Major Tasks: ##
+## Database Highlights: ##
 
 ### Create Table ###
 ```sql
