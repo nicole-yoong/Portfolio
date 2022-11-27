@@ -305,17 +305,6 @@ on ordered_items.sku = product_sku.sku
 select * from ordered_items_view
 ```
 
-### Automate the file loading from container to the sql server using Logic App ###
-
-Upload the csv files to the Container under Storage Account
-
-![image](https://user-images.githubusercontent.com/77920592/193472705-283dfb79-4789-46d2-bd88-7ea8f08935a7.png)
-
-Create new workflow under the Logic App to allow data being transferred to the SQL server from the csv files
-
-![image](https://user-images.githubusercontent.com/77920592/193472669-8f8a7428-7180-4413-a8c4-ad3fb92f47a9.png)
-![image](https://user-images.githubusercontent.com/77920592/193472631-5bb037b5-581f-4a28-bdcf-e2d4484c967d.png)
-
 
 
 
