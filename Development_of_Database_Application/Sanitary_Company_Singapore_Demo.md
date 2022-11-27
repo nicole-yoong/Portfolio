@@ -47,7 +47,7 @@ create table salary_change(
 create table interior_designer (
 	int_id integer,
 	int_name varchar(100),
-	whatsapp integer,
+	whatsapp varchar(100),
 	address varchar(100),
 	postal_code integer,
 	emp_id integer, --- employee in charge
