@@ -161,6 +161,10 @@ create table cancelled_order(
 );
 ```
 
+#### View Dependencies ####
+
+![image](https://user-images.githubusercontent.com/77920592/204134784-01641b5a-658c-4777-8a31-542bcb4124a7.png)
+
 ### Create Trigger Objects ###
 ```sql
 --- update status of a specific emp_id on employee will trigger resigned_employee to update
