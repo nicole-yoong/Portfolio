@@ -307,10 +307,19 @@ on ordered_items.sku = product_sku.sku
 select * from ordered_items_view
 ```
 
-### Insert demo data ###
+### Insert Demo Data ###
 
 Demo database are created using Mockaroo and imported to SQL Server using SSIS Package.
 ![image](https://user-images.githubusercontent.com/77920592/204137567-92e0763d-edc5-448d-affb-5131cc3862f7.png)
 ![image](https://user-images.githubusercontent.com/77920592/204137525-28df013a-9984-46d3-953a-9f9264fe6d5c.png)
 
 
+### Function Testing ###
+#### Update status of a specific emp_id on employee will trigger resigned_employee to update ####
+update emp
+set status = 'Resigned'
+where emp_id = 18;
+
+select * from emp;
+
+#### Insert on new employee update the salary_change table ####
