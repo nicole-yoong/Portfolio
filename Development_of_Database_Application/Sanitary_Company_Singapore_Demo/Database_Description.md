@@ -238,6 +238,7 @@ select * from quotation
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204311667-8c324b6f-1b17-4e1e-a0a9-df4683e231cc.png)
 
+```sql
 create table confirmed_order(
 	order_id integer identity(1,1),
 	cus_id integer,
@@ -250,8 +251,36 @@ create table confirmed_order(
 	foreign key (cus_id, quotation_number) 
 	references quotation (cus_id, quotation_number)
 );
+```
+
+**Insert quotation data into the confirmed_order table is the quotation is confirmed**
+```sql
+CREATE TRIGGER insert_into_confirmed_order
+ON quotation FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO confirmed_order(cus_id, quotation_number)
+	SELECT DISTINCT quotation.cus_id, quotation.quotation_number
+	FROM INSERTED quotation
+	LEFT JOIN confirmed_order
+	ON quotation.cus_id = confirmed_order.cus_id
+	WHERE quotation.status = 'Confirmed'
+END
+GO
+```
+
+```sql
+--- Function Testing
+update quotation
+set status = 'Confirmed'
+where quotation_number = 34;
+
+select * from confirmed_order
+```
+![image](https://user-images.githubusercontent.com/77920592/204338441-95834d3e-f276-4e6c-bae1-c488363b3ee0.png)
 
 
+```sql
 create table ordered_items (
 	order_id integer,
 	sku varchar(100),
@@ -262,7 +291,33 @@ create table ordered_items (
 	foreign key (order_id) references  confirmed_order (order_id) ON DELETE CASCADE,
 	foreign key (sku) references product_sku (sku)
 );
+```
 
+**Insert order_id from the confimed_order table into the ordered_item table**
+```sql
+CREATE TRIGGER insert_ordered_items
+ON confirmed_order FOR INSERT
+AS
+BEGIN 
+	INSERT INTO ordered_items(order_id)
+	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
+	LEFT JOIN ordered_items
+	ON ordered_items.order_id = confirmed_order.order_id
+END
+GO
+```
+
+```sql
+--- Function Testing
+update quotation
+set status = 'Confirmed'
+where quotation_number = 34;
+
+select * from ordered_items
+```
+![image](https://user-images.githubusercontent.com/77920592/204339117-278c49be-4c71-4be0-89ba-fc6f0f351878.png)
+
+```sql
 create table cancelled_order(
 	order_id integer,
 	date_of_cancellation date,
@@ -272,6 +327,29 @@ create table cancelled_order(
 	special_note text
 );
 ```
+
+**Insert confirmed_order data into the cancelled_order table if the order is cancelled**
+```sql
+CREATE TRIGGER delete_confirmed_order 
+ON confirmed_order FOR DELETE
+AS
+BEGIN 
+	DECLARE @order_id INT, @amount_purchase INT, @date_of_cancellation DATE
+	SELECT @order_id = DELETED.order_id FROM DELETED
+	INSERT INTO cancelled_order(order_id, amount_purchase, date_of_cancellation)
+	VALUES (@order_id, @amount_purchase, getdate())
+END
+GO
+```
+
+```sql
+--- Function testing
+delete from confirmed_order 
+where order_id = 6;
+
+select * from cancelled_order
+```
+![image](https://user-images.githubusercontent.com/77920592/204339966-09104789-7ff4-4551-95e7-1218745c2dd7.png)
 
 #### G. Product SKU ####
 ```sql
@@ -294,67 +372,8 @@ create table product_sku(
 
 ![image](https://user-images.githubusercontent.com/77920592/204134784-01641b5a-658c-4777-8a31-542bcb4124a7.png)
 
-## Triggers ##
-
-### Insert on new employee update the salary_change table ###
-```sql
-CREATE TRIGGER insert_salary_change
-ON emp FOR INSERT
-AS
-BEGIN 
-	INSERT INTO salary_change(emp_id, increment_date)
-	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
-	LEFT JOIN salary_change
-	ON salary_change.emp_id = emp.emp_id
-END
-GO
-```
-
-### Insert quotation data into the confirmed_order table is the quotation is confirmed  ###
-```sql
-CREATE TRIGGER insert_into_confirmed_order
-ON quotation FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO confirmed_order(cus_id, quotation_number)
-	SELECT DISTINCT quotation.cus_id, quotation.quotation_number
-	FROM INSERTED quotation
-	LEFT JOIN confirmed_order
-	ON quotation.cus_id = confirmed_order.cus_id
-	WHERE quotation.status = 'Confirmed'
-END
-GO
-```
-
-### Insert order_id from the confimed_order table into the ordered_item table ###
-```sql
-CREATE TRIGGER insert_ordered_items
-ON confirmed_order FOR INSERT
-AS
-BEGIN 
-	INSERT INTO ordered_items(order_id)
-	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
-	LEFT JOIN ordered_items
-	ON ordered_items.order_id = confirmed_order.order_id
-END
-GO
-```
-
-### Insert confirmed_order data inro the cancelled_order table if the order is cancelled ###
-```sql
-CREATE TRIGGER delete_confirmed_order 
-ON confirmed_order FOR DELETE
-AS
-BEGIN 
-	DECLARE @order_id INT, @amount_purchase INT, @date_of_cancellation DATE
-	SELECT @order_id = DELETED.order_id FROM DELETED
-	INSERT INTO cancelled_order(order_id, amount_purchase, date_of_cancellation)
-	VALUES (@order_id, @amount_purchase, getdate())
-END
-GO
-```
-
 ## Views ##
+
 ### Top Management Level ###
 ```sql
 --- total sales of a specific month 
