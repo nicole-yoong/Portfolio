@@ -105,7 +105,7 @@ create table supplier_billing(
 	invoice_id varchar(100),
 	sup_company varchar(100),
 	billing_date date,
-	billing_amount decimal,
+	billing_amount decimal(6,2),
 	status varchar(100),
 	special_note text,
 	primary key (invoice_id)
@@ -142,7 +142,7 @@ create table quotation (
 	int_id integer,
 	quotation_number integer identity(1,1),
 	quotation_date date,
-	amount_purchase decimal,
+	amount_purchase decimal(6,2),
 	status varchar (100), --- either pending or confirmed
 	special_note text,
 	primary key (cus_id, quotation_number),
