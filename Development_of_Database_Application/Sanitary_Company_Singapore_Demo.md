@@ -141,6 +141,7 @@ create table quotation (
 	int_id integer,
 	quotation_number varchar (100),
 	quotation_date date,
+	amount_purchase decimal,
 	status varchar (100), --- either pending or confirmed
 	special_note text,
 	primary key (cus_id, quotation_number),
@@ -151,22 +152,27 @@ create table quotation (
 
 create table confirmed_order(
 	order_id integer,
-	quotation_number varchar(100),
-	emp_id integer,
 	cus_id integer,
-	int_id integer,
+	quotation_number varchar(100),
 	comms decimal,
-	date_of_purchase date,
-	amount_purchase decimal,
 	payment_method varchar(100),
 	payment_cleared varchar(100), --- yes/half/pending
 	special_note text,
 	primary key (order_id),
-	foreign key (emp_id) references emp (emp_id),
-	foreign key (int_id) references interior_designer (int_id),
-	foreign key (cus_id, quotation_number) references quotation (cus_id, quotation_number)
+	foreign key (cus_id, quotation_number) 
+	references quotation (cus_id, quotation_number)
 );
 
+CREATE TRIGGER delete_confirmed_order 
+ON confirmed_order FOR DELETE
+AS
+BEGIN 
+	DECLARE @order_id INT, @amount_purchase INT, @date_of_cancellation DATE
+	SELECT @order_id = DELETED.order_id FROM DELETED
+	INSERT INTO cancelled_order(order_id, amount_purchase, date_of_cancellation)
+	VALUES (@order_id, @amount_purchase, getdate())
+END
+GO
 
 create table product_sku(
 	sku varchar(100),
@@ -193,6 +199,17 @@ create table ordered_items (
 	foreign key (sku) references product_sku (sku)
 );
 
+CREATE TRIGGER insert_ordered_items
+ON confirmed_order FOR INSERT
+AS
+BEGIN 
+	INSERT INTO ordered_items(order_id)
+	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
+	LEFT JOIN ordered_items
+	ON ordered_items.order_id = confirmed_order.order_id
+END
+GO
+
 create table cancelled_order(
 	order_id integer,
 	date_of_cancellation date,
@@ -207,32 +224,7 @@ create table cancelled_order(
 
 ![image](https://user-images.githubusercontent.com/77920592/204134784-01641b5a-658c-4777-8a31-542bcb4124a7.png)
 
-### Create Trigger Objects ###
-```sql
---- update the ordered_item when new order comes in
-CREATE TRIGGER insert_ordered_items
-ON confirmed_order FOR INSERT
-AS
-BEGIN 
-	INSERT INTO ordered_items(order_id)
-	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
-	LEFT JOIN ordered_items
-	ON ordered_items.order_id = confirmed_order.order_id
-END
-GO
 
---- delete a specific order on confirmed order will trigger cancelled_order to update
-CREATE TRIGGER delete_confirmed_order 
-ON confirmed_order FOR DELETE
-AS
-BEGIN 
-	DECLARE @order_id INT, @amount_purchase INT, @date_of_cancellation DATE
-	SELECT @order_id = DELETED.order_id FROM DELETED
-	INSERT INTO cancelled_order(order_id, amount_purchase, date_of_cancellation)
-	VALUES (@order_id, @amount_purchase, getdate())
-END
-GO
-```
 
 ### Create Views ###
 ```sql
