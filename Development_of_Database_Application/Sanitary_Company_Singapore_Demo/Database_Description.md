@@ -24,6 +24,7 @@ The database contains 11 tables:
 
 ### A. Employee ###
 
+**Create emp table**
 ```sql
 create table emp(
 	emp_id integer,
@@ -40,6 +41,7 @@ create table emp(
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204303806-8b0cc13e-82aa-47c4-8897-2c8b04b05206.png)
 
+**Create resigned_emp table**
 ```sql
 create table resigned_emp(
 	emp_id integer,
@@ -54,7 +56,6 @@ create table resigned_emp(
 ![image](https://user-images.githubusercontent.com/77920592/204305679-28205808-fadc-479b-a872-f1edde0e4aa8.png)
 
 **Update status of a specific employee to 'Resigned' triggers the resigned_employee table to update**
-
 ```sql
 CREATE TRIGGER update_emp_status 
 ON emp FOR UPDATE
@@ -85,6 +86,8 @@ select * from resigned_emp
 
 
 ### B. Salary Change ###
+
+**Create salary_change table**
 ```sql
 create table salary_change(
 	emp_id integer,
@@ -127,6 +130,8 @@ select * from salary_change
 ![image](https://user-images.githubusercontent.com/77920592/204308218-ec51472a-249b-45df-b5e9-6cf61b892801.png)
 
 ### C. Interior Designer ###
+
+**Create interior_designer table**
 ```sql
 create table interior_designer (
 	int_id integer,
@@ -141,6 +146,8 @@ create table interior_designer (
 ![image](https://user-images.githubusercontent.com/77920592/204308552-4b2fc1ee-1d03-4eb3-b1c5-6841ad1258a9.png)
 
 ### D. Supplier ###
+
+**Create supplier table**
 ```sql
 create table supplier(
 	sup_id int,
@@ -158,6 +165,7 @@ create table supplier(
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204308775-1cc02fc9-1ac1-42a1-880d-ac2ff673a4a5.png)
 
+**Create supplier_billing table**
 ```sql
 create table supplier_billing(
 	invoice_id varchar(100),
@@ -172,6 +180,8 @@ create table supplier_billing(
 ![image](https://user-images.githubusercontent.com/77920592/204308955-5c277ef0-1cf8-43a8-acae-a65cbf7eee5a.png)
 
 ### E. Customer ###
+
+**Create customer table**
 ```sql
 create table customer(
 	cus_id integer,
@@ -195,6 +205,8 @@ create table customer(
 ![image](https://user-images.githubusercontent.com/77920592/204309607-38a4d0f9-fc3c-4d81-a2c9-5c285ceaa67c.png)
 
 ### F. Quotation and Order ###
+
+**Create quotation table**
 ```sql
 create table quotation (
 	cus_id integer,
@@ -238,6 +250,7 @@ select * from quotation
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204311667-8c324b6f-1b17-4e1e-a0a9-df4683e231cc.png)
 
+**Create confirmed_order table**
 ```sql
 create table confirmed_order(
 	order_id integer identity(1,1),
@@ -279,7 +292,7 @@ select * from confirmed_order
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204338441-95834d3e-f276-4e6c-bae1-c488363b3ee0.png)
 
-
+**Create ordered_item table**
 ```sql
 create table ordered_items (
 	order_id integer,
@@ -317,6 +330,7 @@ select * from ordered_items
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204339117-278c49be-4c71-4be0-89ba-fc6f0f351878.png)
 
+**Create cancelled_order table**
 ```sql
 create table cancelled_order(
 	order_id integer,
@@ -352,6 +366,8 @@ select * from cancelled_order
 ![image](https://user-images.githubusercontent.com/77920592/204339966-09104789-7ff4-4551-95e7-1218745c2dd7.png)
 
 #### G. Product SKU ####
+
+**Create product_sku table**
 ```sql
 create table product_sku(
 	sku varchar(100),
