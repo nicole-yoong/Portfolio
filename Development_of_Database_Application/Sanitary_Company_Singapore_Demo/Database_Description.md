@@ -138,6 +138,7 @@ create table interior_designer (
 	primary key (int_id)
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204308552-4b2fc1ee-1d03-4eb3-b1c5-6841ad1258a9.png)
 
 ### D. Supplier ###
 ```sql
@@ -154,7 +155,10 @@ create table supplier(
 	special_note text,
 	primary key (sup_id)
 );
+```
+![image](https://user-images.githubusercontent.com/77920592/204308775-1cc02fc9-1ac1-42a1-880d-ac2ff673a4a5.png)
 
+```sql
 create table supplier_billing(
 	invoice_id varchar(100),
 	sup_company varchar(100),
@@ -165,6 +169,7 @@ create table supplier_billing(
 	primary key (invoice_id)
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204308955-5c277ef0-1cf8-43a8-acae-a65cbf7eee5a.png)
 
 ### E. Customer ###
 ```sql
@@ -187,6 +192,7 @@ create table customer(
 	references emp (emp_id) on update cascade
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204309607-38a4d0f9-fc3c-4d81-a2c9-5c285ceaa67c.png)
 
 ### F. Quotation and Order ###
 ```sql
@@ -204,7 +210,33 @@ create table quotation (
 	foreign key (int_id) references interior_designer (int_id),
 	foreign key (emp_id) references emp (emp_id)
 );
+```
 
+**Insert customer data into quotation table if orderis placed**
+```sql
+CREATE TRIGGER insert_into_quotation
+ON customer FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO quotation(cus_id, emp_id, int_id, quotation_date)
+	SELECT DISTINCT customer.cus_id, customer.emp_id, customer.int_id, getdate()
+	FROM INSERTED customer
+	LEFT JOIN quotation
+	ON customer.cus_id = quotation.cus_id
+	WHERE customer.order_placed = 'Yes'
+END
+GO
+```
+
+```sql
+--- Function Testing ---
+update customer
+set order_placed = 'Yes'
+where cus_id = 30;
+
+select * from quotation
+```
+![image](https://user-images.githubusercontent.com/77920592/204311667-8c324b6f-1b17-4e1e-a0a9-df4683e231cc.png)
 
 create table confirmed_order(
 	order_id integer identity(1,1),
@@ -274,22 +306,6 @@ BEGIN
 	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
 	LEFT JOIN salary_change
 	ON salary_change.emp_id = emp.emp_id
-END
-GO
-```
-
-### Insert customer data into quotation table if orderis placed ###
-```sql
-CREATE TRIGGER insert_into_quotation
-ON customer FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO quotation(cus_id, emp_id, int_id)
-	SELECT DISTINCT customer.cus_id, customer.emp_id, customer.int_id 
-	FROM INSERTED customer
-	LEFT JOIN quotation
-	ON customer.cus_id = quotation.cus_id
-	WHERE customer.order_placed = 'Yes'
 END
 GO
 ```
