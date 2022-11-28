@@ -250,6 +250,19 @@ select * from quotation
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204311667-8c324b6f-1b17-4e1e-a0a9-df4683e231cc.png)
 
+**Bulk update columns in quotation table by importing flat files and merge tables**
+```sql
+--- Import flat file to a table named quotation_temp
+update quotation
+set amount_purchase = amount
+from quotation q join quotation_temp t
+on q.quotation_number = t.quotation_number;
+
+select * from quotation;
+```
+![image](https://user-images.githubusercontent.com/77920592/204351511-6ab8d19a-7f70-4d73-87cd-666061cc5023.png)
+
+
 **Create confirmed_order table**
 ```sql
 create table confirmed_order(
@@ -260,7 +273,7 @@ create table confirmed_order(
 	payment_method varchar(100),
 	payment_cleared varchar(100), --- yes/half/pending
 	special_note text,
-	primary key (order_id),
+	primary key (order_id, quotation_number),
 	foreign key (cus_id, quotation_number) 
 	references quotation (cus_id, quotation_number)
 );
@@ -291,6 +304,18 @@ where quotation_number = 34;
 select * from confirmed_order
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204338441-95834d3e-f276-4e6c-bae1-c488363b3ee0.png)
+
+**Bulk update columns in confirmed_table table by importing flat files and merge tables**
+```sql
+--- Import flat file to a table named confirmed_table_temp
+update confirmed_order
+set comms = t.comms, payment_method = t.payment_method, payment_cleared =  t.payment_cleared
+from confirmed_order co join confirmed_order_temp t
+on co.order_id = t.order_id;
+
+select * from confirmed_order
+```
+![image](https://user-images.githubusercontent.com/77920592/204353814-48c484d6-eec4-4d4a-b2a2-62a5cd196501.png)
 
 **Create ordered_item table**
 ```sql
