@@ -239,7 +239,7 @@ create table product_sku(
 	sku varchar(100),
 	item_name text,
 	description text,
-	price decimal(6,2),
+	price decimal(7,2),
 	brand varchar(100),
 	color varchar(100),
 	status varchar(100),
