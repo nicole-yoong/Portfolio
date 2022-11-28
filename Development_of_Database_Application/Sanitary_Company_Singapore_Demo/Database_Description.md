@@ -37,8 +37,10 @@ create table emp(
 	special_note text,
 	primary key (emp_id)
 );
+```
+![image](https://user-images.githubusercontent.com/77920592/204303806-8b0cc13e-82aa-47c4-8897-2c8b04b05206.png)
 
-
+```sql
 create table resigned_emp(
 	emp_id integer,
 	date_of_resignation date,
@@ -49,6 +51,38 @@ create table resigned_emp(
 	foreign key (emp_id) references emp (emp_id)
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204305679-28205808-fadc-479b-a872-f1edde0e4aa8.png)
+
+**Update status of a specific employee to 'Resigned' triggers the resigned_employee table to update**
+
+```sql
+CREATE TRIGGER update_emp_status 
+ON emp FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO resigned_emp(emp_id, date_of_resignation)
+	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
+	LEFT JOIN resigned_emp
+	ON resigned_emp.emp_id = emp.emp_id
+	WHERE emp.status = 'Resigned'
+END
+GO
+```
+
+```sql
+--- Function testing 
+update emp
+set status = 'Resigned'
+where emp_id = 18;
+
+update resigned_emp
+set reason = 'Resigned to pursue studies abroad',
+salary_cleared = 'Yes'
+
+select * from resigned_emp
+```
+![image](https://user-images.githubusercontent.com/77920592/204304535-e258682f-c41f-4ab9-8028-605728727f5d.png)
+
 
 ### B. Salary Change ###
 ```sql
@@ -61,6 +95,36 @@ create table salary_change(
 );
 
 ```
+![image](https://user-images.githubusercontent.com/77920592/204307764-92cf8ec8-98d0-48e2-a4ff-aa91b1e17011.png)
+
+**Insert on new employee update the salary_change table by inserting the new emp_id**
+
+```sql
+CREATE TRIGGER insert_salary_change
+ON emp FOR INSERT
+AS
+BEGIN 
+	INSERT INTO salary_change(emp_id, increment_date)
+	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
+	LEFT JOIN salary_change
+	ON salary_change.emp_id = emp.emp_id
+END
+GO
+```
+
+```sql
+--- Function testing 
+insert into emp
+values (21, 'Alex Mitchell', 'Junior Sales', 'Office', '1997-06-16', '2020-06-05', 'Malaysia', 'Employed', NULL);
+
+update salary_change
+set increment_salary = 2800, default_comms = 0.20, special_note = 'Initial salary'
+where emp_id = 21;
+
+select * from salary_change
+```
+
+![image](https://user-images.githubusercontent.com/77920592/204308218-ec51472a-249b-45df-b5e9-6cf61b892801.png)
 
 ### C. Interior Designer ###
 ```sql
@@ -199,20 +263,6 @@ create table product_sku(
 ![image](https://user-images.githubusercontent.com/77920592/204134784-01641b5a-658c-4777-8a31-542bcb4124a7.png)
 
 ## Triggers ##
-### Update status of a specific employee to resigned triggers the resigned_employee table to update ###
-```sql
-CREATE TRIGGER update_emp_status 
-ON emp FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO resigned_emp(emp_id, date_of_resignation)
-	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
-	LEFT JOIN resigned_emp
-	ON resigned_emp.emp_id = emp.emp_id
-	WHERE emp.status = 'Resigned'
-END
-GO
-```
 
 ### Insert on new employee update the salary_change table ###
 ```sql
