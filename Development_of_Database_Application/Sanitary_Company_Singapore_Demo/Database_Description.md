@@ -1,13 +1,29 @@
 ## Description ##
 
-This is a demo of the SQL server developed for a sanitary company, Bathworld based in Singapore.
+This is a demo of the SQL server developed for a sanitary company, Bathworld based in Singapore. 
+Demo database are created using Mockaroo and imported to SQL Server using SSIS Package.
+
 It contains of 12 tables consisting of data from different departments.
 Constraints and triggers are developed. 
 
-## Database Highlights: ##
+## Tables ##
+The database contains 11 tables:
+| Table Name| Columns |
+| ------------- | ------------- |
+| **Emp** | emp_id, emp_name, emp_title, emp_type(office / delivery), bday, join_date, nationality, status (employed / resigned), special_note |
+| **Resigned_emp** |emp_id, date_of_resignation, reason, salary_cleared, special_note |
+| **Salary_change** |emp_id, increment_date, increment_salary, default_comms, special_note |
+| **Interior_designer** | int_id, int-name, whatsapp, address, postal_code, special_note |
+| **Supplier** | sup_id, sup_name, company, dept, category, email, phone_number, country, status, special_note |
+| **Supplier_billing** | invoice_id, sup_company, billing_date, billing_amount, status, special_note |
+| **Customer** | cus_id, cus_name, int_id, emp_id, whatsapp, house_no, street, postal_code, last_visit, order_placed (Yes / No), special_note|
+| **Quotation** | cus_id, emp_id, int_id, quotation_number, quotation_date, amount_purchase, status, special_note |
+| **Confirmed_order** | order_id, cus_id, quotation_number, comms, payment_method, payment_cleared, special_note |
+| **Ordered_items** | order_id, sku, quantity, price, date_of_delivery, special_note |
+| **Product_sku** | sku, item_name, description, price, brand, color, status, stock_quantity, pre_order_arrival_date, special_note |
 
-### Create Table ###
-#### A. Employee ####
+### A. Employee ###
+
 ```sql
 create table emp(
 	emp_id integer,
@@ -17,7 +33,7 @@ create table emp(
 	bday date,
 	join_date date,
 	nationality varchar(100),
-	status varchar(100), --- whether still in employment or resigned 
+	status varchar(100), --- employed/resigned 
 	special_note text,
 	primary key (emp_id)
 );
@@ -32,47 +48,21 @@ create table resigned_emp(
 	primary key (emp_id),
 	foreign key (emp_id) references emp (emp_id)
 );
-
-
---- update status of a specific emp_id on employee will trigger resigned_employee to update
-CREATE TRIGGER update_emp_status 
-ON emp FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO resigned_emp(emp_id, date_of_resignation)
-	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
-	LEFT JOIN resigned_emp
-	ON resigned_emp.emp_id = emp.emp_id
-	WHERE emp.status = 'Resigned'
-END
-GO
-
 ```
 
-#### B. Salary Change ####
+### B. Salary Change ###
 ```sql
 create table salary_change(
 	emp_id integer,
 	increment_date date,
 	increment_salary integer,
-	default_comms decimal,
+	default_comms decimal(6,2),
 	special_note text,
 );
 
---- insert on new employee update the salary_change table
-CREATE TRIGGER insert_salary_change
-ON emp FOR INSERT
-AS
-BEGIN 
-	INSERT INTO salary_change(emp_id, increment_date)
-	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
-	LEFT JOIN salary_change
-	ON salary_change.emp_id = emp.emp_id
-END
-GO
 ```
 
-#### C. Interior Designer ####
+### C. Interior Designer ###
 ```sql
 create table interior_designer (
 	int_id integer,
@@ -85,7 +75,7 @@ create table interior_designer (
 );
 ```
 
-#### D. Supplier ####
+### D. Supplier ###
 ```sql
 create table supplier(
 	sup_id int,
@@ -112,7 +102,7 @@ create table supplier_billing(
 );
 ```
 
-#### E. Customer ####
+### E. Customer ###
 ```sql
 create table customer(
 	cus_id integer,
@@ -120,9 +110,9 @@ create table customer(
 	int_id integer,
 	emp_id integer,
 	whatsapp varchar(100),
-	address_house_no varchar(100),
-	address_street varchar(100),
-	address_postal_code integer,
+	house_no varchar(100),
+	street varchar(100),
+	postal_code integer,
 	last_visit date,
 	order_placed varchar(100),
 	special_note text,
@@ -134,7 +124,7 @@ create table customer(
 );
 ```
 
-#### F. Quotation and Order ####
+### F. Quotation and Order ###
 ```sql
 create table quotation (
 	cus_id integer,
@@ -151,18 +141,6 @@ create table quotation (
 	foreign key (emp_id) references emp (emp_id)
 );
 
-CREATE TRIGGER insert_into_quotation
-ON customer FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO quotation(cus_id, emp_id, int_id)
-	SELECT DISTINCT customer.cus_id, customer.emp_id, customer.int_id 
-	FROM INSERTED customer
-	LEFT JOIN quotation
-	ON customer.cus_id = quotation.cus_id
-	WHERE customer.order_placed = 'Yes'
-END
-GO
 
 create table confirmed_order(
 	order_id integer identity(1,1),
@@ -177,29 +155,6 @@ create table confirmed_order(
 	references quotation (cus_id, quotation_number)
 );
 
-CREATE TRIGGER insert_into_confirmed_order
-ON quotation FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO confirmed_order(cus_id, quotation_number)
-	SELECT DISTINCT quotation.cus_id, quotation.quotation_number
-	FROM INSERTED quotation
-	LEFT JOIN confirmed_order
-	ON quotation.cus_id = confirmed_order.cus_id
-	WHERE quotation.status = 'Confirmed'
-END
-GO
-
-CREATE TRIGGER delete_confirmed_order 
-ON confirmed_order FOR DELETE
-AS
-BEGIN 
-	DECLARE @order_id INT, @amount_purchase INT, @date_of_cancellation DATE
-	SELECT @order_id = DELETED.order_id FROM DELETED
-	INSERT INTO cancelled_order(order_id, amount_purchase, date_of_cancellation)
-	VALUES (@order_id, @amount_purchase, getdate())
-END
-GO
 
 create table ordered_items (
 	order_id integer,
@@ -211,17 +166,6 @@ create table ordered_items (
 	foreign key (order_id) references  confirmed_order (order_id) ON DELETE CASCADE,
 	foreign key (sku) references product_sku (sku)
 );
-
-CREATE TRIGGER insert_ordered_items
-ON confirmed_order FOR INSERT
-AS
-BEGIN 
-	INSERT INTO ordered_items(order_id)
-	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
-	LEFT JOIN ordered_items
-	ON ordered_items.order_id = confirmed_order.order_id
-END
-GO
 
 create table cancelled_order(
 	order_id integer,
@@ -250,16 +194,103 @@ create table product_sku(
 );
 ```
 
-### Dependencies ###
+## Dependencies ##
 
 ![image](https://user-images.githubusercontent.com/77920592/204134784-01641b5a-658c-4777-8a31-542bcb4124a7.png)
 
-
-
-### Create Views ###
+## Triggers ##
+### Update status of a specific employee to resigned triggers the resigned_employee table to update ###
 ```sql
---- TOP MANAGEMENT LEVEL
+CREATE TRIGGER update_emp_status 
+ON emp FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO resigned_emp(emp_id, date_of_resignation)
+	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
+	LEFT JOIN resigned_emp
+	ON resigned_emp.emp_id = emp.emp_id
+	WHERE emp.status = 'Resigned'
+END
+GO
+```
 
+### Insert on new employee update the salary_change table ###
+```sql
+CREATE TRIGGER insert_salary_change
+ON emp FOR INSERT
+AS
+BEGIN 
+	INSERT INTO salary_change(emp_id, increment_date)
+	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
+	LEFT JOIN salary_change
+	ON salary_change.emp_id = emp.emp_id
+END
+GO
+```
+
+### Insert customer data into quotation table if orderis placed ###
+```sql
+CREATE TRIGGER insert_into_quotation
+ON customer FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO quotation(cus_id, emp_id, int_id)
+	SELECT DISTINCT customer.cus_id, customer.emp_id, customer.int_id 
+	FROM INSERTED customer
+	LEFT JOIN quotation
+	ON customer.cus_id = quotation.cus_id
+	WHERE customer.order_placed = 'Yes'
+END
+GO
+```
+
+### Insert quotation data into the confirmed_order table is the quotation is confirmed  ###
+```sql
+CREATE TRIGGER insert_into_confirmed_order
+ON quotation FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO confirmed_order(cus_id, quotation_number)
+	SELECT DISTINCT quotation.cus_id, quotation.quotation_number
+	FROM INSERTED quotation
+	LEFT JOIN confirmed_order
+	ON quotation.cus_id = confirmed_order.cus_id
+	WHERE quotation.status = 'Confirmed'
+END
+GO
+```
+
+### Insert order_id from the confimed_order table into the ordered_item table ###
+```sql
+CREATE TRIGGER insert_ordered_items
+ON confirmed_order FOR INSERT
+AS
+BEGIN 
+	INSERT INTO ordered_items(order_id)
+	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
+	LEFT JOIN ordered_items
+	ON ordered_items.order_id = confirmed_order.order_id
+END
+GO
+```
+
+### Insert confirmed_order data inro the cancelled_order table if the order is cancelled ###
+```sql
+CREATE TRIGGER delete_confirmed_order 
+ON confirmed_order FOR DELETE
+AS
+BEGIN 
+	DECLARE @order_id INT, @amount_purchase INT, @date_of_cancellation DATE
+	SELECT @order_id = DELETED.order_id FROM DELETED
+	INSERT INTO cancelled_order(order_id, amount_purchase, date_of_cancellation)
+	VALUES (@order_id, @amount_purchase, getdate())
+END
+GO
+```
+
+## Views ##
+### Top Management Level ###
+```sql
 --- total sales of a specific month 
 drop view temp_total_sales_view;
 create view temp_total_sales_view as
@@ -290,20 +321,18 @@ END comms
 from confirmed_order
 where date_of_purchase between '2021-11-01' and '2021-12-31' 
 group by emp_id, comms;
+```
 
-
-
---- SALES LEVEL
-
+### Sales Level ###
+```sql
 --- check which quotation is still pending for followup
 select distinct(quotation.cus_id), cus_name, whatsapp from quotation join customer
 on quotation.cus_id = customer.cus_id
 where status like 'pending';
+```
 
-
-
---- MARKETING LEVEL
-
+### Marketing Level ###
+```sql
 --- loyalty programme for each interior designer 
 drop view id_loyalty_prog_view;
 create view id_loyalty_prog_view as 
@@ -330,11 +359,10 @@ where date_of_purchase between '2021-01-01' and '2021-12-31'
 group by cus_id;
 
 select * from cus_loyalty_prog_view
+```
 
-
-
---- OPERATION LEVEL
-
+### Operation Level ###
+```sql
 --- check what items to be order before a certain date
 create view ordered_items_view as
 select ordered_items.order_id, ordered_items.sku, ordered_items.special_note, 
@@ -345,19 +373,3 @@ on ordered_items.sku = product_sku.sku
 select * from ordered_items_view
 ```
 
-### Insert Demo Data ###
-
-Demo database are created using Mockaroo and imported to SQL Server using SSIS Package.
-![image](https://user-images.githubusercontent.com/77920592/204137567-92e0763d-edc5-448d-affb-5131cc3862f7.png)
-![image](https://user-images.githubusercontent.com/77920592/204137525-28df013a-9984-46d3-953a-9f9264fe6d5c.png)
-
-
-### Function Testing ###
-#### Update status of a specific emp_id on employee will trigger resigned_employee to update ####
-update emp
-set status = 'Resigned'
-where emp_id = 18;
-
-select * from emp;
-
-#### Insert on new employee update the salary_change table ####
