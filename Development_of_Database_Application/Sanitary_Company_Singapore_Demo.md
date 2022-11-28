@@ -119,11 +119,12 @@ create table customer(
 	cus_name varchar(100),
 	int_id integer,
 	emp_id integer,
-	whatsapp integer,
+	whatsapp varchar(100),
 	address_house_no varchar(100),
 	address_street varchar(100),
 	address_postal_code integer,
 	last_visit date,
+	order_placed varchar(100),
 	special_note text,
 	primary key (cus_id),
 	constraint FK_Customer foreign key (int_id) 
@@ -139,7 +140,7 @@ create table quotation (
 	cus_id integer,
 	emp_id integer,
 	int_id integer,
-	quotation_number varchar (100),
+	quotation_number integer identity(1,1),
 	quotation_date date,
 	amount_purchase decimal,
 	status varchar (100), --- either pending or confirmed
@@ -150,10 +151,23 @@ create table quotation (
 	foreign key (emp_id) references emp (emp_id)
 );
 
+CREATE TRIGGER insert_into_quotation
+ON customer FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO quotation(cus_id, emp_id, int_id)
+	SELECT DISTINCT customer.cus_id, customer.emp_id, customer.int_id 
+	FROM INSERTED customer
+	LEFT JOIN quotation
+	ON customer.cus_id = quotation.cus_id
+	WHERE customer.order_placed = 'Yes'
+END
+GO
+
 create table confirmed_order(
-	order_id integer,
+	order_id integer identity(1,1),
 	cus_id integer,
-	quotation_number varchar(100),
+	quotation_number integer,
 	comms decimal,
 	payment_method varchar(100),
 	payment_cleared varchar(100), --- yes/half/pending
@@ -162,6 +176,19 @@ create table confirmed_order(
 	foreign key (cus_id, quotation_number) 
 	references quotation (cus_id, quotation_number)
 );
+
+CREATE TRIGGER insert_into_confirmed_order
+ON quotation FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO confirmed_order(cus_id, quotation_number)
+	SELECT DISTINCT quotation.cus_id, quotation.quotation_number
+	FROM INSERTED quotation
+	LEFT JOIN confirmed_order
+	ON quotation.cus_id = confirmed_order.cus_id
+	WHERE quotation.status = 'Confirmed'
+END
+GO
 
 CREATE TRIGGER delete_confirmed_order 
 ON confirmed_order FOR DELETE
