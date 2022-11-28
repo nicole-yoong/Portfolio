@@ -7,9 +7,8 @@ Constraints and triggers are developed.
 ## Database Highlights: ##
 
 ### Create Table ###
+#### A. Employee ####
 ```sql
---- A. EMPLOYEE 
-
 create table emp(
 	emp_id integer,
 	emp_name varchar(100),
@@ -34,6 +33,24 @@ create table resigned_emp(
 	foreign key (emp_id) references emp (emp_id)
 );
 
+
+--- update status of a specific emp_id on employee will trigger resigned_employee to update
+CREATE TRIGGER update_emp_status 
+ON emp FOR UPDATE
+AS
+BEGIN 
+	INSERT INTO resigned_emp(emp_id, date_of_resignation)
+	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
+	LEFT JOIN resigned_emp
+	ON resigned_emp.emp_id = emp.emp_id
+	WHERE emp.status = 'Resigned'
+END
+GO
+
+```
+
+#### B. Salary Change ####
+```sql
 create table salary_change(
 	emp_id integer,
 	increment_date date,
@@ -42,20 +59,34 @@ create table salary_change(
 	special_note text,
 );
 
---- B. INTERIOR DESIGNER AND SUPPLIER 
+--- insert on new employee update the salary_change table
+CREATE TRIGGER insert_salary_change
+ON emp FOR INSERT
+AS
+BEGIN 
+	INSERT INTO salary_change(emp_id, increment_date)
+	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
+	LEFT JOIN salary_change
+	ON salary_change.emp_id = emp.emp_id
+END
+GO
+```
 
+#### C. Interior Designer ####
+```sql
 create table interior_designer (
 	int_id integer,
 	int_name varchar(100),
 	whatsapp varchar(100),
 	address varchar(100),
 	postal_code integer,
-	emp_id integer, --- employee in charge
 	special_note text,
 	primary key (int_id)
 );
+```
 
-
+#### D. Supplier ####
+```sql
 create table supplier(
 	sup_id int,
 	sup_name varchar(100),
@@ -79,13 +110,15 @@ create table supplier_billing(
 	special_note text,
 	primary key (invoice_id)
 );
+```
 
-
---- C. CUSTOMER AND ORDER 
+#### E. Customer ####
+```sql
 create table customer(
 	cus_id integer,
 	cus_name varchar(100),
 	int_id integer,
+	emp_id integer,
 	whatsapp integer,
 	address_house_no varchar(100),
 	address_street varchar(100),
@@ -94,17 +127,26 @@ create table customer(
 	special_note text,
 	primary key (cus_id),
 	constraint FK_Customer foreign key (int_id) 
-	references interior_designer (int_id) on update cascade
+	references interior_designer (int_id) on update cascade,
+	constraint FK_Employee foreign key (emp_id) 
+	references emp (emp_id) on update cascade
 );
+```
 
+#### F. Quotation and Order ####
+```sql
 create table quotation (
 	cus_id integer,
+	emp_id integer,
+	int_id integer,
 	quotation_number varchar (100),
 	quotation_date date,
 	status varchar (100), --- either pending or confirmed
 	special_note text,
 	primary key (cus_id, quotation_number),
-	foreign key (cus_id) references customer (cus_id)
+	foreign key (cus_id) references customer (cus_id),
+	foreign key (int_id) references interior_designer (int_id),
+	foreign key (emp_id) references emp (emp_id)
 );
 
 create table confirmed_order(
@@ -161,38 +203,12 @@ create table cancelled_order(
 );
 ```
 
-#### View Dependencies ####
+### Dependencies ###
 
 ![image](https://user-images.githubusercontent.com/77920592/204134784-01641b5a-658c-4777-8a31-542bcb4124a7.png)
 
 ### Create Trigger Objects ###
 ```sql
---- update status of a specific emp_id on employee will trigger resigned_employee to update
-CREATE TRIGGER update_emp_status 
-ON emp FOR UPDATE
-AS
-BEGIN 
-	INSERT INTO resigned_emp(emp_id, date_of_resignation)
-	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
-	LEFT JOIN resigned_emp
-	ON resigned_emp.emp_id = emp.emp_id
-	WHERE emp.status = 'Resigned'
-END
-GO
-
-
---- insert on new employee update the salary_change table
-CREATE TRIGGER insert_salary_change
-ON emp FOR INSERT
-AS
-BEGIN 
-	INSERT INTO salary_change(emp_id, increment_date)
-	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
-	LEFT JOIN salary_change
-	ON salary_change.emp_id = emp.emp_id
-END
-GO
-
 --- update the ordered_item when new order comes in
 CREATE TRIGGER insert_ordered_items
 ON confirmed_order FOR INSERT
