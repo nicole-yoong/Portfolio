@@ -269,7 +269,7 @@ create table confirmed_order(
 	order_id integer identity(1,1),
 	cus_id integer,
 	quotation_number integer,
-	comms decimal,
+	comms decimal(6,2),
 	payment_method varchar(100),
 	payment_cleared varchar(100), --- yes/half/pending
 	special_note text,
