@@ -460,7 +460,8 @@ group by int_id;
 select * from id_loyalty_prog_view
 ```
 
---- loyalty programme for customer
+**Customer loyalty programme**
+```sql
 drop view cus_loyalty_prog_view;
 
 create view cus_loyalty_prog_view as 
