@@ -201,20 +201,6 @@ BEGIN
 END
 GO
 
-create table product_sku(
-	sku varchar(100),
-	item_name text,
-	description text,
-	price decimal,
-	brand varchar(100),
-	color varchar(100),
-	status varchar(100),
-	stock_quantity integer,
-	pre_order_arrival_date date,
-	special_note text,
-	primary key (sku)
-);
-
 create table ordered_items (
 	order_id integer,
 	sku varchar(100),
@@ -244,6 +230,23 @@ create table cancelled_order(
 	refund_required varchar(100),
 	reason varchar(100),
 	special_note text
+);
+```
+
+#### G. Product SKU ####
+```sql
+create table product_sku(
+	sku varchar(100),
+	item_name text,
+	description text,
+	price decimal(6,2),
+	brand varchar(100),
+	color varchar(100),
+	status varchar(100),
+	stock_quantity integer,
+	pre_order_arrival_date date,
+	special_note text,
+	primary key (sku)
 );
 ```
 
