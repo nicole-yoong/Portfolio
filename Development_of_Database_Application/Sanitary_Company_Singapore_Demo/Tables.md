@@ -44,6 +44,7 @@ create table salary_change(
 	increment_salary integer,
 	default_comms decimal(6,2),
 	special_note text,
+	foreign key (emp_id) references emp (emp_id)
 );
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204307764-92cf8ec8-98d0-48e2-a4ff-aa91b1e17011.png)
@@ -88,12 +89,13 @@ create table supplier(
 ```sql
 create table supplier_billing(
 	invoice_id varchar(100),
-	sup_company varchar(100),
+	sup_id integer,
 	billing_date date,
 	billing_amount decimal(6,2),
 	status varchar(100),
 	special_note text,
 	primary key (invoice_id)
+	foreign key (sup_id) references supplier (sup_id)
 );
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204308955-5c277ef0-1cf8-43a8-acae-a65cbf7eee5a.png)
@@ -177,12 +179,13 @@ create table ordered_items (
 **Create cancelled_order table**
 ```sql
 create table cancelled_order(
-	order_id integer,
+	quotation_number integer,
 	date_of_cancellation date,
 	amount_purchase integer,
 	refund_required varchar(100),
 	reason varchar(100),
 	special_note text
+	foreign key (quotation_number) references confirmed_order (quotation_number)
 );
 ```
 
