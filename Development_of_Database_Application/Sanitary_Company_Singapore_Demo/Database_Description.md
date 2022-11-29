@@ -311,7 +311,7 @@ select * from confirmed_order
 update confirmed_order
 set comms = t.comms, payment_method = t.payment_method, payment_cleared =  t.payment_cleared
 from confirmed_order co join confirmed_order_temp t
-on co.order_id = t.order_id;
+on co.quotation_number = t.quotation_number;
 
 select * from confirmed_order
 ```
@@ -323,7 +323,6 @@ create table ordered_items (
 	quotation_number integer,
 	sku varchar(100),
 	quantity integer,
-	price varchar(100),
 	date_of_delivery date,
 	special_note text,
 	foreign key (quotation_number) references  confirmed_order (quotation_number) ON DELETE CASCADE,
@@ -332,29 +331,6 @@ create table ordered_items (
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204549019-d841bfa7-87c8-4825-b43d-85dae046e0bd.png)
 
-**Insert quotation_number from the confimed_order table into the ordered_item table**
-```sql
-CREATE TRIGGER insert_ordered_items
-ON confirmed_order FOR INSERT
-AS
-BEGIN 
-	INSERT INTO ordered_items(quotation_number)
-	SELECT DISTINCT confirmed_order.quotation_number FROM INSERTED confirmed_order
-	LEFT JOIN ordered_items
-	ON ordered_items.quotation_number = confirmed_order.quotation_number
-END
-GO
-```
-
-```sql
---- Function Testing
-update quotation
-set status = 'Confirmed'
-where quotation_number = 34;
-
-select * from ordered_items
-```
-![image](https://user-images.githubusercontent.com/77920592/204339117-278c49be-4c71-4be0-89ba-fc6f0f351878.png)
 
 **Create cancelled_order table**
 ```sql
