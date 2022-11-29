@@ -39,7 +39,8 @@ where status = 'Confirmed'
 group by emp_id
 order by sum(amount_purchase) desc;
 ```
-![image](https://user-images.githubusercontent.com/77920592/204571941-c632dfe0-facd-4495-b991-df6b01c3b83e.png)
+![image](https://user-images.githubusercontent.com/77920592/204579599-397ba3c2-8dd0-4c56-b73d-578c1d3dac31.png)
+
 
 **Commissions for sales personnel**
 ```sql
@@ -48,17 +49,18 @@ from confirmed_order co join quotation q on co.quotation_number = q.quotation_nu
 ---where month(quotation_date) = 11
 group by emp_id;
 ```
+![image](https://user-images.githubusercontent.com/77920592/204579665-a3e6ce1a-dc08-42b6-a352-ef40160248e8.png)
 
 **Bonus for sales personnel if hit certain target**
 ```sql
 select emp_id, 
 case when sum(amount_purchase)> 100000 then (0.015*sum(amount_purchase))
-when sum(amount_purchase)< 100000 then 0
 end as bonus
 from confirmed_order co join quotation q on co.quotation_number = q.quotation_number
 ---where month(quotation_date) = 11
 group by emp_id
 ```
+![image](https://user-images.githubusercontent.com/77920592/204579823-4885bd48-5f9a-4ac3-8fd3-23215a16ba51.png)
 
 **Bonus + Salary for sales personnel**
 ```sql
@@ -75,6 +77,7 @@ group by emp_id, amount_purchase
 select emp_id, bonus, sum(amount_purchase) + bonus as total_salary from cte
 group by emp_id, bonus
 ```
+![image](https://user-images.githubusercontent.com/77920592/204579882-d133d4c6-0eda-473c-8a7b-a67226423893.png)
 
 ### Sales Level ###
 **Pending / Confirmed quotation to follow-up**
