@@ -77,12 +77,14 @@ group by emp_id, bonus
 ```
 
 ### Sales Level ###
+**Pending / Confirmed quotation to follow-up**
 ```sql
---- check which quotation is still pending for followup
 select distinct(quotation.cus_id), cus_name, whatsapp from quotation join customer
 on quotation.cus_id = customer.cus_id
-where status like 'pending';
+where status like 'Confirmed' 
+---and month(quotation_date) = 11;
 ```
+![image](https://user-images.githubusercontent.com/77920592/204573088-f325b7a7-9e5c-4921-a18d-fe638426d9f1.png)
 
 ### Marketing Level ###
 **Contribution of each interior designer**
@@ -96,10 +98,13 @@ WHEN sum(amount_purchase)< 100000 THEN 'Silver'
 END tier
 from confirmed_order co join quotation q on co.quotation_number = q.quotation_number
 ---where month(quotation_date) = 11 
-group by int_id;
+group by int_id
+order by amount desc;
 
 select * from id_loyalty_prog_view
+order by amount desc
 ```
+![image](https://user-images.githubusercontent.com/77920592/204572520-fda48eee-ebc6-4b0f-bae9-a3399faed772.png)
 
 **Customer loyalty programme**
 ```sql
@@ -115,7 +120,9 @@ from confirmed_order co join quotation q on co.quotation_number = q.quotation_nu
 group by q.cus_id;
 
 select * from cus_loyalty_prog_view
+order by amount desc
 ```
+![image](https://user-images.githubusercontent.com/77920592/204572680-0eb159fc-670d-415f-ac83-cfa2ecb5bb21.png)
 
 ### Operation Level ###
 **Items required before certain date**
