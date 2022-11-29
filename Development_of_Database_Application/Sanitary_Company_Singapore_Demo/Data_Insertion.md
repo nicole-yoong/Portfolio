@@ -1,6 +1,17 @@
 # Data Insertion #
 
-**Bulk update columns in quotation table by importing flat files and merge tables**
+**Bulk update columns in customer table by importing flat file**
+```sql
+--- Import flat file to a table named customer_temp
+insert into customer (cus_id, cus_name, int_id, emp_id, whatsapp, house_no, street, postal_code, last_visit)
+select cus_id, cus_name, int_id, emp_id, whatsapp, house_no, street, postal_code, last_visit
+from customer_temp
+
+select * from customer
+```
+![image](https://user-images.githubusercontent.com/77920592/204567104-d68c4243-7aa2-4150-ba59-59473bd30e91.png)
+
+**Bulk update columns in customer table by importing flat file**
 ```sql
 --- Import flat file to a table named quotation_temp
 update quotation
@@ -12,7 +23,7 @@ select * from quotation;
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204562101-78a0b24a-7dcd-4193-95a6-4e1e26ee69c4.png)
 
-**Bulk update columns in confirmed_orders table by importing flat files and merge tables**
+**Bulk update columns in confirmed_orders table by importing flat files**
 ```sql
 --- Import flat file to a table named confirmed_table_temp
 update confirmed_order
