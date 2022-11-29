@@ -96,6 +96,7 @@ BEGIN
 	LEFT JOIN confirmed_order
 	ON quotation.quotation_number = confirmed_order.quotation_number
 	WHERE quotation.status = 'Confirmed'
+	and quotation.quotation_number not in (select quotation_number from confirmed_order)
 END
 GO
 ```
