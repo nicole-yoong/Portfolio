@@ -223,6 +223,7 @@ create table quotation (
 	foreign key (emp_id) references emp (emp_id)
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204548858-20910e65-a141-4374-bec5-82ab38c51cc9.png)
 
 **Insert customer data into quotation table if orderis placed**
 ```sql
@@ -276,6 +277,7 @@ create table confirmed_order(
 	references quotation (quotation_number)
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204548943-aa7c63cf-94e3-4900-84a3-a4cc401c9746.png)
 
 **Insert quotation data into the confirmed_order table is the quotation is confirmed**
 ```sql
@@ -328,6 +330,7 @@ create table ordered_items (
 	foreign key (sku) references product_sku (sku)
 );
 ```
+![image](https://user-images.githubusercontent.com/77920592/204549019-d841bfa7-87c8-4825-b43d-85dae046e0bd.png)
 
 **Insert quotation_number from the confimed_order table into the ordered_item table**
 ```sql
