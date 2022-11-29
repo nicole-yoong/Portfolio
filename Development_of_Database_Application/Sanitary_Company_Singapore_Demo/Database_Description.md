@@ -217,7 +217,7 @@ create table quotation (
 	amount_purchase decimal(6,2),
 	status varchar (100), --- either pending or confirmed
 	special_note text,
-	primary key (cus_id, quotation_number),
+	primary key (quotation_number),
 	foreign key (cus_id) references customer (cus_id),
 	foreign key (int_id) references interior_designer (int_id),
 	foreign key (emp_id) references emp (emp_id)
@@ -266,16 +266,14 @@ select * from quotation;
 **Create confirmed_order table**
 ```sql
 create table confirmed_order(
-	order_id integer identity(1,1),
-	cus_id integer,
 	quotation_number integer,
 	comms decimal(6,2),
 	payment_method varchar(100),
 	payment_cleared varchar(100), --- yes/half/pending
 	special_note text,
-	primary key (order_id, quotation_number),
-	foreign key (cus_id, quotation_number) 
-	references quotation (cus_id, quotation_number)
+	primary key (quotation_number),
+	foreign key (quotation_number) 
+	references quotation (quotation_number)
 );
 ```
 
@@ -320,13 +318,13 @@ select * from confirmed_order
 **Create ordered_item table**
 ```sql
 create table ordered_items (
-	order_id integer,
+	quotation_number integer,
 	sku varchar(100),
 	quantity integer,
 	price varchar(100),
 	date_of_delivery date,
 	special_note text,
-	foreign key (order_id) references  confirmed_order (order_id) ON DELETE CASCADE,
+	foreign key (quotation_number) references  confirmed_order (quotation_number) ON DELETE CASCADE,
 	foreign key (sku) references product_sku (sku)
 );
 ```
