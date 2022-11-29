@@ -283,11 +283,11 @@ CREATE TRIGGER insert_into_confirmed_order
 ON quotation FOR UPDATE
 AS
 BEGIN 
-	INSERT INTO confirmed_order(cus_id, quotation_number)
-	SELECT DISTINCT quotation.cus_id, quotation.quotation_number
+	INSERT INTO confirmed_order(quotation_number)
+	SELECT DISTINCT quotation.quotation_number
 	FROM INSERTED quotation
 	LEFT JOIN confirmed_order
-	ON quotation.cus_id = confirmed_order.cus_id
+	ON quotation.quotation_number = confirmed_order.quotation_number
 	WHERE quotation.status = 'Confirmed'
 END
 GO
@@ -329,16 +329,16 @@ create table ordered_items (
 );
 ```
 
-**Insert order_id from the confimed_order table into the ordered_item table**
+**Insert quotation_number from the confimed_order table into the ordered_item table**
 ```sql
 CREATE TRIGGER insert_ordered_items
 ON confirmed_order FOR INSERT
 AS
 BEGIN 
-	INSERT INTO ordered_items(order_id)
-	SELECT DISTINCT confirmed_order.order_id FROM INSERTED confirmed_order
+	INSERT INTO ordered_items(quotation_number)
+	SELECT DISTINCT confirmed_order.quotation_number FROM INSERTED confirmed_order
 	LEFT JOIN ordered_items
-	ON ordered_items.order_id = confirmed_order.order_id
+	ON ordered_items.quotation_number = confirmed_order.quotation_number
 END
 GO
 ```
