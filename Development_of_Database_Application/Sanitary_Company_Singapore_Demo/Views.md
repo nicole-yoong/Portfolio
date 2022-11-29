@@ -4,20 +4,31 @@
 
 **Rolling sales**
 ```sql
+drop view monthly_total_sales_view;
 
+create view rolling_sales_view as
+select year(quotation_date) as year, month(quotation_date) as month,
+sum(amount_purchase) over (partition by year(quotation_date), month(quotation_date) order by quotation_date) as rolling_sales 
+from confirmed_order co join quotation q on co.quotation_number = q.quotation_number;
+
+select * from rolling_sales_view
 ```
+![image](https://user-images.githubusercontent.com/77920592/204571809-e0ff5d37-7eb2-4fb5-bb74-6bf27a6f9783.png)
 
 **Monthly sales**
 ```sql
-drop view monthly_total_sales_view;
+drop view monthly_sales_view;
 
-create view monthly_total_sales_view as
+create view monthly_sales_view as
 select year(quotation_date) as year, month(quotation_date) as month,
-sum (amount_purchase) over (partition by year(quotation_date), month(quotation_date) order by quotation_date) as rolling_sales 
-from confirmed_order co join quotation q on co.quotation_number = q.quotation_number;
+sum(amount_purchase) as monthly_sales 
+from confirmed_order co join quotation q on co.quotation_number = q.quotation_number
+group by year(quotation_date), month(quotation_date)
+order by year(quotation_date), month(quotation_date);
 
-select * from monthly_total_sales_view;
+select * from monthly_sales_view
 ```
+![image](https://user-images.githubusercontent.com/77920592/204571645-2fa5fe57-ccac-445a-ac8b-9eef00a5e1ab.png)
 
 **Performance of sales personnel**
 ```sql
@@ -28,6 +39,7 @@ where status = 'Confirmed'
 group by emp_id
 order by sum(amount_purchase) desc;
 ```
+![image](https://user-images.githubusercontent.com/77920592/204571941-c632dfe0-facd-4495-b991-df6b01c3b83e.png)
 
 **Commissions for sales personnel**
 ```sql
