@@ -170,6 +170,7 @@ create table ordered_items (
 	quantity integer,
 	date_of_delivery date,
 	special_note text,
+	primary key (quotation_number, sku),
 	foreign key (quotation_number) references  confirmed_order (quotation_number) ON DELETE CASCADE,
 	foreign key (sku) references product_sku (sku)
 );
