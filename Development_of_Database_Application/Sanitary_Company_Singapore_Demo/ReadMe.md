@@ -12,7 +12,7 @@ The database contains 11 tables:
 | ------------- | ------------- |
 | **Emp** | emp_id, emp_name, emp_title, emp_type(office / delivery), bday, join_date, nationality, status (employed / resigned), special_note |
 | **Resigned_emp** |emp_id, date_of_resignation, reason, salary_cleared, special_note |
-| **Salary_change** |emp_id, increment_date, increment_salary, default_comms, special_note |
+| **Salary_change** |emp_id, updates_date, updated_salary, default_comms, special_note |
 | **Interior_designer** | int_id, int-name, whatsapp, address, postal_code, special_note |
 | **Supplier** | sup_id, sup_name, company, dept, category, email, phone_number, country, status, special_note |
 | **Supplier_billing** | invoice_id, sup_company, billing_date, billing_amount, status, special_note |
