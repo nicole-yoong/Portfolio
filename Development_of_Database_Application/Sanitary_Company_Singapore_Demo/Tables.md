@@ -40,8 +40,8 @@ create table resigned_emp(
 ```sql
 create table salary_change(
 	emp_id integer,
-	increment_date date,
-	increment_salary integer,
+	updates_date date,
+	updated_salary integer,
 	default_comms decimal(6,2),
 	special_note text,
 	foreign key (emp_id) references emp (emp_id)
