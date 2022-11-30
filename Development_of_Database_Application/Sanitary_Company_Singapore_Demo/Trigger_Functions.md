@@ -36,7 +36,7 @@ CREATE TRIGGER insert_salary_change
 ON emp FOR INSERT
 AS
 BEGIN 
-	INSERT INTO salary_change(emp_id, increment_date)
+	INSERT INTO salary_change(emp_id, updates_date)
 	SELECT DISTINCT emp.emp_id, getdate() FROM INSERTED emp
 	LEFT JOIN salary_change
 	ON salary_change.emp_id = emp.emp_id
@@ -50,7 +50,7 @@ insert into emp
 values (21, 'Alex Mitchell', 'Junior Sales', 'Office', '1997-06-16', '2020-06-05', 'Malaysia', 'Employed', NULL);
 
 update salary_change
-set increment_salary = 2800, default_comms = 0.20, special_note = 'Initial salary'
+set updated_salary = 2800, default_comms = 0.20, special_note = 'Initial salary'
 where emp_id = 21;
 
 select * from salary_change
