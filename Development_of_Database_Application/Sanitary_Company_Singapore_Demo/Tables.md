@@ -189,6 +189,7 @@ create table cancelled_order(
 	reason varchar(100),
 	special_note text
 	foreign key (quotation_number) references confirmed_order (quotation_number)
+	foreign key (assigned_driver) references emp(emp_id)
 );
 ```
 
