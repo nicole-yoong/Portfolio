@@ -58,6 +58,20 @@ select * from salary_change
 
 ![image](https://user-images.githubusercontent.com/77920592/204308218-ec51472a-249b-45df-b5e9-6cf61b892801.png)
 
+**Update salary to 0 when employee resigns**
+```sql
+CREATE TRIGGER update_resigned_salary
+ON resigned_emp FOR INSERT
+AS
+BEGIN 
+	INSERT INTO salary_change(emp_id, increment_date, increment_salary, special_note)
+	SELECT DISTINCT emp.emp_id, getdate(), 0, 'Resigned' FROM INSERTED emp
+	LEFT JOIN salary_change
+	ON salary_change.emp_id = emp.emp_id
+END
+GO
+```
+
 **Insert customer data into quotation table if orderis placed**
 ```sql
 CREATE TRIGGER insert_into_quotation
