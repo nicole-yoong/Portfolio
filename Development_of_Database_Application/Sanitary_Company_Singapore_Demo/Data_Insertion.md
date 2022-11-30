@@ -37,8 +37,8 @@ select * from confirmed_order
 
 **Bulk update columns in ordered_items table by selecting the data from flat files into the table**
 ```sql
-insert into ordered_items (quotation_number, quantity, sku)
-select quotation_number, quantity, sku
+insert into ordered_items (quotation_number, quantity, sku, date_of_delivery, delivery_time, assigned_driver)
+select quotation_number, quantity, sku, date_of_delivery, delivery_time, assigned_driver
 from ordered_items_temp
 
 select * from ordered_items;
