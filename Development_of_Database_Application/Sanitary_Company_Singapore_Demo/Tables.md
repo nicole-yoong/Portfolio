@@ -169,6 +169,8 @@ create table ordered_items (
 	sku varchar(100),
 	quantity integer,
 	date_of_delivery date,
+	delivery_time time, 
+	assined_driver integer,
 	special_note text,
 	primary key (quotation_number, sku),
 	foreign key (quotation_number) references  confirmed_order (quotation_number) ON DELETE CASCADE,
