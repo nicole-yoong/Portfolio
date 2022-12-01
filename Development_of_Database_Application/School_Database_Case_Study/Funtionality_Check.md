@@ -119,6 +119,7 @@ BEGIN
 	  WHERE sno = entry.sno
 END
 GO
+```
 
 **Display membership status for student number: ‘2’**
 
