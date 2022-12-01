@@ -48,20 +48,15 @@ GO
 
 **Retrieve grade_title, distinction, merit or pass based on excode**
 ```sql
-CREATE FUNCTION retrieve_result_on_excode (
-	@sno INTEGER, @egrade DECIMAL
-)
-RETURNS VARCHAR(20) AS 
-BEGIN
-	DECLARE @grade_title VARCHAR(20);
-	SET @grade_title = NULL
-	IF @egrade > 70 SET @grade_title = 'Distinction';
-	IF (@egrade < 70 and @egrade > 50) SET @grade_title = 'Merit';
-	IF @egrade < 50 SET @grade_title = 'FAIL';
-
-	RETURN @grade_title
-END
-GO
+CREATE FUNCTION retrieve_result_on_excode (@excode VARCHAR(50))
+RETURNS TABLE
+AS 
+RETURN
+	SELECT egrade, CASE WHEN egrade > 70 THEN 'Distinction'
+	WHEN (egrade < 70 and egrade >= 50) THEN 'Merit'
+	WHEN egrade < 50 THEN 'FAIL' END AS grade_title
+	FROM exam_details ed
+	WHERE ed.excode = @excode
 ```
 
 **Update exam details**
@@ -88,6 +83,24 @@ BEGIN
 	 WHERE sname = student.sname
 END
 GO
+```
+
+**Retrieve membership based on exam details**
+```sql
+CREATE FUNCTION membership (@sno INTEGER)
+RETURNS TABLE
+AS 
+RETURN
+	 SELECT s.sname, 
+	 CASE WHEN s.sname IS NOT NULL THEN 'Accredited'
+	 ELSE 'Pending' END as membership
+	 
+	 FROM exam_details ed JOIN student s ON ed.sno = s.sno
+	 WHERE @sno = s.sno AND egrade IS NOT NULL 
+	 AND exdate BETWEEN '2022/01/01' AND '2022/12/31'
+	 AND ed.sno = @sno
+	 GROUP BY s.sname
+	 HAVING COUNT(ed.sno) > 3 AND AVG(egrade) >= 50
 ```
 
 **Retrieve cancel data based on sno**
