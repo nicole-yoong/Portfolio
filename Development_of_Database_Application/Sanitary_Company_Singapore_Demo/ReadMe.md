@@ -1,10 +1,13 @@
 ## Description ##
 
-This is a demo of the SQL server developed for a sanitary company, Bathworld based in Singapore. 
+This is a demo of the SQL server developed for a sanitary company, Bathworld based in Singapore. It contains of 12 tables consisting of data from different departments.
 Demo database are created using Mockaroo and imported to SQL Server using SSIS Package.
 
-It contains of 12 tables consisting of data from different departments.
-Constraints and triggers are developed. 
+The tasks include but not limited to:
+- Design, develop, and test database and database objects (tables, views, stored procedures, indexes, functions, constraints)
+- Build complex queries using T-SQL command
+- Extract, transform and load the data from multiple sources and store them inside data warehouse using SSIS packages 
+
 
 ## Tables ##
 The database contains 11 tables:
@@ -22,3 +25,5 @@ The database contains 11 tables:
 | **Ordered_items** | order_id, sku, quantity, price, date_of_delivery, special_note |
 | **Product_sku** | sku, item_name, description, price, brand, color, status, stock_quantity, pre_order_arrival_date, special_note |
 
+## Entity Diagram ##
+![image](https://user-images.githubusercontent.com/77920592/205033353-c9e68bd6-fe31-4d45-a4dc-c23f6b03bcd1.png)
