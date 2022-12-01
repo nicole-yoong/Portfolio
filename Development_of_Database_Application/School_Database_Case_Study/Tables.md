@@ -82,3 +82,55 @@ CREATE TABLE exam_details (
 ); 		
 ```
 
+# Sample Data Insertion #
+
+INSERT INTO exam VALUES 
+    ('VB01', 'Visual Basic 1', 'London', '2022-06-01', '09:00'),
+    ('VB02', 'Visual Basic 2', 'London', '2022-06-02', '18:00'),
+    ('SQL1', 'SQL 1', 'Norwich', '2022-06-01', '09:00'),
+    ('XQ02', 'Xquery 2', 'Norwich', '2022-06-03', '09:00'),
+    ('PMAN', 'Project Management', 'London', '2022-06-04', '09:00');
+
+INSERT INTO student VALUES
+    ('Smith, A.', 'bj@myhome.com'),
+    ('Brown, B.', 'bb@myhome.com'),
+    ('Green, C.', 'cg@myhome.com'),
+    ('White, D.', 'dw@myhome.com'),
+    ('Young, E.', 'ey@myhome.com');
+    
+INSERT INTO entry(excode, sno)
+    VALUES ('VB01', 1);
+INSERT INTO entry(excode, sno)
+    VALUES ('VB02', 1);   
+INSERT INTO entry(excode, sno)
+    VALUES ('XQ02', 1);
+INSERT INTO entry(excode, sno)
+    VALUES ('PMAN', 1);
+INSERT INTO entry(excode, sno)
+    VALUES ('SQL1', 2);
+INSERT INTO entry(excode, sno)
+    VALUES ('VB02', 2);
+INSERT INTO entry(excode, sno)
+    VALUES ('XQ02', 2);
+INSERT INTO entry(excode, sno)
+    VALUES ('PMAN', 2);
+INSERT INTO entry(excode, sno)
+    VALUES ('VB01', 3);
+    
+UPDATE entry SET egrade = 50
+WHERE eno = 19;
+
+UPDATE entry SET egrade = 55
+WHERE eno = 20;
+
+UPDATE entry SET egrade = 45
+WHERE eno = 21;
+
+UPDATE entry SET egrade = 50
+WHERE eno = 22;
+
+UPDATE entry SET egrade = 90
+WHERE eno = 23;
+
+UPDATE entry SET egrade = 20
+WHERE eno = 24;
