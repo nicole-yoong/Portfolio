@@ -1,5 +1,16 @@
 # Triggers #
 
+**Retrieve student timetable**
+```sql
+CREATE FUNCTION retrieve_student_timetable (@sno INTEGER)
+RETURNS TABLE
+AS
+RETURN
+	 SELECT sname, excode, extitle, exlocation, exdate, extime
+	 FROM student, exam
+	 WHERE student.sno =  @sno
+```
+
 **Delete entry and update the cancel table**
 ```sql
 CREATE TRIGGER delete_entry_update_cancel
