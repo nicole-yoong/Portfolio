@@ -50,7 +50,7 @@ CREATE TABLE cancel (
     eno          INTEGER,
     excode       CHAR(4),
     sno          INTEGER,
-    cdate        TIMESTAMP,
+    cdate        DATETIME,
     cuser        VARCHAR(128)
     PRIMARY KEY (eno, cdate)
 );    
