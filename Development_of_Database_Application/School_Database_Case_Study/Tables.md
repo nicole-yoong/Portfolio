@@ -1,126 +1,85 @@
--- Insert tables into schema
+# Tables #
+
+## A. Exam
+**Create exam table**
 
 ```sql
 CREATE TABLE exam (
     excode       CHAR(4),
     extitle      VARCHAR(20),
     exlocation   VARCHAR(20),
-    exdate       DATE,
-    extime       TIME);
+    exdate       DATE CHECK(exdate between '2022-06-01' and '2022-06-30'),
+    extime       TIME CHECK(extime between '09:00:00' and '18:00:00'),
+    PRIMARY KEY (excode)	
+);
+```
 
+## B. Student 
+**Create student table**
+
+```sql
 CREATE TABLE student (
-    sno          INTEGER,
+    sno          INTEGER IDENTITY(1,1),
     sname        VARCHAR(20),
-    semail       VARCHAR(20));
+    semail       VARCHAR(20),
+    PRIMARY KEY (sno),
+    UNIQUE (semail)
+);
+```
 
+## C. Enty
+**Create entry table**
+```sql
 CREATE TABLE entry (
-    eno          INTEGER,
-    excode       CHAR(4),
+    eno          INTEGER IDENTITY(1,1),
+    excode       CHAR(4) not null,
     sno          INTEGER,
-    egrade       DECIMAL(5,2));
-    
+    egrade       DECIMAL(5,2) CHECK(egrade between 0 and 100),
+    PRIMARY KEY (eno),
+    FOREIGN KEY (excode) REFERENCES exam(excode),
+    FOREIGN KEY (sno) REFERENCES student(sno) ON DELETE CASCADE,
+    UNIQUE (excode,sno)
+);
+```
+
+## D. Cancel
+**Create cancel table**
+
+```sql
 CREATE TABLE cancel (
     eno          INTEGER,
     excode       CHAR(4),
     sno          INTEGER,
     cdate        TIMESTAMP,
-cuser        VARCHAR(128));   
-
+    cuser        VARCHAR(128)
+    PRIMARY KEY (eno, cdate)
+);    
+```
+## E. Result ##
+**Create result table**
+```sql
 CREATE TABLE result (
-excode       CHAR(4),
-sno          INTEGER,
-    grade_title      VARCHAR(20),
-    egrade   DECIMAL);
+    excode       CHAR(4),
+    sno          INTEGER,
+    grade_title  VARCHAR(20),
+    egrade		 DECIMAL);
+```
 
+## F. Exam Details
+**Create exam_details table**
+
+```sql
 CREATE TABLE exam_details ( 
-
-excode       CHAR(4), 
+    excode       CHAR(4), 
     extitle      VARCHAR(20), 
     exlocation   VARCHAR(20), 
     exdate       DATE, 
     extime       TIME, 
     sno          INTEGER, 
-sname        VARCHAR(20), 
-    egrade       DECIMAL(5,2)); 	
-```
-
--- Set Entity Integrity Constraint 
-```sql
-ALTER TABLE exam
-ADD CONSTRAINT PK_exam PRIMARY KEY (excode);
-
-ALTER TABLE student
-ADD CONSTRAINT PK_student PRIMARY KEY (sno);
-
-ALTER TABLE entry
-ADD CONSTRAINT PK_entry PRIMARY KEY (eno);
-
-ALTER TABLE cancel
-ADD CONSTRAINT PK_cancel PRIMARY KEY (eno,cdate);
-
-ALTER TABLE entry 
-ALTER COLUMN excode SET NOT NULL;
-
-ALTER TABLE exam_details
-ADD CONSTRAINT PK_exam_details PRIMARY KEY (excode,sno);
-
-CREATE SEQUENCE eno_sequence
-START 1
-INCREMENT 1;
-
-ALTER table entry
-ALTER column eno SET DEFAULT nextval('eno_sequence');
-
-CREATE SEQUENCE sno_sequence
-START 1
-INCREMENT 1;
-
-ALTER table student
-ALTER column sno SET DEFAULT nextval('sno_sequence');
-
-ALTER SEQUENCE eno_sequence RESTART WITH 1;
-UPDATE entry SET eno=nextval('eno_sequence');
-```
-
--- Set Referential Constraint 
-```sql
-ALTER TABLE entry
-ADD CONSTRAINT FK_exam FOREIGN KEY (excode) REFERENCES exam(excode);
-
-ALTER TABLE entry
-ADD CONSTRAINT FK_sno FOREIGN KEY (sno) REFERENCES student(sno) ON DELETE CASCADE;
-```
-
--- Set Domain Constraint
-```sql
-CREATE DOMAIN domain_exdate AS DATE 
-CHECK(value between date '2022-06-01' and date '2022-06-30');
-
-ALTER TABLE exam  
-ALTER COLUMN exdate
-SET DATA TYPE domain_exdate;
-
-CREATE DOMAIN domain_extime AS TIME
-CHECK(value between time '09:00:00' and time '18:00:00');
-
-ALTER TABLE exam  
-ALTER COLUMN extime
-SET DATA TYPE domain_extime;
-
-CREATE DOMAIN domain_egrade AS DECIMAL
-CHECK(value between decimal '0' and decimal '100');
-
-ALTER TABLE entry 
-ALTER COLUMN egrade
-SET DATA TYPE domain_egrade;
-```
--- Set Unique Constraint
-```sql
-ALTER TABLE student 
-ADD CONSTRAINT email_constraint UNIQUE (semail);
-
-ALTER TABLE entry 
-ADD CONSTRAINT excode_sno_constraint UNIQUE (excode,sno);
+    sname        VARCHAR(20), 
+    egrade       DECIMAL(5,2)
+    PRIMARY KEY (excode, sno)
+); 		
 ```
 
 -- Delete entry and update the cancel table 
