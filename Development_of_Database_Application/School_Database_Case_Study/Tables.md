@@ -84,6 +84,7 @@ CREATE TABLE exam_details (
 
 # Sample Data Insertion #
 
+```sql
 INSERT INTO exam VALUES 
     ('VB01', 'Visual Basic 1', 'London', '2022-06-01', '09:00'),
     ('VB02', 'Visual Basic 2', 'London', '2022-06-02', '18:00'),
@@ -134,3 +135,4 @@ WHERE eno = 23;
 
 UPDATE entry SET egrade = 20
 WHERE eno = 24;
+```
