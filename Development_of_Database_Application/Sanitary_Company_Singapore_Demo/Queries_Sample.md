@@ -1,6 +1,6 @@
-# Views #
+# Queries Sample #
 
-### Top Management Level ###
+## Top Management Level ##
 
 **Rolling sales**
 ```sql
@@ -41,7 +41,6 @@ order by sum(amount_purchase) desc;
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204579599-397ba3c2-8dd0-4c56-b73d-578c1d3dac31.png)
 
-
 **Commissions for sales personnel**
 ```sql
 select emp_id, sum(amount_purchase*comms) as comms_amount
@@ -79,7 +78,7 @@ group by emp_id, bonus
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204579882-d133d4c6-0eda-473c-8a7b-a67226423893.png)
 
-### Sales Level ###
+## Sales Level ##
 **Pending / Confirmed quotation to follow-up**
 ```sql
 select distinct(quotation.cus_id), cus_name, whatsapp from quotation join customer
@@ -89,7 +88,7 @@ where status like 'Confirmed'
 ```
 ![image](https://user-images.githubusercontent.com/77920592/204573088-f325b7a7-9e5c-4921-a18d-fe638426d9f1.png)
 
-### Marketing Level ###
+## Marketing Level ##
 **Contribution of each interior designer**
 ```sql
 drop view id_loyalty_prog_view;
@@ -128,15 +127,19 @@ order by amount desc
 ![image](https://user-images.githubusercontent.com/77920592/204572680-0eb159fc-670d-415f-ac83-cfa2ecb5bb21.png)
 
 ### Operation Level ###
-**Items required before certain date**
+**Pre-items required before certain date**
 ```sql
-drop view ordered_items_view;
-
-create view ordered_items_view as
 select ordered_items.quotation_number, ordered_items.sku, ordered_items.special_note, 
 ordered_items.date_of_delivery, status from ordered_items
 join product_sku
 on ordered_items.sku = product_sku.sku
+---where date_of_delivery <= '2021-12-31' and status = 'Pre-order'
+```
 
-select * from ordered_items_view
+**Daily schedule of drivers**
+```sql
+select assigned_driver, date_of_delivery, delivery_time, special_note
+from ordered_items
+---where date_of_delivery = '2021-12-01'
+order by assigned_driver, date_of_delivery, delivery_time
 ```
