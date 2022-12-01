@@ -27,7 +27,7 @@ CREATE TABLE student (
 );
 ```
 
-## C. Enty
+## C. Entry
 **Create entry table**
 ```sql
 CREATE TABLE entry (
