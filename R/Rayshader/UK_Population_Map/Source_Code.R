@@ -17,7 +17,6 @@ library(rayshader)
 library(units)
 units_options(allow_mixed = TRUE)
 
-=
 uk_data = st_read("C:/Users/Nicole/Desktop/kontur_population_GB_20220630.gpkg")
 uk_data|>
 +   ggplot() +
@@ -59,7 +58,7 @@ uk_rast <- st_rasterize(uk_data, nx = a, ny = b)
 mp <- matrix(uk_rast$population, nrow = a, ncol = b)
 
 # Create color palette
-color <- MetBrewer::met.brewer(name="Hokusai2")
+color <- MetBrewer::met.brewer(name="Degas")
 
 tx <- grDevices::colorRampPalette(color, bias = 1.5)(256)
 
@@ -72,35 +71,22 @@ rgl.open()
 mp |>
   height_shade(texture = tx) |>
   add_overlay(sphere_shade(mp, texture = "desert",
-  zscale= 0.5, colorintensity = 4), alphalayer=0.5) |>
+  zscale= 0.2, colorintensity = 4), alphalayer=0.2) |>
   plot_3d(heightmap = mp,
-          zscale = 100 / 5 / 2,
+          zscale = 30 / 5 / 2,
           solid = FALSE,
-          shadowdepth = 0,
-          shadowcolor = color[7],
-          shadow_darkness = 2)
+          background = "#FFE0A7",
+          shadowdepth = 0)
 
-render_camera(theta = 200, phi = 30, zoom =0.5)
+render_camera(theta = 300, phi =120, zoom =0.30)
 
+render_snapshot ("C:/Users/user/Desktop/map.png")
+                 
 file <- ("C:/Users/Nicole/Desktop/uk_map.png")
-
-{
-  start_time <- Sys.time()
-  cat(crayon::cyan(start_time), "\n")
-  if(!file.exists(file)) {
-    png::writePNG(matrix(1), target = file)
-  }
   
-  render_highquality (
-    filename = outfile,
-    interactive = FALSE,
-    texture = TRUE,
-    samples = 250,
+render_highquality (
+    "C:/Users/Nicole/Desktop/uk_map.png",
     height = 1000,
     width = 1000
   )
-  
-  end_time <- Sys.time()
-  diff <- end_time - start_time
-  cat(crayon::cyan(diff), "\n")
-}
+
