@@ -59,7 +59,7 @@ uk_rast <- st_rasterize(uk_data, nx = a, ny = b)
 mp <- matrix(uk_rast$population, nrow = a, ncol = b)
 
 # Create color palette
-color <- MetBrewer::met.brewer(name="Troy")
+color <- MetBrewer::met.brewer(name="Hokusai2")
 
 tx <- grDevices::colorRampPalette(color, bias = 1.5)(256)
 
@@ -80,7 +80,7 @@ mp |>
           shadowcolor = color[7],
           shadow_darkness = 2)
 
-render_camera(theta = 200, phi = 30, zoom =0.3)
+render_camera(theta = 200, phi = 30, zoom =0.5)
 
 file <- ("C:/Users/Nicole/Desktop/uk_map.png")
 
@@ -95,7 +95,7 @@ file <- ("C:/Users/Nicole/Desktop/uk_map.png")
     filename = outfile,
     interactive = FALSE,
     texture = TRUE,
-    samples = 450,
+    samples = 250,
     height = 1000,
     width = 1000
   )
