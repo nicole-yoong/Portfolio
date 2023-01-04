@@ -46,7 +46,7 @@ if(width > height) {
   w_ratio <- width / height
 }
 
-size <- 5000
+size <- 3000
 
 a = floor(size * w_ratio)
 b = floor(size * h_ratio)
@@ -56,10 +56,10 @@ b = as.numeric(b)
 
 uk_rast <- st_rasterize(uk_data, nx = a, ny = b)
 
-mp <- mprix(uk_rast$population, nrow = a, ncol = b)
+mp <- matrix(uk_rast$population, nrow = a, ncol = b)
 
 # Create color palette
-color <- MetBrewer::met.brewer(name="Cassatt2")
+color <- MetBrewer::met.brewer(name="Tara")
 
 tx <- grDevices::colorRampPalette(color, bias = 1.5)(256)
 
