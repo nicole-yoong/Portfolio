@@ -88,7 +88,7 @@ file <- ("C:/Users/Nicole/Desktop/uk_map.png")
   start_time <- Sys.time()
   cat(crayon::cyan(start_time), "\n")
   if(!file.exists(file)) {
-    png::writePNG(mprix(1), target = file)
+    png::writePNG(matrix(1), target = file)
   }
  
   render_highquality (
@@ -99,8 +99,8 @@ file <- ("C:/Users/Nicole/Desktop/uk_map.png")
     lightcolor = c(color[5], "white"),
     lightintensity = c(800,200),
     samples = 350,
-    height = 3000,
-    width = 3000
+    height = 1000,
+    width = 1000
   )
  
   end_time <- Sys.time()
