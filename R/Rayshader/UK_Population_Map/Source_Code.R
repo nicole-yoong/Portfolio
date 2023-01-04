@@ -59,7 +59,7 @@ uk_rast <- st_rasterize(uk_data, nx = a, ny = b)
 mp <- matrix(uk_rast$population, nrow = a, ncol = b)
 
 # Create color palette
-color <- MetBrewer::met.brewer(name="Tara")
+color <- MetBrewer::met.brewer(name="Troy")
 
 tx <- grDevices::colorRampPalette(color, bias = 1.5)(256)
 
@@ -80,7 +80,7 @@ mp |>
           shadowcolor = color[7],
           shadow_darkness = 2)
 
-render_camera(theta = 200, phi = 30, zoom =.65)
+render_camera(theta = 200, phi = 30, zoom =0.3)
 
 file <- ("C:/Users/Nicole/Desktop/uk_map.png")
 
@@ -90,19 +90,16 @@ file <- ("C:/Users/Nicole/Desktop/uk_map.png")
   if(!file.exists(file)) {
     png::writePNG(matrix(1), target = file)
   }
- 
+  
   render_highquality (
-    filename = file,
+    filename = outfile,
     interactive = FALSE,
-    lightdirection = 350,
-    lightaltitude = c(20,80),
-    lightcolor = c(color[5], "white"),
-    lightintensity = c(800,200),
-    samples = 350,
+    texture = TRUE,
+    samples = 450,
     height = 1000,
     width = 1000
   )
- 
+  
   end_time <- Sys.time()
   diff <- end_time - start_time
   cat(crayon::cyan(diff), "\n")
