@@ -19,8 +19,8 @@ units_options(allow_mixed = TRUE)
 
 uk_data = st_read("C:/Users/Nicole/Desktop/kontur_population_GB_20220630.gpkg")
 uk_data|>
-ggplot() 
-eom_sf()
+ggplot() +
+geom_sf()
 
 ratio = st_bbox(uk_data)
 
@@ -78,7 +78,7 @@ mp |>
           background = "#FFE0A7",
           shadowdepth = 0)
 
-render_camera(theta = 300, phi =120, zoom =0.65)
+render_camera(theta = 300, phi =90, zoom =0.45)
 
 render_snapshot ("C:/Users/user/Desktop/map.png")
                  
