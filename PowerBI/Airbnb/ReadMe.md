@@ -1,6 +1,6 @@
-## INTERATIVE VISUALIZATION - COMPANY, REGIONAL AND COUNTRY-SPECIFIC OVERVIEW OF AIRBNB  ##
+## INTERATIVE VISUALIZATION - CORPORATE, REGIONAL AND COUNTRY-SPECIFIC OVERVIEW OF AIRBNB  ##
 
-This dashboard illsutrates the company, regional and country-specific overview of Aibnb. 
+This dashboard illsutrates the corporate, regional and country-specific overview of Aibnb. 
 
 ### Company Overview ###
 <img width="800" alt="airbnb_company_overview" src="https://user-images.githubusercontent.com/77920592/212880234-741892bf-216b-4074-9f9b-56861e21cf98.png">
