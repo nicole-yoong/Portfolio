@@ -1,7 +1,6 @@
 ## INTERATIVE VISUALIZATION - TOP PERFORMING LEAGUES, CLUBS AND PLAYERS OF FIFA 2022 ##
 
-This dashboard illsutrates the top performing leagues, clubs and players of FIFA 2022.
-You can see the top scoring countries, and total goals of the top players, also the top 5 leagues (big fives), the values of their clubs and players.
+This visualization illustrates the top-performing leagues, clubs, and players of FIFA 2022. You can see the top-scoring countries, and total goals of the top players, also the top 5 leagues (big fives), and the values of their clubs and players.
 
 <img width="800" alt="fifa22" src="https://user-images.githubusercontent.com/77920592/211548241-73e9f165-32bc-4855-9a12-947cb242ffca.png">
 
