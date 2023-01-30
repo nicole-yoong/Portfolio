@@ -107,4 +107,5 @@ http://localhost:2908/emp/emp_id/1
 
 http://localhost:2908/emp/emp_type/office
 ![image](https://user-images.githubusercontent.com/77920592/215497887-2040ebcf-fb41-47bd-875c-53cc0c84b54c.png)
+![image](https://user-images.githubusercontent.com/77920592/215498000-7f4c7914-9fe0-4514-8e62-c45de63d1106.png)
 
