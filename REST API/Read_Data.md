@@ -104,3 +104,7 @@ app.get('/emp/emp_id/:empID/', function(req, res) {
 
 http://localhost:2908/emp/emp_id/1
 ![image](https://user-images.githubusercontent.com/77920592/215495338-06c314d8-a880-464b-b80d-5e1180d96203.png)
+
+http://localhost:2908/emp/emp_type/office
+![image](https://user-images.githubusercontent.com/77920592/215497887-2040ebcf-fb41-47bd-875c-53cc0c84b54c.png)
+
