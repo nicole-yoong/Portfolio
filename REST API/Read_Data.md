@@ -3,19 +3,23 @@
 ### Install node from https://nodejs.org/en ###
 
 ### Create a directory ### 
+```javascript
 mkdir SQLAPI
 cd SQLAPI
+```
 
 ### Initiate the node environment and install packages ###
+```javascript
 npm init
 
 npm install --save express
 npm install --save mssql
 npm install  --save msnodesqlv8
 npm install --save json-beautify
-
+```
 
 ### Create config.js ###
+```javascript
 var config = {
   production: {
      driver: 'msnodesqlv8',
@@ -23,8 +27,10 @@ var config = {
      } 
 };
 module.exports = config;
+```
 
 ### Create ReadApp.js ###
+```javascript
 // Read functions
 const express = require('express'); 
 const app = express();
@@ -102,6 +108,7 @@ app.get('/emp/emp_id/:empID/', function(req, res) {
     connection.close();
   });
 });
+```
 
 http://localhost:2908/emp/emp_id/1
 ![image](https://user-images.githubusercontent.com/77920592/215495338-06c314d8-a880-464b-b80d-5e1180d96203.png)
