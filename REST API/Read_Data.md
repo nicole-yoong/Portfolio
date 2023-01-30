@@ -49,7 +49,7 @@ const connection = new sql.ConnectionPool(sqlConfig, function(err){
 )
   
 // Input as Integer
-app.get('/emp/emp_id/:empid/', function(req, res) {
+app.get('/emp/emp_id/:empID/', function(req, res) {
   connection.connect().then(pool => { 
     var conn=pool.request()
     var forInteger = /\b\d+\b/i; 
@@ -78,10 +78,10 @@ app.get('/emp/emp_id/:empid/', function(req, res) {
  
  
  // input as VarChar
- app.get('/emp/emp_title/:emptitle/', function(req, res) {
+ app.get('/emp/emp_title/:empTITLE/', function(req, res) {
   connection.connect().then(pool => { 
     var conn=pool.request()
-    conn.input('input_parameter', sql.VarChar, req.params.SamAccountName)
+    conn.input('input_parameter', sql.VarChar, req.params.empTITLE)
     var string = 'SELECT * FROM dbo.emp WHERE  emp_name = @input_parameter'
     return conn.query(string)
   }).then(result => {
@@ -102,4 +102,5 @@ app.get('/emp/emp_id/:empid/', function(req, res) {
   });
 });
 
-node ReadApp.js
+http://localhost:2908/emp/emp_id/1
+![image](https://user-images.githubusercontent.com/77920592/215495338-06c314d8-a880-464b-b80d-5e1180d96203.png)
