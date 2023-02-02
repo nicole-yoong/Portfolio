@@ -1,0 +1,112 @@
+```
+// Product displayed prices
+add_filter( 'woocommerce_get_price_html', 'free_price_custom_label', 20, 2 );
+function free_price_custom_label( $price, $product ) {
+    if ( is_shop() || is_product_category() || is_product_tag() || is_product() ) {
+        // HERE your custom free price label
+        $free_label = '<span class="amount">' . __('Coming soon') . '</span>';
+
+        if( $product->is_type('variable') )
+        {
+            $price_min  = wc_get_price_to_display( $product, array( 'price' => $product->get_variation_price('min') ) );
+            $price_max  = wc_get_price_to_display( $product, array( 'price' => $product->get_variation_price('max') ) );
+
+            if( $price_min != $price_max ){
+                if( $price_min == 0 && $price_max > 0 )
+                    $price = wc_price( $price_max );
+                elseif( $price_min > 0 && $price_max == 0 )
+                    $price = wc_price( $price_min );
+                else
+                    $price = wc_format_price_range( $price_min, $price_max );
+            } else {
+                if( $price_min > 0 )
+                    $price = wc_price( $price_min);
+                else
+                    $price = $free_label;
+            }
+        }
+        elseif( $product->is_on_sale() )
+        {
+            $regular_price = wc_get_price_to_display( $product, array( 'price' => $product->get_regular_price() ) );
+            $sale_price = wc_get_price_to_display( $product, array( 'price' => $product->get_sale_price() ) );
+            if( $sale_price > 0 )
+                $price = wc_format_sale_price( $regular_price, $sale_price );
+            else
+                $price = $free_label;
+        }
+        else
+        {
+            $active_price = wc_get_price_to_display( $product, array( 'price' => $product->get_price() ) );
+            if( $active_price > 0 )
+                $price = wc_price($active_price);
+            else
+                $price = $free_label;
+        }
+    }
+    return $price;
+}
+
+// Product variation displayed prices
+add_filter( 'woocommerce_variable_price_html', 'free_variation_price_custom_label', 20, 2 );
+function free_variation_price_custom_label( $price, $product ) {
+    // HERE your custom free price label
+    $free_label = '<span class="amount">' . __('Coming soon') . '</span>';
+
+    if( $product->is_on_sale() )
+    {
+        $regular_price = wc_get_price_to_display( $product, array( 'price' => $product->get_regular_price() ) );
+        $sale_price = wc_get_price_to_display( $product, array( 'price' => $product->get_sale_price() ) );
+        if( $sale_price > 0 )
+            $price = wc_format_sale_price( $regular_price, $sale_price );
+        else
+            $price = $free_label;
+    }
+    else
+    {
+        $active_price = wc_get_price_to_display( $product, array( 'price' => $product->get_price() ) );
+        if( $active_price > 0 )
+            $price = wc_price($active_price);
+        else
+            $price = $free_label;
+    }
+    return $price;
+}
+
+// Cart items displayed prices and line item subtotal
+add_filter( 'woocommerce_cart_item_subtotal', 'free_cart_item_price_custom_label', 20, 3 );
+add_filter( 'woocommerce_cart_item_price', 'free_cart_item_price_custom_label', 20, 3 );
+function free_cart_item_price_custom_label( $price, $cart_item, $cart_item_key ) {
+    // HERE your custom free price label
+    $free_label = '<span class="amount">' . __('Coming soon') . '</span>';
+
+    if( $cart_item['data']->get_price() > 0 )
+        return $price;
+    else
+        return $free_label;
+}
+
+// Order items displayed prices (and also email notifications)
+add_filter( 'woocommerce_order_formatted_line_subtotal', 'free_order_item_price_custom_label', 20, 3 );
+function free_order_item_price_custom_label( $subtotal, $item, $order ) {
+    // HERE your custom free price label
+    $free_label = '<span class="amount">' . __('Coming soon') . '</span>';
+
+    if( $order->get_line_subtotal( $item ) > 0 )
+        return $subtotal;
+    else
+        return $free_label;
+}
+
+// Change text on add to cart button for certain products
+add_filter( 'woocommerce_product_add_to_cart_text', 'custom_loop_add_to_cart_button', 20, 2 ); 
+function custom_loop_add_to_cart_button( $button_text, $product ) {
+    // HERE define your specific product IDs in this array
+    $specific_ids = array(34720, 34719, 34718);
+
+    if( in_array($product->get_id(), $specific_ids) ) {
+        $button_text = __("Enquire with us", "woocommerce");
+    } else {
+        $button_text = __('Add to cart', 'woocommerce');
+    }
+    return $button_text;
+}
